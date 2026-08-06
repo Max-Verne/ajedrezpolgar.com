@@ -1,0 +1,1 @@
+# ajedrezpolgar.com
