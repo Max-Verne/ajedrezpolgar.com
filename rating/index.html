@@ -35,6 +35,7 @@ body{
   font-size:15px;
   line-height:1.5;
   min-height:100vh;
+  padding-top:28px;
 }
 ::selection{background:var(--gold-dim);color:var(--bg);}
 a{color:var(--gold-bright);}
@@ -75,7 +76,7 @@ tbody tr:hover{background:var(--bg-elevated);}
 
 /* ---- top nav ---- */
 .topbar{
-  position:sticky;top:0;z-index:50;
+  position:sticky;top:28px;z-index:50;
   background:linear-gradient(var(--bg),var(--bg) 92%, transparent);
   backdrop-filter:blur(6px);
   border-bottom:1px solid var(--line);
@@ -202,6 +203,42 @@ hr.line{border:none;border-top:1px solid var(--line);margin:24px 0;}
 </style>
 </head>
 <body>
+
+<!-- BARRA DE NAVEGACIÓN COMPARTIDA ENTRE SITIOS -->
+<div id="nav-sitios" style="
+  position:fixed; top:0; width:100%; z-index:200;
+  background:#0d2b4e;
+  border-bottom:1px solid rgba(255,255,255,0.08);
+  display:flex; align-items:center;
+  padding:0 2rem;
+  font-family:inherit;
+  font-size:0.72rem;
+">
+  <span style="color:rgba(255,255,255,0.35);margin-right:0.8rem;letter-spacing:1px;text-transform:uppercase;font-size:0.65rem;">Sitios</span>
+  <a href="https://max-verne.github.io/ajedrezpolgar.com/"
+     style="color:rgba(255,255,255,0.6);text-decoration:none;padding:0.4rem 0.9rem;border-left:1px solid rgba(255,255,255,0.08);border-right:1px solid rgba(255,255,255,0.08);transition:all 0.2s;"
+     onmouseover="this.style.background='rgba(255,255,255,0.07)';this.style.color='#fff'"
+     onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.6)'">
+    🏠 Club Polgar
+  </a>
+  <a href="https://max-verne.github.io/ajedrezpolgar.com/liga/"
+     style="color:rgba(255,255,255,0.6);text-decoration:none;padding:0.4rem 0.9rem;border-right:1px solid rgba(255,255,255,0.08);transition:all 0.2s;"
+     onmouseover="this.style.background='rgba(255,255,255,0.07)';this.style.color='#fff'"
+     onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.6)'">
+    🏆 Liga MTL
+  </a>
+  <a href="https://max-verne.github.io/ajedrezpolgar.com/rating/"
+     class="active"
+     style="color:#4a90d9;background:rgba(30,111,191,0.3);font-weight:700;text-decoration:none;padding:0.4rem 0.9rem;border-right:1px solid rgba(255,255,255,0.08);transition:all 0.2s;">
+    📊 Rating GTO
+  </a>
+  <a href="https://max-verne.github.io/ajedrezpolgar.com/nacional/"
+     style="color:rgba(255,255,255,0.6);text-decoration:none;padding:0.4rem 0.9rem;border-right:1px solid rgba(255,255,255,0.08);transition:all 0.2s;"
+     onmouseover="this.style.background='rgba(255,255,255,0.07)';this.style.color='#fff'"
+     onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.6)'">
+    🌐 Rating Nacional
+  </a>
+</div>
 
 <div class="topbar">
   <div class="topbar-inner">
@@ -512,7 +549,7 @@ hr.line{border:none;border-top:1px solid var(--line);margin:24px 0;}
           </div>
           <div class="card">
             <label class="field">Número de versión</label>
-            <input type="text" id="siteVersionInput" style="width:120px;" placeholder="13">
+            <input type="text" id="siteVersionInput" style="width:120px;" placeholder="14">
             <p class="small" style="margin-top:8px;">Se agrega como <code>_v#</code> al final del nombre de los archivos que descargues (respaldo e imágenes). Cámbialo antes de descargar para llevar el control de versiones.</p>
           </div>
         </div>
@@ -1502,7 +1539,7 @@ init();
 
 
 /* ===== Generación de imágenes PNG de ranking (Top 50 / Top 25 Juvenil) ===== */
-const SITE_VERSION = 13;
+const SITE_VERSION = 14;
 function _siteVer(){
   const el = document.getElementById('siteVersionInput');
   let v = (el && el.value!=null && el.value.trim()!=='') ? el.value.trim()
