@@ -21,6 +21,23 @@
   * { margin:0; padding:0; box-sizing:border-box; }
   html { scroll-behavior:smooth; }
   body { background:var(--blanco); color:var(--azul-oscuro); font-family:'Segoe UI',sans-serif; }
+  /* Compensar banner + nav-top + nav-main */
+  body { padding-top: calc(28px + 32px + 56px); }
+
+  /* BANNER CONSTRUCCIÓN */
+  #banner-construccion {
+    position:fixed; top:28px; width:100%; z-index:150;
+    background:#f5c518; color:#1a1a1a;
+    text-align:center; padding:0.45rem 1rem;
+    font-size:0.82rem; font-weight:600;
+    border-bottom:1px solid #d4a800;
+    display:flex; align-items:center; justify-content:center; gap:0.6rem;
+    flex-wrap:wrap;
+  }
+  #banner-construccion a {
+    color:#0d2b4e; font-weight:700; text-decoration:underline;
+  }
+  #banner-construccion a:hover { color:#1e6fbf; }
 
   /* NAV */
   nav {
@@ -32,7 +49,7 @@
   }
   /* Barra superior — sitios hermanos */
   .nav-top {
-    display:flex; align-items:center; gap:0; 
+    display:flex; align-items:center; gap:0;
     background:var(--azul-oscuro);
     border-bottom:1px solid rgba(255,255,255,0.08);
     padding:0 2.5rem;
@@ -194,6 +211,15 @@
 </style>
 </head>
 <body>
+
+<!-- BANNER EN CONSTRUCCIÓN -->
+<div id="banner-construccion">
+  🚧 Sitio en construcción — el contenido mostrado es de ejemplo y no refleja datos reales del club. &nbsp;|&nbsp;
+  Visita nuestros sitios activos:
+  <a href="https://www.ajedrezpolgar.com/liga/">🏆 Liga MTL</a>
+  <a href="https://www.ajedrezpolgar.com/rating/">📊 Rating GTO</a>
+  <a href="https://www.ajedrezpolgar.com/nacional/">🌐 Rating Nacional</a>
+</div>
 
 <!-- NAV -->
 <nav>
