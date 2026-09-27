@@ -23,8 +23,8 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
 /aviso-de-privacidad/ (proyecto propio, numeración propia, texto del proyecto legal).
 
 ## Estado actual
-* Versión vigente: v5
-* Archivo entregado: Inscripciones_v5.html + carpeta convocatorias/ (PDF e imágenes) → se sube como /inscripciones/index.html
+* Versión vigente: v6
+* Archivo entregado: Inscripciones_v6.html + carpeta convocatorias/ (PDF e imágenes) → se sube como /inscripciones/index.html
 * Dónde vive este documento: [x] Fusionado en el artefacto (este comentario HTML,
   invisible para el visitante). No en pestaña visible porque es una página pública.
 * Traspaso a nuevo chat: la IA descarga el archivo con
@@ -90,6 +90,15 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
 - [ ] Portada v3 enlaza a los sitios hermanos vía max-verne.github.io en la barra superior y vía www en el banner — inconsistencia heredada, no se toca aquí.
 
 ## Historial de cambios
+**v6 — Segunda revisión de datos del certificado**
+* Paso 2: el recuadro "Así aparecerá en el certificado" ahora repite el nombre completo, la
+  institución educativa y la rama (la categoría no, porque puede elegirse una superior en el paso 3).
+* Casilla obligatoria "Revisé el nombre completo, la institución educativa y la rama…": no se
+  envía ni se guarda (el payload no cambia → Code.gs no cambia); solo habilita "Siguiente" en el
+  paso 2. Si se edita nombre, apellidos, institución o rama después de marcarla, se desmarca sola.
+* Verificación: flujo probado en navegador automatizado (botón bloqueado, desbloqueo, desmarcado
+  al editar, avance al paso 3 y regreso). PENDIENTE confirmar en el sitio publicado.
+
 **v5 — Categorías corregidas (reversión parcial de v4)**
 * El titular revisó y confirmó que las categorías correctas son las de la convocatoria de la
   1ª etapa, no las de la Convocatoria General: 2026 → Sec y Prepa 2008–2013, Sub-12 2014–2015,
@@ -258,6 +267,9 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
   .err{color:var(--err);font-size:.88rem;margin-top:4px;min-height:1em}
   .preview{margin-top:14px;padding:12px;border:1px dashed var(--azul-claro);border-radius:10px;background:var(--suave)}
   .preview b{display:block;font-size:1.1rem}
+  .preview .prevLinea{display:block;margin-top:4px}
+  .preview .confirma{margin-top:12px;padding-top:10px;border-top:1px dashed var(--azul-claro)}
+  #btnNext:disabled{opacity:.45;cursor:not-allowed}
   .pay{background:var(--suave);border-radius:10px;padding:12px;margin:8px 0 4px}
   .pay code{font-size:1.05rem;font-weight:700;letter-spacing:.03em}
   .fnav{display:flex;justify-content:space-between;gap:10px;margin-top:18px}
@@ -394,7 +406,12 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
           <div><label class="f" for="correo">Correo electrónico <span class="req">*</span></label><input type="email" id="correo" autocomplete="email"><div class="err" data-for="correo"></div></div>
           <div><label class="f" for="telefono">Teléfono (10 dígitos) <span class="req">*</span></label><input type="tel" id="telefono" inputmode="numeric" autocomplete="tel"><div class="err" data-for="telefono"></div></div>
         </div>
-        <div class="preview"><span class="small">Así aparecerá en el certificado:</span><b id="prevNombre">—</b></div>
+        <div class="preview"><span class="small">Así aparecerá en el certificado:</span><b id="prevNombre">—</b>
+          <span class="prevLinea"><span class="small">Institución educativa:</span> <span id="prevInst">—</span></span>
+          <span class="prevLinea"><span class="small">Rama:</span> <span id="prevRama">—</span></span>
+          <label class="opt confirma"><input type="checkbox" id="confirmaDatos"> <span>Revisé el nombre completo, la institución educativa y la rama, y están escritos correctamente. <span class="req">*</span></span></label>
+          <div class="err" data-for="confirmaDatos"></div>
+        </div>
       </section>
 
       <section class="card step hidden" data-step="3">
@@ -672,11 +689,24 @@ function abrirFormulario(){
   $('#inscribir').scrollIntoView({ behavior:'smooth' });
 }
 
+// Segunda revisión: la casilla #confirmaDatos no se envía ni se guarda; solo habilita "Siguiente" en el paso 2.
+// Cualquier cambio en nombre, apellidos, institución o rama la desmarca para obligar a revisar de nuevo.
+function syncNext(){
+  $('#btnNext').disabled = (step === 2 && !$('#confirmaDatos').checked);
+}
 function updatePreview(){
   const n = titleCase(val('nombres')), a = titleCase(val('apellidos'));
+  const inst = val('institucion').replace(/\s+/g,' ');
+  const r = document.querySelector('input[name=sexo]:checked');
   $('#prevNombre').textContent = (n || a) ? `${n} ${a}`.trim() : '—';
+  $('#prevInst').textContent = inst || '—';
+  $('#prevRama').textContent = r ? (r.value === 'V' ? 'Varonil' : 'Femenil') : '—';
+  if ($('#confirmaDatos').checked){ $('#confirmaDatos').checked = false; }
+  syncNext();
 }
-['nombres','apellidos'].forEach(id => $('#'+id).addEventListener('input', updatePreview));
+['nombres','apellidos','institucion'].forEach(id => $('#'+id).addEventListener('input', updatePreview));
+document.querySelectorAll('input[name=sexo]').forEach(el => el.addEventListener('change', updatePreview));
+$('#confirmaDatos').addEventListener('change', () => { setErr('confirmaDatos',''); syncNext(); });
 
 function renderCats(){
   const cats = ACTIVO.categorias;
@@ -709,6 +739,7 @@ function validate(s){
     ok &= setErr('tutor', nameRe.test(val('tutor')) ? '' : 'Escribe el nombre del padre, madre o tutor.');
     ok &= setErr('correo', /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val('correo')) ? '' : 'Correo no válido.');
     ok &= setErr('telefono', /^\d{10}$/.test(val('telefono').replace(/\D/g,'')) ? '' : 'Debe tener 10 dígitos.');
+    ok &= setErr('confirmaDatos', $('#confirmaDatos').checked ? '' : 'Confirma que los datos del certificado son correctos.');
   }
   if (s === 3){
     ok &= setErr('categoria', document.querySelector('input[name=categoria]:checked') ? '' : 'Selecciona una categoría.');
@@ -755,6 +786,7 @@ function show(s){
   $('#btnSend').classList.toggle('hidden', s !== 4);
   if (s === 3) renderCats();
   if (s === 4) renderResumen();
+  syncNext();
   if (s > 1) $('#inscribir').scrollIntoView({ behavior:'smooth' });
 }
 $('#btnNext').onclick = () => { if (validate(step)) show(step+1); };
