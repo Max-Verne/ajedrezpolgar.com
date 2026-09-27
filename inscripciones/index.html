@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inscripciones · Club de Ajedrez Polgar</title>
+<meta name="description" content="Inscripción al torneo activo del Club de Ajedrez Polgar (León, Gto.) y registro de eventos anteriores.">
+<!--
+=====================================================================
+ CONTEXTO Y CONTROL DE CAMBIOS: Inscripciones (ajedrezpolgar.com/inscripciones/)
+ (Documento de contexto fusionado en el artefacto — método "Control de
+ Contexto y Versionado". Contrato/Arquitectura MANDAN sobre el Historial.)
+=====================================================================
+
+## Qué es este proyecto
+Sección única de inscripciones del Club de Ajedrez Polgar. Una sola dirección
+permanente (https://www.ajedrezpolgar.com/inscripciones/) y un solo código QR
+que siempre llevan al torneo ACTIVO, sin importar cuándo se imprimió el
+material. Muestra el torneo activo, los próximos, y los pasados en gris.
+Contiene integrado el formulario de inscripción que se creó en el proyecto
+Liga MTL (index.html + Code.gs), ahora alimentado por el catálogo EVENTOS.
+Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
+/aviso-de-privacidad/ (proyecto propio, numeración propia, texto del proyecto legal).
+
+## Estado actual
+* Versión vigente: v2
+* Archivo entregado: Inscripciones_v2.html → se sube como /inscripciones/index.html
+* Dónde vive este documento: [x] Fusionado en el artefacto (este comentario HTML,
+  invisible para el visitante). No en pestaña visible porque es una página pública.
+* Traspaso a nuevo chat: la IA descarga el archivo con
+  curl -o i.html https://raw.githubusercontent.com/Max-Verne/ajedrezpolgar.com/main/inscripciones/index.html
+  y lee este bloque.
+* QR entregado: QR_Inscripciones_Polgar.png / .svg → apunta a
+  https://www.ajedrezpolgar.com/inscripciones/ (versión 5, corrección H).
+
+## Contrato del Artefacto
+* DEBE: vivir siempre en /inscripciones/ (la URL y el QR NO cambian jamás).
+* DEBE: decidir el torneo activo automáticamente por fecha (hora de León),
+  con opción de forzar manualmente (FORZAR_ACTIVO).
+* DEBE: mostrar los eventos pasados en gris, sin borrarlos del catálogo.
+* DEBE: ser un solo HTML autocontenido; sin dependencias externas.
+* DEBE: ser compatible con Code.gs (payload del formulario original de Liga MTL
+  + campos de consentimiento; Code.gs v2 los guarda en columnas propias).
+* NO DEBE: abrir el formulario si AVISO_PUBLICADO es false (el aviso de
+  privacidad debe estar publicado antes de recabar datos de menores).
+* NO DEBE: abrir el formulario al público sin scriptUrl (el modo demostración
+  entrega folios falsos); la demo solo existe con ?demo=1.
+* DEBE: presentar las 3 casillas del Anexo del aviso, separadas y NUNCA
+  premarcadas; solo la primera (tratamiento + publicación de resultados) es
+  obligatoria. Imagen y boletines son opcionales y no condicionan la inscripción.
+* DEBE: enviar al backend qué se aceptó y la versión del aviso (AVISO_VERSION).
+* NO DEBE: abrir inscripciones de un evento con sede sin confirmar.
+
+## Glosario
+* Evento activo: el primero del catálogo cuya fecha es hoy o posterior
+  (o el que indique FORZAR_ACTIVO). Solo hay uno a la vez.
+* Estado de inscripción del activo: "abierta" | "cerrada" (pasó el cierre,
+  pero el evento aún no ocurre) | "proximamente" (antes de apertura o sede
+  por confirmar) | "sin-formulario" (evento informativo, p. ej. Gala).
+* Pasado: fecha del evento < hoy (se vuelve gris el día siguiente al evento).
+
+## Arquitectura / Convenciones
+* Todo el contenido editable está en el bloque CATÁLOGO del <script>:
+  AJUSTES (pago, backend, aviso, override) y EVENTOS (uno por evento).
+* Campos por evento: id (estable, nunca se reutiliza), serie, titulo, etapa
+  (texto que va al backend; su número forma el folio MTL-N-###), fecha
+  (AAAA-MM-DD), sede (null = por confirmar), direccion, mapsUrl, horario,
+  costo, cupo, categorias, apertura (opcional), cierre (opcional; por defecto
+  2 días antes del evento a las 23:59), formulario ('mtl' | URL externa |
+  null), convocatoriaUrl, resultadosUrl.
+* Zona horaria fija America/Mexico_City (México sin horario de verano desde 2022 → -06:00).
+* Parámetro de prueba: ?hoy=AAAA-MM-DD simula la fecha (solo para revisar).
+* Folio y hoja de cálculo los genera Code.gs a partir de "etapa".
+
+## Tareas Pendientes
+- [ ] Instalar Code.gs v2 en la hoja 26-27 y pegar su URL /exec en AJUSTES.scriptUrl (sin ella el formulario no abre).
+- [ ] Probar un envío real de punta a punta (folio, fila con consentimientos, comprobante en Drive, correo de aviso).
+- [ ] Corregir Transitorios de la convocatoria: hoy dice que al inscribirse se acepta la autorización de uso de imagen; el aviso la hace opcional y separada.
+- [ ] Confirmar fecha de cierre por evento (por defecto: jueves previo 23:59).
+- [ ] Cupo de 150 por evento: el backend no lo controla todavía.
+- [ ] Agregar "Inscripciones" a la barra de sitios compartida en Portada, Liga, Rating GTO y Rating Nacional.
+- [ ] (Opcional) Cargar eventos de la 2ª Liga 25-26 como historial.
+
+## Bugs Conocidos / Deuda Técnica
+- [ ] Portada v3 enlaza a los sitios hermanos vía max-verne.github.io en la barra superior y vía www en el banner — inconsistencia heredada, no se toca aquí.
+
+## Historial de cambios
+**v2 — Aviso de privacidad 2.0 integrado y consentimientos separados**
+* Enlaces al aviso pasan a /aviso-de-privacidad/ (URL citada en el propio aviso).
+* Paso 1 muestra el Aviso simplificado (Anexo) visible y las 3 casillas: tratamiento +
+  publicación de resultados (obligatoria), imagen y voz (opcional), boletines (opcional);
+  ninguna premarcada. Se retira el "aviso simplificado" heredado de Liga MTL (decía que
+  no se compartía con terceros, lo que contradice la publicación en Chess-Results).
+* Payload agrega autorizaImagen, autorizaBoletines, versionAviso; aceptaciones ya no
+  van fijas en true sino leídas de las casillas. Resumen del paso 4 las muestra.
+* AVISO_PUBLICADO=true. Nuevo candado FORM_LISTO: sin scriptUrl el formulario no se abre
+  al público; ?demo=1 lo abre con banner de MODO DEMOSTRACIÓN.
+* Verificación: flujo completo en modo demo probado en navegador automatizado; envío real
+  PENDIENTE DE PRUEBA.
+
+**v1 — Creación de la sección Inscripciones con torneo activo automático**
+* Página nueva /inscripciones/: tarjeta del evento activo, próximos, pasados en gris, QR y enlace permanente.
+* Se integra el formulario de 4 pasos del proyecto Liga MTL; su CONFIG fijo se sustituye por el evento activo del catálogo (categorías por año: 2026 vs 2027 según la convocatoria de la 3ra Liga).
+* Catálogo inicial: 3ra Liga MTL 2026-2027 (6 eventos + Gala) según Convocatoria General v1 del 26-sep-2026.
+* Candado AVISO_PUBLICADO=false hasta publicar /privacidad/.
+* Verificación: lógica de fechas probada en navegador automatizado con fechas simuladas; envío real al Apps Script PENDIENTE DE PRUEBA (scriptUrl vacío).
+=====================================================================
+-->
+<style>
+  :root{
+    --azul-oscuro:#0d2b4e; --azul-medio:#1a4a7a; --azul-vivo:#1e6fbf; --azul-claro:#4a90d9; --azul-palido:#ddeeff;
+    --rojo:#c0392b; --rojo-claro:#e05c4b; --oro:#b8892d;
+    --blanco:#ffffff; --fondo:#f4f7fb; --tarjeta:#ffffff; --texto:#0d2b4e; --gris-texto:#5a6e85; --gris-borde:#c8d8ea;
+    --ok:#1e7a46; --err:#b3261e; --suave:#f7f9fc;
+    --pasado-bg:#eef0f3; --pasado-tx:#8a94a3;
+    --radio:14px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --fondo:#0b1522; --tarjeta:#12233a; --texto:#e6eef8; --gris-texto:#9fb2c8; --gris-borde:#284463;
+      --suave:#0f1e33; --pasado-bg:#16202d; --pasado-tx:#6f7d8f; --ok:#4cc27f; --err:#ff8a80; --azul-palido:#1a3556;
+    }
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--fondo);color:var(--texto);font:16px/1.55 'Segoe UI',system-ui,-apple-system,Roboto,sans-serif;padding-top:88px}
+  a{color:var(--azul-vivo)}
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) a{color:var(--azul-claro)} }
+
+  /* NAV (misma línea visual que Portada) */
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,43,78,.97);border-bottom:2px solid var(--azul-vivo);backdrop-filter:blur(10px)}
+  .nav-top{display:flex;align-items:center;background:var(--azul-oscuro);border-bottom:1px solid rgba(255,255,255,.08);padding:0 2.5rem;font-size:.72rem;overflow-x:auto;white-space:nowrap;scrollbar-width:none}
+  .nav-top::-webkit-scrollbar{display:none}
+  .nav-top span{color:rgba(255,255,255,.35);margin-right:.8rem;letter-spacing:1px;text-transform:uppercase;font-size:.65rem}
+  .nav-top a{color:rgba(255,255,255,.6);text-decoration:none;padding:.4rem .9rem;border-right:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:.4rem;flex-shrink:0}
+  .nav-top a:first-of-type{border-left:1px solid rgba(255,255,255,.08)}
+  .nav-top a:hover{background:rgba(255,255,255,.07);color:#fff}
+  .nav-top a.active{background:rgba(30,111,191,.3);color:var(--azul-claro);font-weight:700}
+  .nav-main{display:flex;justify-content:space-between;align-items:center;padding:.6rem 2.5rem}
+  .nav-logo{display:flex;align-items:center;gap:.7rem;color:#fff;text-decoration:none}
+  .nav-logo .icon{font-size:1.7rem}
+  .nav-logo b{font-size:1.05rem;font-weight:800;letter-spacing:1px;display:block;line-height:1.1}
+  .nav-logo small{display:block;font-size:.62rem;color:var(--azul-claro);letter-spacing:2px;text-transform:uppercase}
+  .nav-cta{background:var(--rojo);color:#fff!important;padding:.45rem 1rem;border-radius:4px;font-weight:700;font-size:.8rem;text-decoration:none}
+  .nav-cta:hover{background:var(--rojo-claro)}
+
+  /* HERO */
+  .hero{background:linear-gradient(135deg,var(--azul-oscuro) 0%,var(--azul-medio) 60%,#1a5a9a 100%);color:#fff;text-align:center;padding:3rem 1rem 3.5rem;position:relative;overflow:hidden}
+  .hero .pieza{position:absolute;right:4%;top:50%;transform:translateY(-50%);font-size:11rem;opacity:.06;pointer-events:none;user-select:none}
+  .hero .tag{display:inline-block;color:var(--azul-palido);font-size:.72rem;letter-spacing:3px;text-transform:uppercase;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.08);border-radius:20px;padding:.35rem 1rem;margin-bottom:1rem}
+  .hero h1{font-size:2.6rem;font-weight:900;line-height:1.1}
+  .hero p{max-width:560px;margin:.8rem auto 0;color:rgba(255,255,255,.78)}
+  .divider{height:4px;background:linear-gradient(90deg,var(--azul-vivo),var(--azul-claro),var(--rojo))}
+
+  main{max-width:960px;margin:0 auto;padding:2.2rem 16px 3rem}
+  h2.sec{font-size:.78rem;letter-spacing:3px;text-transform:uppercase;color:var(--rojo);font-weight:800;margin:2.4rem 0 1rem}
+  h2.sec:first-child{margin-top:0}
+
+  /* TARJETA ACTIVA */
+  .activo{background:var(--tarjeta);border:1px solid var(--gris-borde);border-top:6px solid var(--azul-vivo);border-radius:var(--radio);padding:1.6rem;box-shadow:0 10px 30px rgba(13,43,78,.10)}
+  .chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.7rem}
+  .chip{font-size:.72rem;font-weight:700;letter-spacing:.5px;padding:.25rem .65rem;border-radius:20px;background:var(--azul-palido);color:var(--azul-oscuro)}
+  .chip.mtl{background:#1a1a1a;color:#e6c068}
+  .chip.st-abierta{background:#dff3e7;color:#135c33}
+  .chip.st-cerrada{background:#fbe3e0;color:#8e2219}
+  .chip.st-proximamente,.chip.st-sin-formulario{background:#fff3d6;color:#7a5510}
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .chip{background:#1f3b5e;color:#d6e6f8} }
+  .activo h3{font-size:1.7rem;line-height:1.2;font-weight:850}
+  .activo .sub{color:var(--gris-texto);margin-top:.2rem}
+  .datos{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.9rem 1.4rem;margin:1.3rem 0}
+  .dato small{display:block;font-size:.7rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--gris-texto);font-weight:700}
+  .dato span{font-weight:600}
+  .cats{display:flex;flex-wrap:wrap;gap:.5rem;margin:.2rem 0 1.2rem}
+  .cat{border:1px solid var(--gris-borde);border-radius:10px;padding:.45rem .7rem;font-size:.85rem;background:var(--suave)}
+  .cat b{display:block;font-size:.9rem}
+  .acciones{display:flex;flex-wrap:wrap;gap:.7rem;align-items:center}
+  .btn{display:inline-block;font:inherit;font-weight:700;border-radius:8px;padding:.8rem 1.5rem;text-decoration:none;cursor:pointer;border:2px solid transparent}
+  .btn-rojo{background:var(--rojo);color:#fff!important}
+  .btn-rojo:hover{background:var(--rojo-claro)}
+  .btn-borde{border-color:var(--gris-borde);color:var(--texto)!important;background:transparent}
+  .btn-borde:hover{border-color:var(--azul-vivo)}
+  .aviso{margin-top:1rem;padding:.9rem 1rem;border-radius:10px;background:var(--suave);border-left:4px solid var(--oro);font-size:.92rem}
+
+  /* LISTAS */
+  .lista{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:.9rem}
+  .mini{background:var(--tarjeta);border:1px solid var(--gris-borde);border-radius:12px;padding:1rem 1.1rem;position:relative}
+  .mini .fecha{font-size:.75rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--azul-vivo)}
+  .mini h4{font-size:1.02rem;margin:.2rem 0 .15rem;line-height:1.3}
+  .mini p{font-size:.85rem;color:var(--gris-texto)}
+  .mini.pasado{background:var(--pasado-bg);border-color:transparent;filter:grayscale(1)}
+  .mini.pasado .fecha,.mini.pasado h4,.mini.pasado p{color:var(--pasado-tx)}
+  .mini .sello{position:absolute;top:.8rem;right:.9rem;font-size:.66rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--pasado-tx);border:1px solid currentColor;border-radius:4px;padding:.05rem .35rem}
+  .mini a.res{font-size:.82rem;font-weight:700;display:inline-block;margin-top:.4rem}
+  .vacio{color:var(--gris-texto);font-size:.9rem}
+
+  /* FORMULARIO (portado del proyecto Liga MTL) */
+  #inscribir{scroll-margin-top:100px}
+  .card{background:var(--tarjeta);border:1px solid var(--gris-borde);border-radius:var(--radio);padding:20px;margin-bottom:16px}
+  .card h3{font-size:1.15rem;margin-bottom:4px}
+  .hint{color:var(--gris-texto);font-size:.92rem;margin:0 0 14px}
+  .facts{display:grid;grid-template-columns:auto 1fr;gap:6px 14px}
+  .facts dt{color:var(--gris-texto);font-size:.9rem}
+  .facts dd{font-weight:500}
+  .steps{display:flex;gap:6px;margin:0 0 16px;list-style:none}
+  .steps li{flex:1;height:6px;border-radius:3px;background:var(--gris-borde)}
+  .steps li.on{background:var(--azul-vivo)}
+  label.f{display:block;font-weight:600;margin:14px 0 6px}
+  .req{color:var(--err)}
+  input[type=text],input[type=email],input[type=tel],input[type=date]{width:100%;padding:11px 12px;border:1px solid var(--gris-borde);border-radius:10px;background:var(--suave);color:var(--texto);font:inherit}
+  input:focus{outline:2px solid var(--azul-claro);outline-offset:1px}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+  .opts{display:grid;gap:8px}
+  .opt{display:flex;gap:10px;align-items:flex-start;padding:11px 12px;border:1px solid var(--gris-borde);border-radius:10px;background:var(--suave);cursor:pointer;margin-top:8px}
+  .opt input{margin-top:4px}
+  .opt.disabled{opacity:.45;cursor:not-allowed}
+  .opt .tag{margin-left:auto;font-size:.75rem;font-weight:700;color:var(--ok);white-space:nowrap}
+  .inline{display:flex;gap:10px;flex-wrap:wrap}
+  .inline .opt{flex:1;min-width:140px;margin-top:0}
+  .err{color:var(--err);font-size:.88rem;margin-top:4px;min-height:1em}
+  .preview{margin-top:14px;padding:12px;border:1px dashed var(--azul-claro);border-radius:10px;background:var(--suave)}
+  .preview b{display:block;font-size:1.1rem}
+  .pay{background:var(--suave);border-radius:10px;padding:12px;margin:8px 0 4px}
+  .pay code{font-size:1.05rem;font-weight:700;letter-spacing:.03em}
+  .fnav{display:flex;justify-content:space-between;gap:10px;margin-top:18px}
+  button{font:inherit;cursor:pointer;border-radius:10px;padding:12px 18px;border:1px solid var(--gris-borde);background:var(--tarjeta);color:var(--texto)}
+  button.primary{background:var(--azul-vivo);color:#fff;border-color:var(--azul-vivo);font-weight:700}
+  button:disabled{opacity:.6;cursor:wait}
+  .hidden{display:none!important}
+  .hp{position:absolute;left:-9999px}
+  .notice{padding:14px;border-radius:10px;background:var(--suave);border-left:4px solid var(--azul-vivo)}
+  .success{text-align:center}
+  .success .folio{font-size:1.6rem;font-weight:800;color:var(--rojo);letter-spacing:.05em;margin:.3rem 0 .6rem}
+  .small{font-size:.86rem;color:var(--gris-texto)}
+  .avisoSimpl{font-size:.86rem;color:var(--gris-texto);background:var(--suave);border:1px solid var(--gris-borde);border-radius:10px;padding:12px 14px;margin:6px 0 10px;max-height:200px;overflow:auto}
+  .avisoSimpl b{color:var(--texto);display:block;margin-bottom:4px}
+  .opcionales{margin:20px 0 0;padding-top:14px;border-top:1px dashed var(--gris-borde);font-size:.78rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gris-texto)}
+
+  /* COMPARTIR / QR */
+  .compartir{display:flex;gap:1.4rem;align-items:center;background:var(--tarjeta);border:1px solid var(--gris-borde);border-radius:var(--radio);padding:1.2rem 1.4rem}
+  .qr-svg{width:128px;height:128px;flex-shrink:0;border-radius:8px}
+  .compartir code{font-weight:700;word-break:break-all}
+
+  footer{background:var(--azul-oscuro);color:rgba(255,255,255,.65);text-align:center;font-size:.82rem;padding:1.6rem 16px}
+  footer a{color:rgba(255,255,255,.85)}
+  footer .links{display:flex;gap:1.2rem;justify-content:center;flex-wrap:wrap;margin-bottom:.6rem}
+
+  @media (max-width:640px){
+    .nav-top,.nav-main{padding-left:16px;padding-right:16px}
+    .nav-logo b{font-size:.92rem}
+    .nav-cta{white-space:nowrap;padding:.4rem .7rem}
+    .hero h1{font-size:2rem}
+    .activo{padding:1.2rem}
+    .activo h3{font-size:1.4rem}
+    .row{grid-template-columns:1fr}
+    .compartir{flex-direction:column;text-align:center}
+    .acciones .btn{flex:1;text-align:center}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-top">
+    <span>Sitios</span>
+    <a href="https://www.ajedrezpolgar.com/">🏠 Club Polgar</a>
+    <a href="https://www.ajedrezpolgar.com/inscripciones/" class="active">📝 Inscripciones</a>
+    <a href="https://www.ajedrezpolgar.com/liga/">🏆 Liga MTL</a>
+    <a href="https://www.ajedrezpolgar.com/rating/">📊 Rating GTO</a>
+    <a href="https://www.ajedrezpolgar.com/nacional/">🌐 Rating Nacional</a>
+  </div>
+  <div class="nav-main">
+    <a class="nav-logo" href="https://www.ajedrezpolgar.com/"><span class="icon">♛</span><div><b>Club de Ajedrez Polgar</b><small>León, Guanajuato</small></div></a>
+    <a class="nav-cta" href="#activo">Torneo activo</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="pieza">♞</div>
+  <div class="tag">♟ Inscripciones</div>
+  <h1>Inscríbete al torneo activo</h1>
+  <p>Esta dirección siempre muestra el torneo con inscripción vigente. Abajo encontrarás también los próximos eventos y el registro de los ya realizados.</p>
+</header>
+<div class="divider"></div>
+
+<main>
+  <h2 class="sec" id="activo">Torneo activo</h2>
+  <div id="boxActivo"></div>
+
+  <!-- ============ FORMULARIO (integrado desde proyecto Liga MTL) ============ -->
+  <section id="inscribir" class="hidden">
+    <h2 class="sec">Formulario de inscripción</h2>
+    <p class="aviso hidden" id="bannerDemo" style="margin-bottom:12px"><b>MODO DEMOSTRACIÓN</b> — nada de lo que captures se envía ni se guarda.</p>
+    <form id="frm" novalidate>
+      <ol class="steps" aria-hidden="true"><li></li><li></li><li></li><li></li></ol>
+
+      <section class="card step" data-step="1">
+        <h3>Datos del evento</h3>
+        <dl class="facts" id="facts"></dl>
+        <p class="hint" style="margin-top:14px">Evento dirigido a estudiantes de instituciones educativas públicas o particulares. Al enviar este formulario aceptas las condiciones de la convocatoria.</p>
+        <div class="avisoSimpl">
+          <b>Aviso de privacidad</b>
+          <p id="avisoTxt"></p>
+        </div>
+        <label class="opt"><input type="checkbox" id="acepta"> <span>He leído y acepto las condiciones de la <a id="lnkConv" target="_blank" rel="noopener">convocatoria</a>. <span class="req">*</span></span></label>
+        <div class="err" data-for="acepta"></div>
+        <label class="opt"><input type="checkbox" id="privacidad"> <span>Soy padre, madre o tutor del jugador (o el jugador es mayor de edad). He leído el <a href="https://www.ajedrezpolgar.com/aviso-de-privacidad/" target="_blank" rel="noopener">aviso de privacidad</a> y acepto el tratamiento de los datos necesarios para la inscripción y la participación deportiva, incluida la publicación pública de resultados. <span class="req">*</span></span></label>
+        <div class="err" data-for="privacidad"></div>
+        <p class="opcionales">Autorizaciones opcionales — negarlas no afecta la inscripción</p>
+        <label class="opt"><input type="checkbox" id="imagen"> <span>Autorizo el uso de la imagen y voz del jugador en materiales de difusión del Club. <span class="small">(Opcional · <a href="https://www.ajedrezpolgar.com/aviso-de-privacidad/#imagen" target="_blank" rel="noopener">sección V</a>)</span></span></label>
+        <label class="opt"><input type="checkbox" id="boletines"> <span>Autorizo el envío de boletines e invitaciones a eventos. <span class="small">(Opcional)</span></span></label>
+      </section>
+
+      <section class="card step hidden" data-step="2">
+        <h3>Datos del jugador</h3>
+        <p class="hint">Escribe ambos nombres y ambos apellidos, si los tiene. El certificado de participación se emite con estos datos y <b>no habrá reimpresiones</b> por errores de llenado.</p>
+        <div class="row">
+          <div><label class="f" for="nombres">Nombre(s) <span class="req">*</span></label><input type="text" id="nombres" autocomplete="given-name"><div class="err" data-for="nombres"></div></div>
+          <div><label class="f" for="apellidos">Apellidos <span class="req">*</span></label><input type="text" id="apellidos" autocomplete="family-name"><div class="err" data-for="apellidos"></div></div>
+        </div>
+        <div class="row">
+          <div><label class="f" for="nacimiento">Fecha de nacimiento <span class="req">*</span></label><input type="date" id="nacimiento"><div class="err" data-for="nacimiento"></div></div>
+          <div><label class="f">Rama <span class="req">*</span></label>
+            <div class="inline">
+              <label class="opt"><input type="radio" name="sexo" value="V"> Varonil</label>
+              <label class="opt"><input type="radio" name="sexo" value="F"> Femenil</label>
+            </div><div class="err" data-for="sexo"></div></div>
+        </div>
+        <label class="f" for="institucion">Institución educativa <span class="req">*</span></label>
+        <input type="text" id="institucion" placeholder="Nombre completo de la escuela"><div class="err" data-for="institucion"></div>
+        <h3 style="margin-top:22px">Contacto</h3>
+        <label class="f" for="tutor">Nombre del padre, madre o tutor <span class="req">*</span></label>
+        <input type="text" id="tutor" autocomplete="name"><div class="err" data-for="tutor"></div>
+        <div class="row">
+          <div><label class="f" for="correo">Correo electrónico <span class="req">*</span></label><input type="email" id="correo" autocomplete="email"><div class="err" data-for="correo"></div></div>
+          <div><label class="f" for="telefono">Teléfono (10 dígitos) <span class="req">*</span></label><input type="tel" id="telefono" inputmode="numeric" autocomplete="tel"><div class="err" data-for="telefono"></div></div>
+        </div>
+        <div class="preview"><span class="small">Así aparecerá en el certificado:</span><b id="prevNombre">—</b></div>
+      </section>
+
+      <section class="card step hidden" data-step="3">
+        <h3>Categoría</h3>
+        <p class="hint">La categoría se define por el <b>año de nacimiento</b>, no por la edad actual. Puedes inscribirte en una categoría superior, pero no en una inferior.</p>
+        <div class="opts" id="catsForm"></div>
+        <div class="err" data-for="categoria"></div>
+      </section>
+
+      <section class="card step hidden" data-step="4">
+        <h3>Pago de inscripción</h3>
+        <p class="hint">Costo: <b id="costo"></b> por jugador. Realiza una transferencia SPEI y adjunta el comprobante.</p>
+        <div class="pay" id="payBox"></div>
+        <label class="f" for="comprobante">Comprobante de pago (imagen o PDF, máx. <span id="maxMb"></span> MB) <span class="req">*</span></label>
+        <input type="file" id="comprobante" accept="image/*,application/pdf">
+        <div class="err" data-for="comprobante"></div>
+        <div class="notice" style="margin-top:16px" id="resumen"></div>
+        <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+      </section>
+
+      <div class="fnav">
+        <button type="button" id="btnPrev" class="hidden">← Anterior</button>
+        <span></span>
+        <button type="button" id="btnNext" class="primary">Siguiente →</button>
+        <button type="submit" id="btnSend" class="primary hidden">Enviar inscripción</button>
+      </div>
+      <p class="err" id="errGlobal" style="text-align:right"></p>
+    </form>
+
+    <section id="ok" class="card success hidden">
+      <h3>¡Inscripción recibida!</h3>
+      <p>Tu folio es</p>
+      <p class="folio" id="folio"></p>
+      <p class="hint">Guarda este folio. El pago se valida manualmente; la lista de jugadores y los emparejamientos se publican en <a id="lnkCR" target="_blank" rel="noopener">Chess-Results</a>.</p>
+      <button type="button" onclick="location.reload()">Inscribir a otro jugador</button>
+    </section>
+  </section>
+
+  <h2 class="sec">Próximos eventos</h2>
+  <div class="lista" id="boxProximos"></div>
+
+  <h2 class="sec">Eventos anteriores</h2>
+  <div class="lista" id="boxPasados"></div>
+
+  <h2 class="sec">Comparte esta dirección</h2>
+  <div class="compartir">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 41 41" class="qr-svg" role="img" aria-label="Código QR a ajedrezpolgar.com/inscripciones"><path fill="#fff" d="M0 0h41v41h-41z"/><path class="qrline" stroke="#0d2b4e" d="M2 2.5h7m3 0h1m3 0h3m1 0h2m1 0h2m1 0h1m5 0h7m-37 1h1m5 0h1m2 0h1m4 0h1m2 0h2m2 0h2m2 0h1m2 0h1m1 0h1m5 0h1m-37 1h1m1 0h3m1 0h1m1 0h1m1 0h1m4 0h1m2 0h2m1 0h2m2 0h3m2 0h1m1 0h3m1 0h1m-37 1h1m1 0h3m1 0h1m1 0h1m2 0h3m1 0h3m2 0h7m1 0h1m1 0h1m1 0h3m1 0h1m-37 1h1m1 0h3m1 0h1m2 0h2m2 0h3m1 0h1m1 0h1m2 0h1m1 0h3m3 0h1m1 0h3m1 0h1m-37 1h1m5 0h1m2 0h3m1 0h2m1 0h4m3 0h4m3 0h1m5 0h1m-37 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-27 1h1m1 0h1m3 0h1m1 0h1m2 0h8m-26 1h2m1 0h2m1 0h1m1 0h1m1 0h1m3 0h1m1 0h1m1 0h1m1 0h2m1 0h1m1 0h1m4 0h2m-34 1h3m1 0h1m1 0h2m1 0h2m2 0h1m1 0h2m1 0h5m1 0h3m3 0h2m1 0h1m-34 1h1m1 0h1m1 0h8m1 0h1m1 0h2m4 0h1m1 0h2m1 0h4m1 0h1m1 0h1m1 0h1m-36 1h5m3 0h2m4 0h1m2 0h1m1 0h3m3 0h2m1 0h2m2 0h4m-37 1h2m2 0h3m4 0h1m1 0h1m1 0h1m6 0h3m3 0h1m1 0h2m-30 1h1m4 0h1m2 0h3m2 0h4m1 0h1m2 0h1m3 0h3m1 0h2m1 0h1m-35 1h3m1 0h6m2 0h2m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m3 0h1m1 0h6m1 0h1m-36 1h1m7 0h1m2 0h5m1 0h2m1 0h1m1 0h1m2 0h2m1 0h2m1 0h4m-35 1h2m2 0h4m1 0h1m2 0h1m1 0h1m1 0h4m3 0h2m4 0h1m3 0h1m1 0h1m-37 1h3m6 0h3m4 0h2m1 0h1m2 0h1m2 0h3m1 0h1m1 0h1m1 0h1m1 0h1m-35 1h3m1 0h3m5 0h1m3 0h2m1 0h1m1 0h1m1 0h1m2 0h2m2 0h1m1 0h1m2 0h1m-36 1h1m5 0h2m2 0h5m5 0h1m3 0h1m1 0h1m3 0h1m1 0h1m2 0h1m-37 1h1m1 0h1m1 0h1m1 0h2m1 0h2m1 0h2m2 0h1m1 0h1m2 0h3m2 0h5m1 0h2m1 0h1m-36 1h2m1 0h2m2 0h1m1 0h1m1 0h1m1 0h5m1 0h1m1 0h3m2 0h3m2 0h4m-35 1h2m1 0h1m2 0h2m3 0h3m1 0h1m2 0h1m2 0h1m1 0h2m2 0h1m1 0h2m1 0h1m1 0h1m1 0h1m-37 1h1m2 0h1m1 0h1m7 0h1m5 0h2m1 0h1m3 0h3m2 0h1m1 0h2m-33 1h1m3 0h2m6 0h5m5 0h1m3 0h1m1 0h1m2 0h1m1 0h2m-37 1h3m1 0h2m1 0h1m2 0h4m1 0h1m3 0h1m1 0h1m2 0h2m1 0h2m3 0h1m-33 1h2m3 0h2m2 0h1m1 0h1m2 0h6m6 0h2m2 0h1m2 0h1m1 0h2m-37 1h1m1 0h2m1 0h1m1 0h1m1 0h1m3 0h1m1 0h2m1 0h3m2 0h1m4 0h2m3 0h3m-36 1h1m2 0h1m2 0h3m1 0h1m1 0h4m3 0h1m1 0h1m3 0h1m2 0h7m-27 1h3m2 0h1m4 0h1m2 0h1m4 0h1m1 0h1m3 0h3m-35 1h7m1 0h1m2 0h1m1 0h1m1 0h3m3 0h1m1 0h4m1 0h1m1 0h1m1 0h3m1 0h1m-37 1h1m5 0h1m5 0h1m3 0h1m4 0h3m1 0h4m3 0h2m1 0h1m-36 1h1m1 0h3m1 0h1m1 0h1m1 0h2m3 0h1m1 0h1m3 0h1m1 0h2m1 0h7m2 0h2m-37 1h1m1 0h3m1 0h1m1 0h1m1 0h1m1 0h1m1 0h2m3 0h2m1 0h6m2 0h2m2 0h1m-35 1h1m1 0h3m1 0h1m4 0h1m2 0h2m1 0h1m1 0h5m2 0h2m3 0h2m2 0h2m-37 1h1m5 0h1m2 0h1m1 0h3m4 0h1m1 0h1m1 0h1m1 0h1m1 0h2m2 0h2m1 0h4m-37 1h7m2 0h3m1 0h1m2 0h1m1 0h3m1 0h3m3 0h6m2 0h1"/></svg>
+    <div>
+      <p><code>www.ajedrezpolgar.com/inscripciones</code></p>
+      <p class="small" style="margin-top:.4rem">Este enlace y este código QR son permanentes: siempre llevan al torneo con inscripción vigente, aunque se hayan impreso en material de eventos anteriores.</p>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="links">
+    <a href="https://www.ajedrezpolgar.com/aviso-de-privacidad/">Aviso de Privacidad y Uso de Imagen</a>
+    <a href="https://www.facebook.com/ajedrezpolgar" target="_blank" rel="noopener">Facebook</a>
+    <a href="mailto:pedro.zambrano@ajedrezpolgar.com">pedro.zambrano@ajedrezpolgar.com</a>
+  </div>
+  © <span id="anio"></span> Club de Ajedrez Polgar · León, Guanajuato
+</footer>
+
+<script>
+/* =====================================================================
+   CATÁLOGO — lo único que se edita en cada versión
+   ===================================================================== */
+const AJUSTES = {
+  // true SOLO cuando /privacidad/ ya esté publicada. Mientras sea false,
+  // el formulario no se abre (se muestra "abre en breve").
+  AVISO_PUBLICADO: true,
+  // Versión del texto del aviso que acepta la familia (se guarda en la hoja de cálculo).
+  // Si cambia el texto en /aviso-de-privacidad/, subir aquí también.
+  AVISO_VERSION: '2.0 (sep-2026)',
+  // null = automático por fecha. Para forzar un evento: su id, p. ej. 'mtl3-e2'.
+  FORZAR_ACTIVO: null,
+  // URL /exec del Apps Script de la temporada. Mientras esté vacía el formulario NO se abre
+  // al público (se evita dar folios falsos a las familias). Para probar: ?demo=1
+  scriptUrl: '',
+  pago: { banco: 'BBVA', titular: 'Pedro Zambrano', clabe: '0122 2500 4731 778742' },
+  maxArchivoMb: 5,
+  chessResultsUrl: 'https://chess-results.com/',
+  facebookUrl: 'https://www.facebook.com/ajedrezpolgar'
+};
+
+// Categorías 3ra Liga MTL según la convocatoria (los rangos se recorren en 2027)
+const CATS_MTL_2026 = [
+  { id:'SEC-PREPA', nombre:'Secundaria y Prepa', minYear:2007, maxYear:2012 },
+  { id:'SUB12',     nombre:'Sub-12',             minYear:2013, maxYear:2014 },
+  { id:'SUB10',     nombre:'Sub-10',             minYear:2015, maxYear:2016 },
+  { id:'SUB08',     nombre:'Sub-08',             minYear:2017, maxYear:9999 }
+];
+const CATS_MTL_2027 = [
+  { id:'SEC-PREPA', nombre:'Secundaria y Prepa', minYear:2008, maxYear:2013 },
+  { id:'SUB12',     nombre:'Sub-12',             minYear:2014, maxYear:2015 },
+  { id:'SUB10',     nombre:'Sub-10',             minYear:2016, maxYear:2017 },
+  { id:'SUB08',     nombre:'Sub-08',             minYear:2018, maxYear:9999 }
+];
+const MTL3 = { serie:'3ra Liga MTL 2026-2027', mtl:true, horario:'Registro 8:30 h · Inicio 9:00 h · Fin aprox. 13:00 h',
+  costo:250, cupo:150, formulario:'mtl', convocatoriaUrl:AJUSTES.facebookUrl, resultadosUrl:null };
+
+// Orden cronológico. Los id NUNCA se reutilizan ni se cambian.
+const EVENTOS = [
+  { ...MTL3, id:'mtl3-e1', etapa:'1er evento', titulo:'1er evento e Inauguración', fecha:'2026-10-10',
+    sede:'Plaza Mayor', direccion:'Plaza Mayor, León, Gto.', mapsUrl:'https://maps.google.com/?q=Plaza+Mayor+León+Guanajuato',
+    categorias:CATS_MTL_2026 },
+  { ...MTL3, id:'mtl3-e2', etapa:'2do evento', titulo:'2do evento', fecha:'2026-11-07', sede:null, categorias:CATS_MTL_2026 },
+  { ...MTL3, id:'mtl3-e3', etapa:'3er evento', titulo:'3er evento', fecha:'2026-12-05', sede:null, categorias:CATS_MTL_2026 },
+  { ...MTL3, id:'mtl3-e4', etapa:'4to evento', titulo:'4to evento', fecha:'2027-01-23', sede:null, categorias:CATS_MTL_2027 },
+  { ...MTL3, id:'mtl3-e5', etapa:'5to evento', titulo:'5to evento', fecha:'2027-02-20', sede:null, categorias:CATS_MTL_2027 },
+  { ...MTL3, id:'mtl3-e6', etapa:'6to evento', titulo:'6to evento', fecha:'2027-03-13', sede:null, categorias:CATS_MTL_2027 },
+  { ...MTL3, id:'mtl3-gala', etapa:'Gala', titulo:'Gala de Celebración y Premiación Final', fecha:'2027-04-24', sede:null,
+    formulario:null, costo:null, cupo:null, categorias:[], horario:null }
+];
+/* ===================================================================== */
+
+const TZ = 'America/Mexico_City', OFFSET = '-06:00';
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money = n => '$' + Number(n).toLocaleString('es-MX') + ' MXN';
+
+// "Ahora" en hora de León; ?hoy=AAAA-MM-DD permite simular una fecha para revisar.
+const qsHoy = new URLSearchParams(location.search).get('hoy');
+const AHORA = /^\d{4}-\d{2}-\d{2}$/.test(qsHoy || '') ? new Date(qsHoy + 'T12:00:00' + OFFSET) : new Date();
+const HOY = new Intl.DateTimeFormat('en-CA', { timeZone: TZ }).format(AHORA); // AAAA-MM-DD
+const DEMO = new URLSearchParams(location.search).get('demo') === '1';
+// El formulario solo se abre con aviso publicado y con backend real (o en modo demo explícito).
+const FORM_LISTO = AJUSTES.AVISO_PUBLICADO && (!!AJUSTES.scriptUrl || DEMO);
+
+const fechaLarga = iso => { const s = new Date(iso + 'T12:00:00' + OFFSET).toLocaleDateString('es-MX', { timeZone:TZ, weekday:'long', day:'numeric', month:'long', year:'numeric' }); return s.charAt(0).toUpperCase() + s.slice(1); };
+const fechaCorta = iso => new Date(iso + 'T12:00:00' + OFFSET).toLocaleDateString('es-MX', { timeZone:TZ, day:'numeric', month:'short', year:'numeric' });
+const fechaHora = d => d.toLocaleString('es-MX', { timeZone:TZ, dateStyle:'long', timeStyle:'short' });
+
+function cierreDe(ev){
+  if (ev.cierre) return new Date(ev.cierre);
+  const d = new Date(ev.fecha + 'T23:59:00' + OFFSET); d.setDate(d.getDate() - 2); return d; // jueves previo 23:59
+}
+function aperturaDe(ev){ return ev.apertura ? new Date(ev.apertura) : null; }
+
+function estadoDe(ev){
+  if (!ev.formulario) return 'sin-formulario';
+  if (!ev.sede) return 'proximamente';
+  const ap = aperturaDe(ev);
+  if (ap && AHORA < ap) return 'proximamente';
+  if (AHORA > cierreDe(ev)) return 'cerrada';
+  return 'abierta';
+}
+const ETIQUETA = { 'abierta':'Inscripción abierta', 'cerrada':'Inscripción cerrada', 'proximamente':'Inscripción próximamente', 'sin-formulario':'Evento sin inscripción' };
+
+const futuros = EVENTOS.filter(e => e.fecha >= HOY);
+const ACTIVO = (AJUSTES.FORZAR_ACTIVO && EVENTOS.find(e => e.id === AJUSTES.FORZAR_ACTIVO)) || futuros[0] || null;
+const pasados = EVENTOS.filter(e => e.fecha < HOY && e !== ACTIVO);
+const proximos = futuros.filter(e => e !== ACTIVO);
+
+function rangoCat(c){ return c.maxYear >= 9999 ? `${c.minYear} y posteriores` : `${c.minYear}–${c.maxYear}`; }
+
+function renderActivo(){
+  const box = $('#boxActivo');
+  if (!ACTIVO){
+    box.innerHTML = `<div class="activo"><h3>No hay torneos convocados por ahora</h3><p class="sub">Síguenos en <a href="${AJUSTES.facebookUrl}" target="_blank" rel="noopener">Facebook</a> para enterarte de la próxima convocatoria.</p></div>`;
+    return;
+  }
+  const ev = ACTIVO, st0 = estadoDe(ev);
+  const puedeInscribir = st0 === 'abierta' && FORM_LISTO;
+  const st = (st0 === 'abierta' && !FORM_LISTO) ? 'proximamente' : st0;
+  const datos = [
+    ['Fecha', fechaLarga(ev.fecha)],
+    ['Sede', ev.sede ? esc(ev.sede) + (ev.mapsUrl ? ` · <a href="${esc(ev.mapsUrl)}" target="_blank" rel="noopener">Ver mapa</a>` : '') : 'Por confirmar'],
+    ev.horario ? ['Horario', esc(ev.horario)] : null,
+    ev.costo ? ['Inscripción', money(ev.costo) + ' por jugador'] : null,
+    ev.cupo ? ['Cupo', ev.cupo + ' jugadores'] : null,
+    ev.formulario && ev.sede ? ['Cierre de inscripción', fechaHora(cierreDe(ev))] : null
+  ].filter(Boolean);
+
+  let aviso = '';
+  if (st0 === 'abierta' && !FORM_LISTO) aviso = 'La inscripción en línea abrirá en breve. Vuelve a esta misma dirección.';
+  else if (st0 === 'proximamente') aviso = !ev.sede ? 'La inscripción se abrirá en esta misma dirección en cuanto se confirme la sede.' : `La inscripción abre el ${fechaHora(aperturaDe(ev))}.`;
+  else if (st === 'cerrada') aviso = 'El periodo de inscripción terminó. Esta dirección mostrará el siguiente torneo al día siguiente del evento.';
+
+  box.innerHTML = `<article class="activo">
+    <div class="chips">
+      ${ev.mtl ? '<span class="chip mtl">♛ Liga MTL</span>' : ''}
+      <span class="chip">${esc(ev.serie)}</span>
+      <span class="chip st-${st}">${ETIQUETA[st]}</span>
+    </div>
+    <h3>${esc(ev.titulo)}</h3>
+    <p class="sub">${esc(ev.serie)}</p>
+    <div class="datos">${datos.map(([k,v]) => `<div class="dato"><small>${k}</small><span>${v}</span></div>`).join('')}</div>
+    ${ev.categorias && ev.categorias.length ? `<div class="dato"><small>Categorías (por año de nacimiento)</small></div>
+      <div class="cats">${ev.categorias.map(c => `<div class="cat"><b>${esc(c.nombre)}</b>${rangoCat(c)}</div>`).join('')}</div>` : ''}
+    <div class="acciones">
+      ${puedeInscribir ? (ev.formulario === 'mtl' ? '<a class="btn btn-rojo" href="#inscribir" id="btnAbrir">Inscribirme</a>' : `<a class="btn btn-rojo" href="${esc(ev.formulario)}" target="_blank" rel="noopener">Inscribirme</a>`) : ''}
+      ${ev.convocatoriaUrl ? `<a class="btn btn-borde" href="${esc(ev.convocatoriaUrl)}" target="_blank" rel="noopener">Ver convocatoria</a>` : ''}
+    </div>
+    ${aviso ? `<div class="aviso">${aviso}</div>` : ''}
+  </article>`;
+  const b = $('#btnAbrir');
+  if (b) b.addEventListener('click', e => { e.preventDefault(); abrirFormulario(); });
+}
+
+function miniCard(ev, pasado){
+  const lugar = ev.sede ? esc(ev.sede) : 'Sede por confirmar';
+  return `<div class="mini ${pasado ? 'pasado' : ''}">
+    ${pasado ? '<span class="sello">Finalizado</span>' : ''}
+    <div class="fecha">${fechaCorta(ev.fecha)}</div>
+    <h4>${esc(ev.titulo)}</h4>
+    <p>${esc(ev.serie)} · ${lugar}</p>
+    ${pasado && ev.resultadosUrl ? `<a class="res" href="${esc(ev.resultadosUrl)}" target="_blank" rel="noopener">Ver resultados →</a>` : ''}
+  </div>`;
+}
+function renderListas(){
+  $('#boxProximos').innerHTML = proximos.length ? proximos.map(e => miniCard(e,false)).join('') : '<p class="vacio">No hay más eventos programados por ahora.</p>';
+  $('#boxPasados').innerHTML = pasados.length ? pasados.slice().reverse().map(e => miniCard(e,true)).join('') : '<p class="vacio">Aún no hay eventos anteriores registrados en esta sección.</p>';
+}
+
+/* ================= FORMULARIO (lógica portada de Liga MTL) ================= */
+let step = 1;
+const titleCase = s => s.trim().replace(/\s+/g,' ').toLowerCase()
+  .replace(/(^|[\s-])(\p{L})/gu, (m,a,b) => a + b.toUpperCase())
+  .replace(/\b(De|Del|La|Las|Los|Y)\b/g, w => w.toLowerCase());
+const setErr = (k,msg) => { const e = document.querySelector(`.err[data-for="${k}"]`); if (e) e.textContent = msg || ''; return !msg; };
+const val = id => ($('#'+id).value || '').trim();
+
+function prepararFormulario(){
+  const ev = ACTIVO;
+  const facts = [
+    ['Torneo', esc(ev.serie) + ' · ' + esc(ev.titulo)],
+    ['Fecha', fechaLarga(ev.fecha)],
+    ['Sede', esc(ev.sede)],
+    ev.direccion ? ['Dirección', esc(ev.direccion) + (ev.mapsUrl ? ` · <a href="${esc(ev.mapsUrl)}" target="_blank" rel="noopener">Ver mapa</a>` : '')] : null,
+    ['Cierre de inscripción', fechaHora(cierreDe(ev))],
+    ['Inscripción', money(ev.costo) + ' por jugador'],
+    ['Resultados', `<a href="${AJUSTES.chessResultsUrl}" target="_blank" rel="noopener">Chess-Results</a>`]
+  ].filter(Boolean);
+  $('#facts').innerHTML = facts.map(([k,v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('');
+  $('#lnkConv').href = ev.convocatoriaUrl || AJUSTES.facebookUrl;
+  $('#lnkCR').href = AJUSTES.chessResultsUrl;
+  $('#costo').textContent = money(ev.costo);
+  $('#maxMb').textContent = AJUSTES.maxArchivoMb;
+  $('#payBox').innerHTML = `<div class="small">CLABE interbancaria (${esc(AJUSTES.pago.banco)})</div><code>${esc(AJUSTES.pago.clabe)}</code>
+    <div class="small" style="margin-top:6px">Titular: <b>${esc(AJUSTES.pago.titular)}</b> · Concepto sugerido: nombre del jugador</div>`;
+  // Texto del Anexo "Aviso simplificado" del Aviso de Privacidad 2.0 (proyecto legal).
+  $('#avisoTxt').textContent = 'Pedro José Zambrano Zambrano, que opera como «Ajedrez Polgar», con domicilio en León, Guanajuato, es responsable del tratamiento de los datos personales que usted proporciona. Los usamos para inscribir y dar seguimiento al jugador, organizar torneos, tramitar su afiliación deportiva, procesar pagos y comunicarnos con usted. Los resultados deportivos se publican en las plataformas oficiales de ajedrez. Esa publicación es pública, permanente y no puede ser retirada por el Club. El Club no solicita ni conserva información sobre la salud de los participantes. El uso de la imagen del jugador es opcional y se autoriza por separado en esta misma cédula; negarlo no afecta su inscripción. Puede conocer el aviso integral, las transferencias de datos y la forma de ejercer sus derechos en https://www.ajedrezpolgar.com/aviso-de-privacidad o solicitándolo al correo pedro.zambrano@ajedrezpolgar.com.';
+}
+
+function abrirFormulario(){
+  $('#inscribir').classList.remove('hidden');
+  if (!AJUSTES.scriptUrl) $('#bannerDemo').classList.remove('hidden');
+  show(1);
+  $('#inscribir').scrollIntoView({ behavior:'smooth' });
+}
+
+function updatePreview(){
+  const n = titleCase(val('nombres')), a = titleCase(val('apellidos'));
+  $('#prevNombre').textContent = (n || a) ? `${n} ${a}`.trim() : '—';
+}
+['nombres','apellidos'].forEach(id => $('#'+id).addEventListener('input', updatePreview));
+
+function renderCats(){
+  const cats = ACTIVO.categorias;
+  const y = val('nacimiento') ? +val('nacimiento').slice(0,4) : null;
+  const sel = (document.querySelector('input[name=categoria]:checked')||{}).value;
+  $('#catsForm').innerHTML = cats.map(c => {
+    const ok = y !== null && y >= c.minYear;
+    const rec = ok && y <= c.maxYear;
+    return `<label class="opt ${ok?'':'disabled'}"><input type="radio" name="categoria" value="${c.id}" ${ok?'':'disabled'} ${(sel===c.id&&ok)||(!sel&&rec)?'checked':''}>
+      <span><b>${esc(c.nombre)}</b><br><span class="small">nacidos en ${rangoCat(c)}</span></span>${rec?'<span class="tag">Tu categoría</span>':''}</label>`;
+  }).join('');
+  if (y !== null && !cats.some(c => y >= c.minYear)) setErr('categoria','El año de nacimiento no corresponde a ninguna categoría de este evento.');
+  else setErr('categoria','');
+}
+
+function validate(s){
+  let ok = true;
+  if (s === 1){
+    ok &= setErr('acepta', $('#acepta').checked ? '' : 'Debes aceptar la convocatoria.');
+    ok &= setErr('privacidad', $('#privacidad').checked ? '' : 'Debes aceptar el aviso de privacidad para inscribir al jugador.');
+  }
+  if (s === 2){
+    const nameRe = /^[\p{L}'´.\- ]{2,}$/u;
+    ok &= setErr('nombres', nameRe.test(val('nombres')) ? '' : 'Escribe el/los nombre(s) completos.');
+    ok &= setErr('apellidos', nameRe.test(val('apellidos')) ? '' : 'Escribe los apellidos completos.');
+    const d = val('nacimiento'), y = d ? +d.slice(0,4) : 0, now = +HOY.slice(0,4);
+    ok &= setErr('nacimiento', (y > now - 25 && y <= now - 3) ? '' : 'Revisa la fecha de nacimiento.');
+    ok &= setErr('sexo', document.querySelector('input[name=sexo]:checked') ? '' : 'Selecciona la rama.');
+    ok &= setErr('institucion', val('institucion').length >= 4 ? '' : 'Escribe el nombre de la escuela.');
+    ok &= setErr('tutor', nameRe.test(val('tutor')) ? '' : 'Escribe el nombre del padre, madre o tutor.');
+    ok &= setErr('correo', /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val('correo')) ? '' : 'Correo no válido.');
+    ok &= setErr('telefono', /^\d{10}$/.test(val('telefono').replace(/\D/g,'')) ? '' : 'Debe tener 10 dígitos.');
+  }
+  if (s === 3){
+    ok &= setErr('categoria', document.querySelector('input[name=categoria]:checked') ? '' : 'Selecciona una categoría.');
+  }
+  if (s === 4){
+    const f = $('#comprobante').files[0];
+    let m = '';
+    if (!f) m = 'Adjunta el comprobante de pago.';
+    else if (!/^image\/|application\/pdf/.test(f.type)) m = 'Solo imagen o PDF.';
+    else if (f.size > AJUSTES.maxArchivoMb*1024*1024) m = `El archivo supera ${AJUSTES.maxArchivoMb} MB.`;
+    ok &= setErr('comprobante', m);
+  }
+  return !!ok;
+}
+
+// Mismo payload que el formulario original de Liga MTL → Code.gs no cambia.
+function payload(){
+  const cat = ACTIVO.categorias.find(c => c.id === document.querySelector('input[name=categoria]:checked').value);
+  return {
+    etapa: ACTIVO.etapa, sede: ACTIVO.sede, eventoId: ACTIVO.id,
+    nombres: titleCase(val('nombres')), apellidos: titleCase(val('apellidos')),
+    nacimiento: val('nacimiento'), sexo: document.querySelector('input[name=sexo]:checked').value,
+    institucion: val('institucion').replace(/\s+/g,' '), tutor: titleCase(val('tutor')),
+    correo: val('correo').toLowerCase(), telefono: val('telefono').replace(/\D/g,''),
+    categoria: cat.nombre, aceptaConvocatoria: $('#acepta').checked, aceptaPrivacidad: $('#privacidad').checked,
+    autorizaImagen: $('#imagen').checked, autorizaBoletines: $('#boletines').checked,
+    versionAviso: AJUSTES.AVISO_VERSION
+  };
+}
+
+function renderResumen(){
+  const p = payload();
+  $('#resumen').innerHTML = `<b>Revisa antes de enviar</b><br>${esc(p.nombres)} ${esc(p.apellidos)} · ${p.sexo==='V'?'Varonil':'Femenil'} · ${esc(p.nacimiento)}<br>
+    ${esc(p.institucion)}<br>Categoría: <b>${esc(p.categoria)}</b><br><span class="small">Contacto: ${esc(p.tutor)} · ${esc(p.correo)} · ${esc(p.telefono)}</span><br>
+    <span class="small">Uso de imagen: <b>${p.autorizaImagen ? 'autorizado' : 'no autorizado'}</b> · Boletines: <b>${p.autorizaBoletines ? 'sí' : 'no'}</b></span>`;
+}
+
+function show(s){
+  step = s;
+  document.querySelectorAll('.step').forEach(el => el.classList.toggle('hidden', +el.dataset.step !== s));
+  document.querySelectorAll('.steps li').forEach((li,i) => li.classList.toggle('on', i < s));
+  $('#btnPrev').classList.toggle('hidden', s === 1);
+  $('#btnNext').classList.toggle('hidden', s === 4);
+  $('#btnSend').classList.toggle('hidden', s !== 4);
+  if (s === 3) renderCats();
+  if (s === 4) renderResumen();
+  if (s > 1) $('#inscribir').scrollIntoView({ behavior:'smooth' });
+}
+$('#btnNext').onclick = () => { if (validate(step)) show(step+1); };
+$('#btnPrev').onclick = () => show(step-1);
+
+const toB64 = f => new Promise((res,rej) => { const r = new FileReader(); r.onload = () => res(r.result.split(',')[1]); r.onerror = rej; r.readAsDataURL(f); });
+
+$('#frm').addEventListener('submit', async e => {
+  e.preventDefault();
+  if (step !== 4 || !validate(4)) return;
+  if (document.querySelector('input[name=website]').value) return; // bot
+  if (estadoDe(ACTIVO) !== 'abierta' || !FORM_LISTO) { $('#errGlobal').textContent = 'La inscripción de este evento no está abierta.'; return; }
+  const btn = $('#btnSend'); btn.disabled = true; btn.textContent = 'Enviando…'; $('#errGlobal').textContent = '';
+  try {
+    const f = $('#comprobante').files[0];
+    const data = { ...payload(), archivo: { nombre: f.name, tipo: f.type, base64: await toB64(f) } };
+    let res;
+    if (!AJUSTES.scriptUrl) { // solo alcanzable con ?demo=1
+      console.log('[MODO DEMO] Datos que se enviarían:', { ...data, archivo: { ...data.archivo, base64: '(…)' } });
+      res = { ok: true, folio: 'DEMO-' + Date.now().toString().slice(-5) };
+    } else {
+      const r = await fetch(AJUSTES.scriptUrl, { method:'POST', headers:{ 'Content-Type':'text/plain;charset=utf-8' }, body: JSON.stringify(data) });
+      res = await r.json();
+    }
+    if (!res.ok) throw new Error(res.error || 'No se pudo registrar.');
+    $('#folio').textContent = res.folio;
+    $('#frm').classList.add('hidden'); $('#ok').classList.remove('hidden');
+    $('#inscribir').scrollIntoView();
+  } catch (err) {
+    $('#errGlobal').textContent = err.message + ' Intenta de nuevo o contacta al organizador.';
+    btn.disabled = false; btn.textContent = 'Enviar inscripción';
+  }
+});
+
+/* ================= ARRANQUE ================= */
+const ajustarNav = () => { document.body.style.paddingTop = document.querySelector('nav').offsetHeight + 'px'; };
+ajustarNav(); addEventListener('resize', ajustarNav);
+$('#anio').textContent = HOY.slice(0,4);
+renderActivo();
+renderListas();
+if (ACTIVO && ACTIVO.formulario === 'mtl' && estadoDe(ACTIVO) === 'abierta' && FORM_LISTO){
+  prepararFormulario();
+  if (location.hash === '#inscribir') abrirFormulario();
+}
+</script>
+</body>
+</html>

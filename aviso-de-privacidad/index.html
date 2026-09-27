@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aviso de Privacidad · Club de Ajedrez Polgar</title>
+<meta name="description" content="Aviso de Privacidad Integral y autorización de uso de imagen del Club de Ajedrez Polgar (León, Guanajuato).">
+<!--
+=====================================================================
+ CONTEXTO Y CONTROL DE CAMBIOS: Aviso de Privacidad (ajedrezpolgar.com/aviso-de-privacidad/)
+ (Documento de contexto fusionado — método "Control de Contexto y Versionado".
+ Contrato/Arquitectura MANDAN sobre el Historial.)
+=====================================================================
+
+## Qué es este proyecto
+Página pública con el Aviso de Privacidad Integral del Club (incluye la
+sección V de Imagen y voz) y su Anexo "Aviso simplificado". Fuente del
+texto: Aviso_Privacidad_Polgar_v2.docx del proyecto legal.
+Frontera: el formulario que recaba los consentimientos vive en /inscripciones/.
+
+## Estado actual
+* Versión de la página: v1 · Versión del TEXTO del aviso: 2.0 (septiembre de 2026)
+  (son numeraciones distintas: la página puede cambiar sin cambiar el texto legal).
+* Archivo entregado: Aviso_Privacidad_v1.html → /aviso-de-privacidad/index.html
+* Dónde vive este documento: [x] Fusionado (este comentario HTML, invisible).
+* Traspaso: curl -o a.html https://raw.githubusercontent.com/Max-Verne/ajedrezpolgar.com/main/aviso-de-privacidad/index.html
+
+## Contrato del Artefacto
+* DEBE: vivir en /aviso-de-privacidad/ — esa URL está citada en el propio aviso,
+  en la cédula impresa y en el formulario. NUNCA cambiarla.
+* DEBE: reproducir el texto del proyecto legal sin reescribirlo; cualquier cambio
+  de fondo se hace en el proyecto legal y se trae aquí como texto nuevo.
+* DEBE: omitir las NOTAS DE REVISIÓN y el registro de cambios del .docx.
+* DEBE: si cambia el texto legal, subir AVISO_VERSION aquí y en /inscripciones/
+  (el formulario guarda qué versión aceptó cada familia).
+* NO DEBE: afirmar mecanismos que no existen (p. ej. panel de cookies).
+
+## Arquitectura
+* HTML estático autocontenido. Anclas: #responsable, #datos, #finalidades,
+  #menores, #imagen, #fundamento, #transferencias, #arco, #cookies,
+  #seguridad, #cambios, #simplificado.
+
+## Tareas Pendientes
+- [ ] Revisión de profesional del derecho externo (pendiente declarado en el .docx).
+- [ ] Domicilio: se publica solo "León, Guanajuato" por decisión del titular;
+      la LFPDPPP pide domicilio del responsable — completar cuando se defina uno para notificaciones.
+- [ ] Confirmar régimen fiscal (el texto dice "persona física").
+- [ ] Sección IX Cookies: el sitio hoy no usa cookies ni analítica; el texto declara
+      cookies esenciales. Inofensivo, pero conviene ajustar en el proyecto legal.
+- [ ] Imprimir la cédula de inscripción con el aviso simplificado y las tres casillas.
+
+## Historial de cambios
+**v1 — Publicación inicial del texto 2.0**
+* Campos completados: titular Pedro José Zambrano Zambrano; domicilio León, Guanajuato;
+  correo pedro.zambrano@ajedrezpolgar.com (contacto y ARCO, canal prioritario, según
+  redacción indicada por el titular); fecha septiembre de 2026.
+* Sección VIII (ARCO): se quitó "o acudiendo al domicilio señalado en la sección I"
+  porque no se publica domicilio físico; queda solo el correo.
+* Referencias cruzadas corregidas (error del .docx por renumeración): Sección IV
+  remitía a "sección VIII" → VII (Transferencias); tabla de Transferencias remitía a
+  "sección IX" → VIII (Derechos ARCO / limitación).
+* Verificación: render revisado en escritorio y móvil; revisión legal PENDIENTE.
+=====================================================================
+-->
+<style>
+  :root{
+    --azul-oscuro:#0d2b4e; --azul-medio:#1a4a7a; --azul-vivo:#1e6fbf; --azul-claro:#4a90d9; --azul-palido:#ddeeff;
+    --rojo:#c0392b; --fondo:#f4f7fb; --tarjeta:#ffffff; --texto:#1b2b3f; --gris-texto:#5a6e85; --gris-borde:#c8d8ea; --suave:#f7f9fc;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){ --fondo:#0b1522; --tarjeta:#12233a; --texto:#e6eef8; --gris-texto:#9fb2c8; --gris-borde:#284463; --suave:#0f1e33; --azul-palido:#1a3556; }
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--fondo);color:var(--texto);font:16px/1.65 'Segoe UI',system-ui,-apple-system,Roboto,sans-serif}
+  a{color:var(--azul-vivo)}
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,43,78,.97);border-bottom:2px solid var(--azul-vivo)}
+  .nav-top{display:flex;align-items:center;background:var(--azul-oscuro);border-bottom:1px solid rgba(255,255,255,.08);padding:0 2.5rem;font-size:.72rem;overflow-x:auto;white-space:nowrap;scrollbar-width:none}
+  .nav-top::-webkit-scrollbar{display:none}
+  .nav-top span{color:rgba(255,255,255,.35);margin-right:.8rem;letter-spacing:1px;text-transform:uppercase;font-size:.65rem}
+  .nav-top a{color:rgba(255,255,255,.6);text-decoration:none;padding:.4rem .9rem;border-right:1px solid rgba(255,255,255,.08);flex-shrink:0}
+  .nav-top a:first-of-type{border-left:1px solid rgba(255,255,255,.08)}
+  .nav-top a:hover{background:rgba(255,255,255,.07);color:#fff}
+  .nav-main{display:flex;justify-content:space-between;align-items:center;padding:.6rem 2.5rem}
+  .nav-logo{display:flex;align-items:center;gap:.7rem;color:#fff;text-decoration:none}
+  .nav-logo .icon{font-size:1.7rem}
+  .nav-logo b{font-size:1.05rem;font-weight:800;letter-spacing:1px;display:block;line-height:1.1}
+  .nav-logo small{display:block;font-size:.62rem;color:var(--azul-claro);letter-spacing:2px;text-transform:uppercase}
+  .nav-cta{background:var(--rojo);color:#fff;padding:.45rem 1rem;border-radius:4px;font-weight:700;font-size:.8rem;text-decoration:none;white-space:nowrap}
+  .hero{background:linear-gradient(135deg,var(--azul-oscuro) 0%,var(--azul-medio) 60%,#1a5a9a 100%);color:#fff;text-align:center;padding:2.6rem 16px 2.8rem}
+  .hero .tag{display:inline-block;color:var(--azul-palido);font-size:.72rem;letter-spacing:3px;text-transform:uppercase;border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:.3rem 1rem;margin-bottom:.9rem}
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .hero .tag{color:#ddeeff} }
+  .hero h1{font-size:2.3rem;font-weight:900;line-height:1.15}
+  .hero p{color:rgba(255,255,255,.78);margin-top:.5rem}
+  .divider{height:4px;background:linear-gradient(90deg,var(--azul-vivo),var(--azul-claro),var(--rojo))}
+  .layout{max-width:1060px;margin:0 auto;padding:2rem 16px 3rem;display:grid;grid-template-columns:230px 1fr;gap:2rem;align-items:start}
+  .indice{position:sticky;top:120px;font-size:.86rem;background:var(--tarjeta);border:1px solid var(--gris-borde);border-radius:12px;padding:1rem}
+  .indice b{display:block;font-size:.7rem;letter-spacing:2px;text-transform:uppercase;color:var(--rojo);margin-bottom:.5rem}
+  .indice ol{list-style:none}
+  .indice a{display:block;padding:.18rem 0;color:var(--gris-texto);text-decoration:none}
+  .indice a:hover{color:var(--azul-vivo)}
+  article{background:var(--tarjeta);border:1px solid var(--gris-borde);border-radius:14px;padding:2rem 2.2rem;min-width:0}
+  .meta{display:flex;flex-wrap:wrap;gap:.5rem 1.2rem;font-size:.85rem;color:var(--gris-texto);padding-bottom:1rem;border-bottom:1px solid var(--gris-borde);margin-bottom:1.2rem}
+  article h2{font-size:1.2rem;margin:2rem 0 .6rem;color:var(--azul-oscuro);scroll-margin-top:120px}
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) article h2{color:#bcd6f3} }
+  article h2 .n{color:var(--rojo);margin-right:.35rem}
+  article h3{font-size:1rem;margin:1.1rem 0 .3rem}
+  article p{margin:.55rem 0}
+  article ul{margin:.4rem 0 .7rem 1.3rem}
+  article li{margin:.25rem 0}
+  .destacado{background:var(--suave);border-left:4px solid var(--rojo);border-radius:8px;padding:.8rem 1rem;margin:.8rem 0;font-weight:600}
+  .tabla{overflow-x:auto;margin:.8rem 0}
+  table{border-collapse:collapse;width:100%;font-size:.88rem;min-width:620px}
+  th,td{border:1px solid var(--gris-borde);padding:.55rem .65rem;text-align:left;vertical-align:top}
+  th{background:var(--suave);font-size:.78rem;letter-spacing:.5px;text-transform:uppercase}
+  tr.critico td{background:rgba(192,57,43,.07)}
+  .simplificado{margin-top:2.4rem;border:2px dashed var(--azul-claro);border-radius:12px;padding:1.3rem 1.4rem;background:var(--suave)}
+  .simplificado h2{margin-top:0}
+  .casillas{margin-top:.8rem}
+  .casillas li{list-style:none;margin:.35rem 0;padding-left:1.6rem;position:relative}
+  .casillas li::before{content:"☐";position:absolute;left:0;top:0}
+  .pie{font-size:.85rem;color:var(--gris-texto);margin-top:2rem;padding-top:1rem;border-top:1px solid var(--gris-borde)}
+  footer{background:var(--azul-oscuro);color:rgba(255,255,255,.65);text-align:center;font-size:.82rem;padding:1.6rem 16px}
+  footer a{color:rgba(255,255,255,.85)}
+  @media (max-width:820px){
+    .layout{grid-template-columns:1fr}
+    .indice{position:static}
+    .indice ol{columns:2}
+  }
+  @media (max-width:640px){
+    .nav-top,.nav-main{padding-left:16px;padding-right:16px}
+    .nav-logo b{font-size:.92rem}
+    .nav-cta{padding:.4rem .7rem}
+    .hero h1{font-size:1.8rem}
+    article{padding:1.2rem 1.1rem}
+    .indice ol{columns:1}
+  }
+  @media print{
+    nav,.hero,.divider,.indice,footer{display:none}
+    body{padding-top:0!important;background:#fff;color:#000}
+    .layout{display:block;padding:0}
+    article{border:none;padding:0}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-top">
+    <span>Sitios</span>
+    <a href="https://www.ajedrezpolgar.com/">🏠 Club Polgar</a>
+    <a href="https://www.ajedrezpolgar.com/inscripciones/">📝 Inscripciones</a>
+    <a href="https://www.ajedrezpolgar.com/liga/">🏆 Liga MTL</a>
+    <a href="https://www.ajedrezpolgar.com/rating/">📊 Rating GTO</a>
+    <a href="https://www.ajedrezpolgar.com/nacional/">🌐 Rating Nacional</a>
+  </div>
+  <div class="nav-main">
+    <a class="nav-logo" href="https://www.ajedrezpolgar.com/"><span class="icon">♛</span><div><b>Club de Ajedrez Polgar</b><small>León, Guanajuato</small></div></a>
+    <a class="nav-cta" href="https://www.ajedrezpolgar.com/inscripciones/">Inscripciones</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="tag">Protección de datos</div>
+  <h1>Aviso de Privacidad Integral</h1>
+  <p>Incluye la autorización de uso de imagen y voz (sección V)</p>
+</header>
+<div class="divider"></div>
+
+<div class="layout">
+  <aside class="indice">
+    <b>Contenido</b>
+    <ol>
+      <li><a href="#responsable">I. Responsable</a></li>
+      <li><a href="#datos">II. Datos que se recaban</a></li>
+      <li><a href="#finalidades">III. Finalidades</a></li>
+      <li><a href="#menores">IV. Niñas, niños y adolescentes</a></li>
+      <li><a href="#imagen">V. Imagen y voz</a></li>
+      <li><a href="#fundamento">VI. Fundamento</a></li>
+      <li><a href="#transferencias">VII. Transferencias</a></li>
+      <li><a href="#arco">VIII. Derechos ARCO</a></li>
+      <li><a href="#cookies">IX. Cookies</a></li>
+      <li><a href="#seguridad">X. Seguridad y conservación</a></li>
+      <li><a href="#cambios">XI. Cambios al aviso</a></li>
+      <li><a href="#simplificado">Aviso simplificado</a></li>
+    </ol>
+  </aside>
+
+  <article>
+    <div class="meta">
+      <span><b>Ajedrez Polgar</b> — Pedro José Zambrano Zambrano</span>
+      <span>Última actualización: septiembre de 2026</span>
+      <span>Versión 2.0</span>
+    </div>
+
+    <p>Con fundamento en los artículos 6.º apartado A, fracción II, y 16 párrafo segundo de la Constitución Política de los Estados Unidos Mexicanos; en la Ley Federal de Protección de Datos Personales en Posesión de los Particulares publicada en el Diario Oficial de la Federación el 20 de marzo de 2025 (en adelante «LFPDPPP»); y en la Ley General de los Derechos de Niñas, Niños y Adolescentes, se hace de su conocimiento lo siguiente.</p>
+
+    <h2 id="responsable"><span class="n">I.</span>Identidad y domicilio del responsable</h2>
+    <p>Pedro José Zambrano Zambrano, persona física, quien opera bajo el nombre comercial «Ajedrez Polgar» (en adelante «el Club» o «el Responsable»), con actividades de enseñanza, entrenamiento y organización de torneos de ajedrez para niñas, niños, adolescentes y personas adultas, con domicilio en León, Guanajuato, es el responsable del tratamiento de sus datos personales.</p>
+    <p>Para cualquier duda, notificación o ejercicio de sus derechos ARCO, el canal prioritario de atención es el correo electrónico: <a href="mailto:pedro.zambrano@ajedrezpolgar.com">pedro.zambrano@ajedrezpolgar.com</a> · Sitio web: ajedrezpolgar.com</p>
+
+    <h2 id="datos"><span class="n">II.</span>Datos personales que se recaban</h2>
+    <h3>Del jugador</h3>
+    <ul>
+      <li>Identificación y contacto: nombre completo, CURP, fecha de nacimiento, domicilio, teléfono y correo electrónico, propios o de su tutor.</li>
+      <li>Deportivos: identificador FENAMAC, identificador FIDE, ratings estándar, rápido y blitz, categoría por edad, historial de torneos, pareos y resultados.</li>
+      <li>De clase: grupo o nivel asignado, asistencia y avance en el programa de enseñanza.</li>
+      <li>Fotografía de acreditación, cuando la normativa federativa la requiera.</li>
+    </ul>
+    <h3>Del padre, madre o tutor</h3>
+    <ul><li>Nombre completo, teléfono, correo electrónico y relación con el jugador.</li></ul>
+    <h3>De quien realiza los pagos</h3>
+    <ul>
+      <li>Nombre, RFC y domicilio fiscal, cuando se solicite comprobante fiscal.</li>
+      <li>Comprobante de pago, que puede incluir el nombre del titular de la cuenta de origen y los últimos dígitos de la referencia bancaria. El Club no recaba ni almacena números de tarjeta.</li>
+    </ul>
+    <h3>Del uso del sitio web</h3>
+    <ul>
+      <li>Dirección IP, identificadores de cookies y datos de navegación.</li>
+      <li>Datos de contacto capturados en formularios de inscripción en línea.</li>
+    </ul>
+    <h3>Datos de salud: el Club no los recaba</h3>
+    <p class="destacado">El Club no solicita ni conserva expedientes médicos, diagnósticos, certificados de aptitud física ni información sobre condiciones de salud de los participantes.</p>
+    <p>Si un padre, madre o tutor comunica de manera espontánea información sobre la salud de su hija o hijo, dicha información se utilizará únicamente para atender la situación concreta que motivó la comunicación, no se incorporará a ningún registro ni base de datos del Club, y no será compartida con terceros distintos de los servicios de emergencia cuando la urgencia lo requiera.</p>
+
+    <h2 id="finalidades"><span class="n">III.</span>Finalidades del tratamiento</h2>
+    <h3>Finalidades primarias, necesarias para el servicio</h3>
+    <ul>
+      <li>Gestionar la inscripción, reinscripción y control de clases, cursos y talleres.</li>
+      <li>Organizar torneos: pareos, tablas de posiciones, desempates y resultados.</li>
+      <li>Tramitar y mantener vigente la afiliación del jugador ante FENAMAC y, en su caso, ante FIDE.</li>
+      <li>Publicar y reportar los resultados deportivos en las plataformas oficiales de gestión de torneos y en los escalafones de rating. <b>Esta publicación es de acceso público y de carácter permanente, y comprende nombre completo, año de nacimiento, club o institución y calificación del jugador. Es indispensable para que el jugador obtenga rating oficial y trayectoria verificable; sin ella no es posible participar en el ajedrez federado.</b></li>
+      <li>Procesar pagos de inscripciones, mensualidades y membresías, y emitir comprobantes fiscales.</li>
+      <li>Comunicarse con el padre, madre o tutor sobre horarios, sedes, convocatorias, resultados y avisos administrativos, por correo electrónico, llamada telefónica o mensajería instantánea, incluido WhatsApp.</li>
+    </ul>
+    <h3>Finalidades secundarias, que requieren consentimiento independiente</h3>
+    <ul>
+      <li>Captar y difundir fotografías, video y voz de los participantes con fines informativos y de promoción del Club.</li>
+      <li>Envío de boletines, invitaciones y contenido promocional.</li>
+    </ul>
+    <p>El otorgamiento de las finalidades secundarias es optativo. Negarlas no condiciona la inscripción ni la participación del jugador en clases o torneos.</p>
+
+    <h2 id="menores"><span class="n">IV.</span>Tratamiento de datos de niñas, niños y adolescentes</h2>
+    <p>La mayoría de los participantes son menores de edad. En cumplimiento del interés superior de la niñez:</p>
+    <ul>
+      <li>El consentimiento es otorgado por la madre, el padre o el tutor legal, en representación del menor.</li>
+      <li>El tratamiento se limita a lo necesario para la prestación del servicio educativo y deportivo y para el cumplimiento de la normativa federativa aplicable.</li>
+      <li>El Club no transfiere datos de menores a destinatarios distintos de los listados en la <a href="#transferencias">sección VII</a>.</li>
+      <li>El personal del Club que tenga acceso a datos de menores está sujeto a deber de confidencialidad.</li>
+      <li>Cuando la madurez del adolescente lo permita, su opinión será tomada en cuenta respecto de la difusión de su imagen.</li>
+    </ul>
+
+    <h2 id="imagen"><span class="n">V.</span>Imagen y voz: autorización independiente</h2>
+    <p>El derecho a la propia imagen está protegido, además de por la LFPDPPP, por el artículo 87 de la Ley Federal del Derecho de Autor. Por ello la autorización para captar y difundir fotografías, video o voz del participante:</p>
+    <ul>
+      <li>Es independiente del consentimiento para el tratamiento de datos deportivos; negarla no impide la inscripción.</li>
+      <li>Se solicita mediante casilla separada en la cédula de inscripción, a la que acompaña el aviso de privacidad simplificado que consta como <a href="#simplificado">anexo</a> de este documento.</li>
+      <li>Se limita a fines informativos, deportivos, culturales y de promoción institucional.</li>
+      <li>No se destinará a fines comerciales de terceros ni a usos que atenten contra la dignidad o integridad del menor.</li>
+      <li>Puede revocarse en cualquier momento, con efectos hacia el futuro.</li>
+    </ul>
+
+    <h2 id="fundamento"><span class="n">VI.</span>Fundamento del tratamiento</h2>
+    <ul>
+      <li>El tratamiento se sustenta en la relación jurídica entre el titular o su tutor y el Club.</li>
+      <li>Las transferencias a FENAMAC, a FIDE y a las plataformas de gestión de torneos se sustentan en el consentimiento del titular y son necesarias para la prestación del servicio deportivo.</li>
+      <li>Las transferencias a instancias oficiales del deporte se sustentan en la normativa de registro del deporte federado, cuando el evento tenga ese carácter.</li>
+    </ul>
+
+    <h2 id="transferencias"><span class="n">VII.</span>Transferencias y remisiones de datos</h2>
+    <p>Sus datos podrán comunicarse a los siguientes destinatarios:</p>
+    <div class="tabla"><table>
+      <thead><tr><th>Destinatario</th><th>Datos</th><th>Finalidad y carácter</th></tr></thead>
+      <tbody>
+        <tr><td>Federación Nacional de Ajedrez de México (FENAMAC)</td><td>Nombre, CURP, fecha de nacimiento, fotografía de acreditación, resultados y ratings</td><td>Afiliación y escalafón nacional. Consentimiento del titular.</td></tr>
+        <tr><td>Federación Internacional de Ajedrez (FIDE)</td><td>Nombre, identificador FIDE, federación, ratings</td><td>Escalafón internacional. Consentimiento del titular. Implica transferencia internacional.</td></tr>
+        <tr class="critico"><td><b>Plataforma de gestión y publicación de torneos (chess-results.com, con servidores en Austria)</b></td><td><b>Nombre completo, año de nacimiento, club o institución, rating, pareos y resultados</b></td><td><b>Publicación de resultados oficiales. TRANSFERENCIA INTERNACIONAL, DE ACCESO PÚBLICO Y CARÁCTER PERMANENTE. Ver la limitación de la <a href="#arco">sección VIII</a>.</b></td></tr>
+        <tr><td>Instancias oficiales del deporte (CONADE, organismos estatales y municipales)</td><td>Nombre, categoría por edad, resultados en eventos oficiales</td><td>Registro del deporte federado y selectivos. Disposición normativa.</td></tr>
+        <tr><td>Instituciones educativas donde se imparten las clases</td><td>Nombre, grupo, asistencia y resultados del alumno inscrito en ese plantel</td><td>Coordinación del servicio dentro del plantel. Consentimiento del titular.</td></tr>
+        <tr><td>Proveedores tecnológicos (mensajería, correo, almacenamiento en la nube y redes sociales)</td><td>Datos de contacto y, en su caso, imagen autorizada</td><td>Remisión a encargados que prestan servicio al Club. No constituye transferencia a terceros independientes.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2 id="arco"><span class="n">VIII.</span>Derechos ARCO y revocación</h2>
+    <p>Usted tiene derecho de Acceso, Rectificación, Cancelación y Oposición respecto del tratamiento de sus datos personales o los de su hija, hijo o pupilo.</p>
+    <p>Puede ejercerlos enviando su solicitud al correo <a href="mailto:pedro.zambrano@ajedrezpolgar.com">pedro.zambrano@ajedrezpolgar.com</a>. El ejercicio de estos derechos es gratuito.</p>
+    <p>El Club comunicará la determinación adoptada dentro de los veinte días hábiles siguientes a la recepción de la solicitud. Si resulta procedente, se hará efectiva dentro de los quince días hábiles posteriores. Ambos plazos pueden ampliarse una sola vez cuando las circunstancias lo justifiquen.</p>
+    <h3>Limitación respecto de resultados ya publicados</h3>
+    <p class="destacado">Los resultados deportivos publicados en plataformas de gestión de torneos y en los escalafones de rating no se encuentran bajo control del Club una vez publicados.</p>
+    <p>El Club no puede suprimirlos, modificarlos ni impedir su indexación por motores de búsqueda. Una solicitud de cancelación sobre esa información será atendida en lo que corresponde a los registros propios del Club, y respecto de la plataforma el Club orientará al titular sobre la vía para dirigirse directamente al operador, sin poder garantizar el resultado de esa gestión.</p>
+    <p>De no obtener respuesta satisfactoria, el titular puede acudir a la Secretaría Anticorrupción y Buen Gobierno, autoridad en materia de protección de datos personales en posesión de particulares.</p>
+
+    <h2 id="cookies"><span class="n">IX.</span>Cookies</h2>
+    <p>El sitio ajedrezpolgar.com utiliza cookies propias necesarias para el funcionamiento del sitio y de sus paneles de consulta. Estas cookies no requieren consentimiento previo.</p>
+
+    <h2 id="seguridad"><span class="n">X.</span>Seguridad y conservación</h2>
+    <p>El Club aplica las siguientes medidas de seguridad:</p>
+    <ul>
+      <li>Acceso restringido a los registros de inscripción, limitado a la presidencia y al personal que lo requiera para su función.</li>
+      <li>Deber de confidencialidad del personal, entrenadores y árbitros respecto de los datos a los que tengan acceso.</li>
+      <li>Prohibición de difundir listas de contacto de las familias entre participantes o terceros.</li>
+      <li>Resguardo de los expedientes físicos en lugar cerrado y de los archivos digitales en cuentas con contraseña.</li>
+    </ul>
+    <p>Los datos se conservarán mientras se mantenga activa la inscripción o la afiliación del jugador, y durante el plazo adicional necesario para cumplir obligaciones fiscales, deportivas o legales. Concluido ese plazo, serán bloqueados y posteriormente suprimidos.</p>
+
+    <h2 id="cambios"><span class="n">XI.</span>Cambios al aviso</h2>
+    <p>Este aviso y sus modificaciones podrán consultarse en <a href="https://www.ajedrezpolgar.com/aviso-de-privacidad">https://www.ajedrezpolgar.com/aviso-de-privacidad</a>. Los cambios se notificarán a través del sitio web, por correo electrónico o mediante avisos en la sede.</p>
+    <p>Fecha de última actualización: septiembre de 2026.</p>
+
+    <section class="simplificado" id="simplificado">
+      <h2>Anexo — Aviso de privacidad simplificado</h2>
+      <p>Pedro José Zambrano Zambrano, que opera como «Ajedrez Polgar», con domicilio en León, Guanajuato, es responsable del tratamiento de los datos personales que usted proporciona. Los usamos para inscribir y dar seguimiento al jugador, organizar torneos, tramitar su afiliación deportiva, procesar pagos y comunicarnos con usted. Los resultados deportivos se publican en las plataformas oficiales de ajedrez. Esa publicación es pública, permanente y no puede ser retirada por el Club. El Club no solicita ni conserva información sobre la salud de los participantes. El uso de la imagen del jugador es opcional y se autoriza por separado en esta misma cédula; negarlo no afecta su inscripción. Puede conocer el aviso integral, las transferencias de datos y la forma de ejercer sus derechos en https://www.ajedrezpolgar.com/aviso-de-privacidad o solicitándolo al correo pedro.zambrano@ajedrezpolgar.com.</p>
+      <p style="margin-top:1rem"><b>Casillas que acompañan a este texto en la cédula y en el formulario en línea:</b></p>
+      <ul class="casillas">
+        <li>He leído el aviso de privacidad y acepto el tratamiento de los datos necesarios para la inscripción y la participación deportiva, incluida la publicación pública de resultados. <i>(Necesaria para la inscripción)</i></li>
+        <li>Autorizo el uso de la imagen y voz del jugador en materiales de difusión del Club. <i>(Opcional)</i></li>
+        <li>Autorizo el envío de boletines e invitaciones a eventos. <i>(Opcional)</i></li>
+      </ul>
+    </section>
+
+  </article>
+</div>
+
+<footer>
+  <a href="https://www.ajedrezpolgar.com/inscripciones/">Inscripciones</a> · <a href="mailto:pedro.zambrano@ajedrezpolgar.com">pedro.zambrano@ajedrezpolgar.com</a><br>
+  © 2026 Club de Ajedrez Polgar · León, Guanajuato
+</footer>
+<script>
+  const ajustarNav = () => { document.body.style.paddingTop = document.querySelector('nav').offsetHeight + 'px'; };
+  ajustarNav(); addEventListener('resize', ajustarNav);
+</script>
+</body>
+</html>
