@@ -23,8 +23,8 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
 /aviso-de-privacidad/ (proyecto propio, numeración propia, texto del proyecto legal).
 
 ## Estado actual
-* Versión vigente: v6
-* Archivo entregado: Inscripciones_v6.html + carpeta convocatorias/ (PDF e imágenes) → se sube como /inscripciones/index.html
+* Versión vigente: v7
+* Archivo entregado: Inscripciones_v7.html + carpeta convocatorias/ (PDF e imágenes) → se sube como /inscripciones/index.html
 * Dónde vive este documento: [x] Fusionado en el artefacto (este comentario HTML,
   invisible para el visitante). No en pestaña visible porque es una página pública.
 * Traspaso a nuevo chat: la IA descarga el archivo con
@@ -90,6 +90,12 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
 - [ ] Portada v3 enlaza a los sitios hermanos vía max-verne.github.io en la barra superior y vía www en el banner — inconsistencia heredada, no se toca aquí.
 
 ## Historial de cambios
+**v7 — CLABE con formato oficial**
+* La CLABE se mostraba en grupos de 4 (0122 2500 4731 778742) y parecía número de tarjeta.
+  Ahora se muestra en el formato oficial 3-3-11-1: 012 225 00473177874 2 (mismos 18 dígitos;
+  dígito verificador comprobado). Se agrega botón "Copiar CLABE" que copia solo los dígitos.
+* Verificación: probado en navegador automatizado. PENDIENTE confirmar en el sitio publicado.
+
 **v6 — Segunda revisión de datos del certificado**
 * Paso 2: el recuadro "Así aparecerá en el certificado" ahora repite el nombre completo, la
   institución educativa y la rama (la categoría no, porque puede elegirse una superior en el paso 3).
@@ -270,6 +276,7 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
   .preview .prevLinea{display:block;margin-top:4px}
   .preview .confirma{margin-top:12px;padding-top:10px;border-top:1px dashed var(--azul-claro)}
   #btnNext:disabled{opacity:.45;cursor:not-allowed}
+  .pay .copiar{margin-left:8px;padding:4px 10px;font-size:.85rem;border-radius:8px;cursor:pointer}
   .pay{background:var(--suave);border-radius:10px;padding:12px;margin:8px 0 4px}
   .pay code{font-size:1.05rem;font-weight:700;letter-spacing:.03em}
   .fnav{display:flex;justify-content:space-between;gap:10px;margin-top:18px}
@@ -491,7 +498,7 @@ const AJUSTES = {
   // URL /exec del Apps Script de la temporada. Mientras esté vacía el formulario NO se abre
   // al público (se evita dar folios falsos a las familias). Para probar: ?demo=1
   scriptUrl: 'https://script.google.com/macros/s/AKfycbwtgznMbImzTrIU1B5xRYi-a8cnZ2Q4RGog1ERdeny6csLMrYDA3QPZ2sAcpULgLi9-/exec',
-  pago: { banco: 'BBVA', titular: 'Pedro Zambrano', clabe: '0122 2500 4731 778742' },
+  pago: { banco: 'BBVA', titular: 'Pedro Zambrano', clabe: '012 225 00473177874 2' }, // CLABE en formato oficial 3-3-11-1 (banco-plaza-cuenta-dígito)
   maxArchivoMb: 5,
   chessResultsUrl: 'https://chess-results.com/',
   facebookUrl: 'https://www.facebook.com/ajedrezpolgar'
@@ -676,8 +683,14 @@ function prepararFormulario(){
   $('#lnkCR').href = AJUSTES.chessResultsUrl;
   $('#costo').textContent = money(ev.costo);
   $('#maxMb').textContent = AJUSTES.maxArchivoMb;
-  $('#payBox').innerHTML = `<div class="small">CLABE interbancaria (${esc(AJUSTES.pago.banco)})</div><code>${esc(AJUSTES.pago.clabe)}</code>
+  $('#payBox').innerHTML = `<div class="small">CLABE interbancaria (${esc(AJUSTES.pago.banco)})</div><code>${esc(AJUSTES.pago.clabe)}</code> <button type="button" id="btnCopiarClabe" class="copiar">Copiar CLABE</button>
     <div class="small" style="margin-top:6px">Titular: <b>${esc(AJUSTES.pago.titular)}</b> · Concepto sugerido: nombre del jugador</div>`;
+  $('#btnCopiarClabe').onclick = async () => {
+    const b = $('#btnCopiarClabe'), digitos = AJUSTES.pago.clabe.replace(/\D/g,'');
+    try { await navigator.clipboard.writeText(digitos); b.textContent = '¡Copiada!'; }
+    catch(_) { b.textContent = digitos; }
+    setTimeout(() => { b.textContent = 'Copiar CLABE'; }, 2500);
+  };
   // Texto del Anexo "Aviso simplificado" del Aviso de Privacidad 2.0 (proyecto legal).
   $('#avisoTxt').textContent = 'Pedro José Zambrano Zambrano, que opera como «Ajedrez Polgar», con domicilio en León, Guanajuato, es responsable del tratamiento de los datos personales que usted proporciona. Los usamos para inscribir y dar seguimiento al jugador, organizar torneos, tramitar su afiliación deportiva, procesar pagos y comunicarnos con usted. Los resultados deportivos se publican en las plataformas oficiales de ajedrez. Esa publicación es pública, permanente y no puede ser retirada por el Club. El Club no solicita ni conserva información sobre la salud de los participantes. El uso de la imagen del jugador es opcional y se autoriza por separado en esta misma cédula; negarlo no afecta su inscripción. Puede conocer el aviso integral, las transferencias de datos y la forma de ejercer sus derechos en https://www.ajedrezpolgar.com/aviso-de-privacidad o solicitándolo al correo pedro.zambrano@ajedrezpolgar.com.';
 }
