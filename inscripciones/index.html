@@ -23,8 +23,8 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
 /aviso-de-privacidad/ (proyecto propio, numeración propia, texto del proyecto legal).
 
 ## Estado actual
-* Versión vigente: v3
-* Archivo entregado: Inscripciones_v3.html → se sube como /inscripciones/index.html
+* Versión vigente: v5
+* Archivo entregado: Inscripciones_v5.html + carpeta convocatorias/ (PDF e imágenes) → se sube como /inscripciones/index.html
 * Dónde vive este documento: [x] Fusionado en el artefacto (este comentario HTML,
   invisible para el visitante). No en pestaña visible porque es una página pública.
 * Traspaso a nuevo chat: la IA descarga el archivo con
@@ -38,7 +38,12 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
 * DEBE: decidir el torneo activo automáticamente por fecha (hora de León),
   con opción de forzar manualmente (FORZAR_ACTIVO).
 * DEBE: mostrar los eventos pasados en gris, sin borrarlos del catálogo.
-* DEBE: ser un solo HTML autocontenido; sin dependencias externas.
+* DEBE: ser un HTML autocontenido en código (sin librerías externas). CAMBIO DE CONTRATO v4:
+  las convocatorias viven como archivos aparte en /inscripciones/convocatorias/
+  (<id-evento>.pdf + <id-evento>-p1.jpg, -p2.jpg…), confirmado por el titular, para que
+  cada PDF tenga dirección fija y la página no crezca con cada evento.
+* DEBE: mostrar la convocatoria dentro del sitio (visor en la propia página + descarga del PDF);
+  la web es el centro operativo, no Facebook.
 * DEBE: ser compatible con Code.gs (payload del formulario original de Liga MTL
   + campos de consentimiento; Code.gs v2 los guarda en columnas propias).
 * NO DEBE: abrir el formulario si AVISO_PUBLICADO es false (el aviso de
@@ -67,7 +72,8 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
   (AAAA-MM-DD), sede (null = por confirmar), direccion, mapsUrl, horario,
   costo, cupo, categorias, apertura (opcional), cierre (opcional; por defecto
   2 días antes del evento a las 23:59), formulario ('mtl' | URL externa |
-  null), convocatoriaUrl, resultadosUrl.
+  null), convocatoria ({pdf, paginas[]} o null), resultadosUrl.
+* Enlace directo a la convocatoria del torneo activo: /inscripciones/#convocatoria
 * Zona horaria fija America/Mexico_City (México sin horario de verano desde 2022 → -06:00).
 * Parámetro de prueba: ?hoy=AAAA-MM-DD simula la fecha (solo para revisar).
 * Folio y hoja de cálculo los genera Code.gs a partir de "etapa".
@@ -84,6 +90,32 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
 - [ ] Portada v3 enlaza a los sitios hermanos vía max-verne.github.io en la barra superior y vía www en el banner — inconsistencia heredada, no se toca aquí.
 
 ## Historial de cambios
+**v5 — Categorías corregidas (reversión parcial de v4)**
+* El titular revisó y confirmó que las categorías correctas son las de la convocatoria de la
+  1ª etapa, no las de la Convocatoria General: 2026 → Sec y Prepa 2008–2013, Sub-12 2014–2015,
+  Sub-10 2016–2017, Sub-08 2018+; 2027 → todo sube un año (Sec y Prepa 2009–2014, Sub-12
+  2015–2016, Sub-10 2017–2018, Sub-08 2019+).
+* El formulario asigna la categoría con estos rangos. Convocatoria 1ª etapa regenerada como
+  versión _3 (categorías originales + Transitorios de v4) → convocatorias/mtl3-e1.pdf e imágenes.
+* Pendiente: corregir la Convocatoria General (sus dos bloques de categorías están desfasados).
+* Los rangos de 2027 se infieren de "todo sube un año": confirmar antes del 4º evento.
+* Verificación: categorías probadas en navegador automatizado; PENDIENTE confirmar en el sitio.
+
+**v4 — Convocatoria visible dentro del sitio**
+* "Ver convocatoria" ya no lleva a Facebook: abre un visor en la misma página con las
+  páginas de la convocatoria como imágenes (se ven en cualquier celular) y botón
+  "Descargar PDF". Enlace directo compartible: /inscripciones/#convocatoria.
+* Tarjetas de próximos/pasados muestran "Convocatoria (PDF)" cuando exista. La casilla
+  "acepto la convocatoria" del formulario enlaza al PDF propio.
+* Campo convocatoriaUrl reemplazado por convocatoria {pdf, paginas}.
+* 1er evento: dirección completa de Plaza Mayor (Blvd. Juan Alonso de Torres Pte. 2002).
+* Convocatoria 1ª etapa (versión _2): categorías cambiadas a los rangos de la Convocatoria
+  General (REVERTIDO en v5, ver arriba); Transitorios alineados con
+  el Aviso de Privacidad (imagen opcional, opt-in en el formulario); registro apunta a
+  /inscripciones. Cambio de Contrato: ver arriba.
+* Verificación: visor probado en navegador automatizado (escritorio y móvil); PENDIENTE
+  confirmar en el sitio publicado.
+
 **v3 — Conexión al backend real (Apps Script de la temporada 26-27)**
 * AJUSTES.scriptUrl = implementación /exec entregada por el titular el 27-sep-2026
   (hoja "Inscripciones Liga MTL 26-27", Code.gs v2). Con esto FORM_LISTO=true y el
@@ -242,6 +274,15 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
   .avisoSimpl b{color:var(--texto);display:block;margin-bottom:4px}
   .opcionales{margin:20px 0 0;padding-top:14px;border-top:1px dashed var(--gris-borde);font-size:.78rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gris-texto)}
 
+  /* VISOR DE CONVOCATORIA */
+  #convocatoria{margin-top:1.6rem;scroll-margin-top:110px}
+  .conv-barra{display:flex;justify-content:space-between;align-items:center;gap:.8rem;flex-wrap:wrap;margin-bottom:.9rem}
+  .conv-acc{display:flex;gap:.5rem}
+  .btn-sm{padding:.5rem .9rem;font-size:.88rem;border-radius:8px}
+  .conv-paginas{display:grid;gap:1rem}
+  .conv-paginas img{display:block;width:100%;height:auto;background:#fff;border:1px solid var(--gris-borde);border-radius:8px;box-shadow:0 6px 18px rgba(13,43,78,.10)}
+  .mini a.conv{font-size:.82rem;font-weight:700;display:inline-block;margin-top:.4rem;margin-right:.8rem}
+
   /* COMPARTIR / QR */
   .compartir{display:flex;gap:1.4rem;align-items:center;background:var(--tarjeta);border:1px solid var(--gris-borde);border-radius:var(--radio);padding:1.2rem 1.4rem}
   .qr-svg{width:128px;height:128px;flex-shrink:0;border-radius:8px}
@@ -292,6 +333,18 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
 <main>
   <h2 class="sec" id="activo">Torneo activo</h2>
   <div id="boxActivo"></div>
+
+  <!-- ============ VISOR DE CONVOCATORIA ============ -->
+  <section id="convocatoria" class="hidden">
+    <div class="conv-barra">
+      <h2 class="sec" id="convTitulo" style="margin:0">Convocatoria</h2>
+      <div class="conv-acc">
+        <a class="btn btn-borde btn-sm" id="convPdf" download>⬇ Descargar PDF</a>
+        <button type="button" class="btn-sm" id="convCerrar">Cerrar ✕</button>
+      </div>
+    </div>
+    <div id="convPaginas" class="conv-paginas"></div>
+  </section>
 
   <!-- ============ FORMULARIO (integrado desde proyecto Liga MTL) ============ -->
   <section id="inscribir" class="hidden">
@@ -427,26 +480,31 @@ const AJUSTES = {
   facebookUrl: 'https://www.facebook.com/ajedrezpolgar'
 };
 
-// Categorías 3ra Liga MTL según la convocatoria (los rangos se recorren en 2027)
+// Categorías 3ra Liga MTL. Fuente de verdad: convocatoria de la 1ª etapa (confirmada por el
+// titular el 27-sep-2026): en 2026 los nacidos en 2013 ya van a Secundaria y Prepa; en 2027
+// todos los rangos suben un año (los nacidos en 2014 pasan a Secundaria y Prepa).
 const CATS_MTL_2026 = [
-  { id:'SEC-PREPA', nombre:'Secundaria y Prepa', minYear:2007, maxYear:2012 },
-  { id:'SUB12',     nombre:'Sub-12',             minYear:2013, maxYear:2014 },
-  { id:'SUB10',     nombre:'Sub-10',             minYear:2015, maxYear:2016 },
-  { id:'SUB08',     nombre:'Sub-08',             minYear:2017, maxYear:9999 }
-];
-const CATS_MTL_2027 = [
   { id:'SEC-PREPA', nombre:'Secundaria y Prepa', minYear:2008, maxYear:2013 },
   { id:'SUB12',     nombre:'Sub-12',             minYear:2014, maxYear:2015 },
   { id:'SUB10',     nombre:'Sub-10',             minYear:2016, maxYear:2017 },
   { id:'SUB08',     nombre:'Sub-08',             minYear:2018, maxYear:9999 }
 ];
+const CATS_MTL_2027 = [
+  { id:'SEC-PREPA', nombre:'Secundaria y Prepa', minYear:2009, maxYear:2014 },
+  { id:'SUB12',     nombre:'Sub-12',             minYear:2015, maxYear:2016 },
+  { id:'SUB10',     nombre:'Sub-10',             minYear:2017, maxYear:2018 },
+  { id:'SUB08',     nombre:'Sub-08',             minYear:2019, maxYear:9999 }
+];
 const MTL3 = { serie:'3ra Liga MTL 2026-2027', mtl:true, horario:'Registro 8:30 h · Inicio 9:00 h · Fin aprox. 13:00 h',
-  costo:250, cupo:150, formulario:'mtl', convocatoriaUrl:AJUSTES.facebookUrl, resultadosUrl:null };
+  costo:250, cupo:150, formulario:'mtl', convocatoria:null, resultadosUrl:null };
 
 // Orden cronológico. Los id NUNCA se reutilizan ni se cambian.
 const EVENTOS = [
   { ...MTL3, id:'mtl3-e1', etapa:'1er evento', titulo:'1er evento e Inauguración', fecha:'2026-10-10',
-    sede:'Plaza Mayor', direccion:'Plaza Mayor, León, Gto.', mapsUrl:'https://maps.google.com/?q=Plaza+Mayor+León+Guanajuato',
+    sede:'Plaza Mayor', direccion:'Blvd. Juan Alonso de Torres Pte. 2002, Valle del Campestre, 37150 León, Gto.',
+    mapsUrl:'https://maps.google.com/?q=Plaza+Mayor,+Blvd.+Juan+Alonso+de+Torres+Pte.+2002,+León,+Gto.',
+    convocatoria:{ pdf:'/inscripciones/convocatorias/mtl3-e1.pdf',
+      paginas:['/inscripciones/convocatorias/mtl3-e1-p1.jpg','/inscripciones/convocatorias/mtl3-e1-p2.jpg'] },
     categorias:CATS_MTL_2026 },
   { ...MTL3, id:'mtl3-e2', etapa:'2do evento', titulo:'2do evento', fecha:'2026-11-07', sede:null, categorias:CATS_MTL_2026 },
   { ...MTL3, id:'mtl3-e3', etapa:'3er evento', titulo:'3er evento', fecha:'2026-12-05', sede:null, categorias:CATS_MTL_2026 },
@@ -534,13 +592,32 @@ function renderActivo(){
       <div class="cats">${ev.categorias.map(c => `<div class="cat"><b>${esc(c.nombre)}</b>${rangoCat(c)}</div>`).join('')}</div>` : ''}
     <div class="acciones">
       ${puedeInscribir ? (ev.formulario === 'mtl' ? '<a class="btn btn-rojo" href="#inscribir" id="btnAbrir">Inscribirme</a>' : `<a class="btn btn-rojo" href="${esc(ev.formulario)}" target="_blank" rel="noopener">Inscribirme</a>`) : ''}
-      ${ev.convocatoriaUrl ? `<a class="btn btn-borde" href="${esc(ev.convocatoriaUrl)}" target="_blank" rel="noopener">Ver convocatoria</a>` : ''}
+      ${ev.convocatoria ? `<a class="btn btn-borde" href="#convocatoria" id="btnConv">Ver convocatoria</a>` : ''}
     </div>
     ${aviso ? `<div class="aviso">${aviso}</div>` : ''}
   </article>`;
   const b = $('#btnAbrir');
   if (b) b.addEventListener('click', e => { e.preventDefault(); abrirFormulario(); });
+  const c = $('#btnConv');
+  if (c) c.addEventListener('click', e => { e.preventDefault(); abrirConvocatoria(ev, true); });
 }
+
+function abrirConvocatoria(ev, desplazar){
+  if (!ev || !ev.convocatoria) return;
+  $('#convTitulo').textContent = 'Convocatoria · ' + ev.titulo;
+  $('#convPdf').href = ev.convocatoria.pdf;
+  $('#convPdf').setAttribute('download', ev.convocatoria.pdf.split('/').pop());
+  $('#convPaginas').innerHTML = ev.convocatoria.paginas.map((src,i) =>
+    `<a href="${esc(ev.convocatoria.pdf)}" target="_blank" rel="noopener" title="Abrir PDF"><img src="${esc(src)}" alt="Convocatoria ${esc(ev.titulo)}, página ${i+1}" loading="lazy"></a>`).join('');
+  $('#convocatoria').classList.remove('hidden');
+  if (history.replaceState) history.replaceState(null, '', '#convocatoria');
+  if (desplazar) $('#convocatoria').scrollIntoView({ behavior:'smooth' });
+}
+$('#convCerrar').addEventListener('click', () => {
+  $('#convocatoria').classList.add('hidden');
+  if (history.replaceState) history.replaceState(null, '', location.pathname + location.search);
+  $('#activo').scrollIntoView({ behavior:'smooth' });
+});
 
 function miniCard(ev, pasado){
   const lugar = ev.sede ? esc(ev.sede) : 'Sede por confirmar';
@@ -549,6 +626,7 @@ function miniCard(ev, pasado){
     <div class="fecha">${fechaCorta(ev.fecha)}</div>
     <h4>${esc(ev.titulo)}</h4>
     <p>${esc(ev.serie)} · ${lugar}</p>
+    ${ev.convocatoria ? `<a class="conv" href="${esc(ev.convocatoria.pdf)}" target="_blank" rel="noopener">Convocatoria (PDF)</a>` : ''}
     ${pasado && ev.resultadosUrl ? `<a class="res" href="${esc(ev.resultadosUrl)}" target="_blank" rel="noopener">Ver resultados →</a>` : ''}
   </div>`;
 }
@@ -577,7 +655,7 @@ function prepararFormulario(){
     ['Resultados', `<a href="${AJUSTES.chessResultsUrl}" target="_blank" rel="noopener">Chess-Results</a>`]
   ].filter(Boolean);
   $('#facts').innerHTML = facts.map(([k,v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('');
-  $('#lnkConv').href = ev.convocatoriaUrl || AJUSTES.facebookUrl;
+  $('#lnkConv').href = ev.convocatoria ? ev.convocatoria.pdf : '#activo';
   $('#lnkCR').href = AJUSTES.chessResultsUrl;
   $('#costo').textContent = money(ev.costo);
   $('#maxMb').textContent = AJUSTES.maxArchivoMb;
@@ -712,11 +790,13 @@ $('#frm').addEventListener('submit', async e => {
 });
 
 /* ================= ARRANQUE ================= */
+// El enlace directo www.ajedrezpolgar.com/inscripciones/#convocatoria abre la convocatoria del torneo activo.
 const ajustarNav = () => { document.body.style.paddingTop = document.querySelector('nav').offsetHeight + 'px'; };
 ajustarNav(); addEventListener('resize', ajustarNav);
 $('#anio').textContent = HOY.slice(0,4);
 renderActivo();
 renderListas();
+if (location.hash === '#convocatoria' && ACTIVO && ACTIVO.convocatoria) abrirConvocatoria(ACTIVO, true);
 if (ACTIVO && ACTIVO.formulario === 'mtl' && estadoDe(ACTIVO) === 'abierta' && FORM_LISTO){
   prepararFormulario();
   if (location.hash === '#inscribir') abrirFormulario();
