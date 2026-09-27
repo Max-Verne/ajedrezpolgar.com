@@ -23,8 +23,8 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
 /aviso-de-privacidad/ (proyecto propio, numeración propia, texto del proyecto legal).
 
 ## Estado actual
-* Versión vigente: v2
-* Archivo entregado: Inscripciones_v2.html → se sube como /inscripciones/index.html
+* Versión vigente: v3
+* Archivo entregado: Inscripciones_v3.html → se sube como /inscripciones/index.html
 * Dónde vive este documento: [x] Fusionado en el artefacto (este comentario HTML,
   invisible para el visitante). No en pestaña visible porque es una página pública.
 * Traspaso a nuevo chat: la IA descarga el archivo con
@@ -73,7 +73,6 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
 * Folio y hoja de cálculo los genera Code.gs a partir de "etapa".
 
 ## Tareas Pendientes
-- [ ] Instalar Code.gs v2 en la hoja 26-27 y pegar su URL /exec en AJUSTES.scriptUrl (sin ella el formulario no abre).
 - [ ] Probar un envío real de punta a punta (folio, fila con consentimientos, comprobante en Drive, correo de aviso).
 - [ ] Corregir Transitorios de la convocatoria: hoy dice que al inscribirse se acepta la autorización de uso de imagen; el aviso la hace opcional y separada.
 - [ ] Confirmar fecha de cierre por evento (por defecto: jueves previo 23:59).
@@ -85,6 +84,14 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
 - [ ] Portada v3 enlaza a los sitios hermanos vía max-verne.github.io en la barra superior y vía www en el banner — inconsistencia heredada, no se toca aquí.
 
 ## Historial de cambios
+**v3 — Conexión al backend real (Apps Script de la temporada 26-27)**
+* AJUSTES.scriptUrl = implementación /exec entregada por el titular el 27-sep-2026
+  (hoja "Inscripciones Liga MTL 26-27", Code.gs v2). Con esto FORM_LISTO=true y el
+  formulario queda abierto al público para el 1er evento hasta el cierre (8-oct 23:59).
+* Sin otros cambios de código.
+* Verificación: PENDIENTE DE PRUEBA — desde el entorno de Claude no hay acceso de red a
+  script.google.com; la prueba real de punta a punta la hace el titular.
+
 **v2 — Aviso de privacidad 2.0 integrado y consentimientos separados**
 * Enlaces al aviso pasan a /aviso-de-privacidad/ (URL citada en el propio aviso).
 * Paso 1 muestra el Aviso simplificado (Anexo) visible y las 3 casillas: tratamiento +
@@ -413,7 +420,7 @@ const AJUSTES = {
   FORZAR_ACTIVO: null,
   // URL /exec del Apps Script de la temporada. Mientras esté vacía el formulario NO se abre
   // al público (se evita dar folios falsos a las familias). Para probar: ?demo=1
-  scriptUrl: '',
+  scriptUrl: 'https://script.google.com/macros/s/AKfycbwtgznMbImzTrIU1B5xRYi-a8cnZ2Q4RGog1ERdeny6csLMrYDA3QPZ2sAcpULgLi9-/exec',
   pago: { banco: 'BBVA', titular: 'Pedro Zambrano', clabe: '0122 2500 4731 778742' },
   maxArchivoMb: 5,
   chessResultsUrl: 'https://chess-results.com/',
