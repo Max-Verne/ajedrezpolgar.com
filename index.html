@@ -21,12 +21,13 @@
   * { margin:0; padding:0; box-sizing:border-box; }
   html { scroll-behavior:smooth; }
   body { background:var(--blanco); color:var(--azul-oscuro); font-family:'Segoe UI',sans-serif; }
-  /* Compensar banner + nav-top + nav-main */
-  body { padding-top: calc(28px + 32px + 56px); }
+  /* Compensar la barra fija (nav-top + nav-main + banner). El valor exacto lo ajusta
+     el script al final según la altura real (cambia en celular). */
+  body { padding-top: 130px; }
 
   /* BANNER CONSTRUCCIÓN */
   #banner-construccion {
-    position:fixed; top:28px; width:100%; z-index:150;
+    width:100%;
     background:#f5c518; color:#1a1a1a;
     text-align:center; padding:0.45rem 1rem;
     font-size:0.82rem; font-weight:600;
@@ -34,6 +35,7 @@
     display:flex; align-items:center; justify-content:center; gap:0.6rem;
     flex-wrap:wrap;
   }
+  section { scroll-margin-top:150px; }
   #banner-construccion a {
     color:#0d2b4e; font-weight:700; text-decoration:underline;
   }
@@ -209,20 +211,12 @@
     .hero h1 { font-size:2.2rem; }
     .about-grid, .form-grid, .footer-grid { grid-template-columns:1fr; }
     .nav-links { display:none; }
+    #banner-construccion { font-size:0.72rem; padding:0.3rem 0.8rem; }
+    #banner-construccion .b-sitios { display:none; } /* en celular los sitios ya están en la barra superior */
   }
 </style>
 </head>
 <body>
-
-<!-- BANNER EN CONSTRUCCIÓN -->
-<div id="banner-construccion">
-  🚧 Sitio en construcción — el contenido mostrado es de ejemplo y no refleja datos reales del club. &nbsp;|&nbsp;
-  Visita nuestros sitios activos:
-  <a href="https://www.ajedrezpolgar.com/inscripciones/">📝 Inscripciones</a>
-  <a href="https://www.ajedrezpolgar.com/liga/">🏆 Liga MTL</a>
-  <a href="https://www.ajedrezpolgar.com/rating/">📊 Rating GTO</a>
-  <a href="https://www.ajedrezpolgar.com/nacional/">🌐 Rating Nacional</a>
-</div>
 
 <!-- NAV -->
 <nav>
@@ -252,6 +246,15 @@
       <li><a href="#noticias">Noticias</a></li>
       <li><a href="https://www.ajedrezpolgar.com/inscripciones/" class="nav-cta">Inscribirse</a></li>
     </ul>
+  </div>
+  <!-- Aviso de sitio en construcción: dentro de la barra fija, debajo del menú -->
+  <div id="banner-construccion">
+    <span>🚧 Sitio en construcción — el contenido mostrado es de ejemplo y no refleja datos reales del club.</span>
+    <span class="b-sitios">&nbsp;|&nbsp; Visita nuestros sitios activos:
+    <a href="https://www.ajedrezpolgar.com/inscripciones/">📝 Inscripciones</a>
+    <a href="https://www.ajedrezpolgar.com/liga/">🏆 Liga MTL</a>
+    <a href="https://www.ajedrezpolgar.com/rating/">📊 Rating GTO</a>
+    <a href="https://www.ajedrezpolgar.com/nacional/">🌐 Rating Nacional</a></span>
   </div>
 </nav>
 
@@ -429,5 +432,10 @@
   <div class="footer-bottom">© 2026 Club de Ajedrez Polgar · León, Guanajuato · Todos los derechos reservados</div>
 </footer>
 
+<script>
+  // Ajusta el espacio superior a la altura real de la barra fija (incluye el aviso amarillo).
+  const ajustarNav = () => { document.body.style.paddingTop = document.querySelector('nav').offsetHeight + 'px'; };
+  ajustarNav(); addEventListener('resize', ajustarNav);
+</script>
 </body>
 </html>
