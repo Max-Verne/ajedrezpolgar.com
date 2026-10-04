@@ -211,6 +211,7 @@ hr.line{border:none;border-top:1px solid var(--line);margin:24px 0;}
 .ctx-doc blockquote p{margin:4px 0;}
 .ctx-doc code{font-family:'IBM Plex Mono',monospace;font-size:12.5px;background:var(--bg-elevated);padding:1px 5px;border-radius:2px;}
 .ctx-doc p{margin:6px 0;}
+.export-ta{width:100%;background:var(--bg-card);color:var(--cream);border:1px solid var(--line);border-radius:var(--radius);padding:8px 10px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;resize:vertical;}
 </style>
 </head>
 <body>
@@ -392,7 +393,7 @@ hr.line{border:none;border-top:1px solid var(--line);margin:24px 0;}
 
       <div class="section">
         <div class="eyebrow" style="margin-bottom:10px;">1 · Cargar listado mensual FENAMAC</div>
-        <p class="small">Formato esperado (columnas): ID_No, Fide_No, Name, Sex, Fed, ClubName, Birthday, Rtg_Nat, Rtg_Int, Title, K, Games — igual al archivo tal como lo publica FENAMAC, sin procesar.</p>
+        <p class="small">Formato esperado (columnas): ID_No, Fide_No, Name, Sex, Fed, ClubName, Birthday, Rtg_Nat, Rtg_Int, Title, K, Games — igual al archivo tal como lo publica FENAMAC, sin procesar. Puedes subir directamente el <strong>archivo nacional completo</strong>: el panel toma solo los jugadores con ClubName = Guanajuato y descarta el resto.</p>
         <div style="display:flex;gap:16px;flex-wrap:wrap;">
           <div class="field-group" style="max-width:220px;">
             <label class="field">Ritmo de juego</label>
@@ -465,6 +466,29 @@ hr.line{border:none;border-top:1px solid var(--line);margin:24px 0;}
           <span class="small" id="genStatus"></span>
         </div>
         <p class="small" style="margin-top:8px;">Las imágenes se generan con el mismo formato de redes (encabezado, semáforo de variación, fuerzas/categorías y Sale/Entra), tomando el ritmo y mes seleccionados arriba.</p>
+      </div>
+
+
+      <div class="section" id="exportSection">
+        <div class="eyebrow" style="margin-bottom:10px;">4 · Descargar el sitio actualizado (HTML)</div>
+        <p class="small">Genera una copia completa de este sitio con todos los datos actuales ya incluidos, lista para subir a GitHub. <strong>Hazlo en la misma sesión en que cargaste el mes:</strong> en el sitio publicado los datos cargados en el panel no se conservan al recargar la página. El historial de versiones del documento de contexto se actualiza solo con lo que cargaste.</p>
+        <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-top:10px;">
+          <div class="field-group" style="max-width:160px;margin-bottom:0;">
+            <label class="field">Número de versión</label>
+            <input type="number" id="exportVersion" min="1" style="width:110px;">
+          </div>
+          <button id="exportHtmlBtn">Descargar HTML actualizado</button>
+          <button class="secondary" id="exportHtmlPick" style="display:none;">Elegir el archivo HTML actual…</button>
+          <input type="file" id="exportHtmlFile" accept=".html,.htm" style="display:none;">
+        </div>
+        <div id="exportSessionInfo" class="small" style="margin-top:10px;"></div>
+        <div id="exportStatus" class="small" style="margin-top:6px;"></div>
+        <div id="exportCommitBox" style="display:none;margin-top:14px;">
+          <label class="field">Mensaje de commit (GitHub Desktop · Summary)</label>
+          <textarea id="exportCommitMsg" readonly rows="1" class="export-ta"></textarea>
+          <label class="field" style="margin-top:10px;">Descripción (GitHub Desktop · Description)</label>
+          <textarea id="exportCommitDesc" readonly rows="6" class="export-ta"></textarea>
+        </div>
       </div>
 
       <div class="section">
@@ -567,7 +591,7 @@ hr.line{border:none;border-top:1px solid var(--line);margin:24px 0;}
           </div>
           <div class="card">
             <label class="field">Número de versión</label>
-            <input type="text" id="siteVersionInput" style="width:120px;" placeholder="16">
+            <input type="text" id="siteVersionInput" style="width:120px;" placeholder="17">
             <p class="small" style="margin-top:8px;">Se agrega como <code>_v#</code> al final del nombre de los archivos que descargues (respaldo e imágenes). Cámbialo antes de descargar para llevar el control de versiones.</p>
           </div>
         </div>
@@ -689,13 +713,25 @@ function toCsv(rows, headers){
    ========================================================= */
 let DB = null;
 const STORAGE_KEY = 'polgar-rating-db-v2';
+const SESSION_LOADS = []; // cargas guardadas en esta sesión (se usan al exportar el HTML)
 
 function emptyRitmoMap(fn){ const o={}; RITMOS.forEach(r=>o[r]=fn?fn():[]); return o; }
 
+/* Siguiente id interno de jugador. Ignora claves no numéricas heredadas (ej. "n55592"):
+   antes, Math.max con esas claves daba NaN y todos los jugadores nuevos de una carga
+   quedaban bajo el mismo id "NaN", pisándose entre sí. */
+function computeNextPid(players, index){
+  const nums = Object.keys(players||{}).concat(Object.keys(index||{})).map(Number).filter(Number.isFinite);
+  return Math.max(0, ...nums) + 1;
+}
 async function loadDb(){
   try{
     const res = await window.storage.get(STORAGE_KEY, true);
-    if(res && res.value){ DB = JSON.parse(res.value); return; }
+    if(res && res.value){
+      DB = JSON.parse(res.value);
+      if(!Number.isFinite(DB.nextPid) || DB.players['NaN']) DB.nextPid = computeNextPid(DB.players, DB.index);
+      return;
+    }
   }catch(e){ /* not found or storage unavailable */ }
   // init from seed (seed carries whichever ritmos have been loaded so far)
   const seedMonths = SEED.months || {};
@@ -708,7 +744,7 @@ async function loadDb(){
       blitz: (seedMonths.blitz || []).slice(),
     },
     rankings: { estandar: {}, rapido: {}, blitz: {} },
-    nextPid: Math.max(0, ...Object.keys(SEED.active).map(Number), ...Object.keys(SEED.index).map(Number)) + 1,
+    nextPid: computeNextPid(SEED.active, SEED.index),
     settings: { roundThreshold: 3 }
   };
   RITMOS.forEach(ritmo => {
@@ -867,6 +903,19 @@ function parseWorkbookRows(wb){
   return out;
 }
 
+/* ---- filtro de entidad: solo Guanajuato (columna ClubName de FENAMAC) ---- */
+function isGuanajuatoClub(v){
+  const s = normName(String(v==null?'':v)).replace(/[.]/g,' ').replace(/\s+/g,' ').trim();
+  return s==='GUANAJUATO' || s==='GTO' || s==='EDO GUANAJUATO' || s==='ESTADO DE GUANAJUATO';
+}
+function filterGuanajuato(rows){
+  const withClub = rows.filter(r => r.club!=null && String(r.club).trim()!=='');
+  if(!withClub.length) return { rows, total: rows.length, kept: rows.length, mode: 'sin-columna' };
+  const kept = rows.filter(r => isGuanajuatoClub(r.club));
+  const mode = kept.length===rows.length ? 'ya-filtrado' : 'nacional';
+  return { rows: kept, total: rows.length, kept: kept.length, mode };
+}
+
 /* ---- build a review plan (non-destructive) ---- */
 let pendingUpload = null; // { ritmo, monthKey, rows, plan }
 
@@ -925,6 +974,8 @@ function commitPlan(plan){
       const linked = { rowIdx: np.rowIdx, row: np.row, pid: np.assignPid };
       applyRowToPlayer(linked, ritmo, monthKey);
     } else {
+      if(!Number.isFinite(DB.nextPid)) DB.nextPid = computeNextPid(DB.players, DB.index);
+      while(DB.players[String(DB.nextPid)] || DB.index[String(DB.nextPid)]) DB.nextPid++;
       const pid = String(DB.nextPid++);
       DB.players[pid] = {
         name: np.row.name, bday: np.row.bday, sex: np.row.sex, idNo: np.row.idNo, fideNo: np.row.fideNo,
@@ -1220,13 +1271,27 @@ function handleFile(file){
     try{
       const data = new Uint8Array(e.target.result);
       const wb = XLSX.read(data, {type:'array', cellDates:true});
-      const rows = parseWorkbookRows(wb);
-      if(!rows.length){ document.getElementById('uploadStatus').textContent = 'No se encontraron filas válidas en el archivo.'; return; }
+      const allRows = parseWorkbookRows(wb);
+      if(!allRows.length){ document.getElementById('uploadStatus').textContent = 'No se encontraron filas válidas en el archivo.'; return; }
+      const filt = filterGuanajuato(allRows);
+      if(!filt.kept){
+        document.getElementById('uploadStatus').textContent = `El archivo trae ${allRows.length.toLocaleString('es-MX')} filas, pero ninguna con ClubName = Guanajuato. No se cargó nada: revisa que sea el listado correcto.`;
+        return;
+      }
+      const rows = filt.rows;
       const ritmo = document.getElementById('uploadRitmo').value;
       const monthKey = document.getElementById('uploadMonth').value;
+      if(DB.months[ritmo].includes(monthKey)){
+        showToast('Ojo: ' + monthLabel(monthKey) + ' ya estaba cargado en ' + RITMO_LABEL[ritmo] + '; si guardas, se reemplazan esos datos.');
+      }
       const plan = buildPlan(rows, ritmo, monthKey);
-      pendingUpload = { ritmo, monthKey, rows, plan };
-      document.getElementById('uploadStatus').textContent = `${rows.length} filas leídas correctamente para ${RITMO_LABEL[ritmo]} · ${monthLabel(monthKey)}.`;
+      pendingUpload = { ritmo, monthKey, rows, plan, fileName: file.name, totalRows: filt.total, mode: filt.mode };
+      const fmt = n => n.toLocaleString('es-MX');
+      let msg;
+      if(filt.mode==='nacional') msg = `Archivo nacional detectado: ${fmt(filt.total)} filas. Se tomaron solo las ${fmt(filt.kept)} de Guanajuato (se descartaron ${fmt(filt.total-filt.kept)} de otros estados o sin estado).`;
+      else if(filt.mode==='ya-filtrado') msg = `Archivo ya filtrado a Guanajuato: ${fmt(filt.kept)} filas.`;
+      else msg = `El archivo no trae la columna ClubName con datos: se tomaron las ${fmt(filt.kept)} filas tal cual, asumiendo que ya es solo de Guanajuato. Revisa que el número de jugadores nuevos sea razonable antes de guardar.`;
+      document.getElementById('uploadStatus').textContent = `${msg} Listo para revisar: ${RITMO_LABEL[ritmo]} · ${monthLabel(monthKey)}.`;
       renderReview(plan);
     }catch(err){
       console.error(err);
@@ -1329,11 +1394,17 @@ document.getElementById('cancelUpload').addEventListener('click', ()=>{
 });
 document.getElementById('commitUpload').addEventListener('click', async ()=>{
   if(!pendingUpload) return;
+  const _pl = pendingUpload.plan;
+  const _nuevos = _pl.newPlayers.filter(n=>!n.assignPid).length;
   commitPlan(pendingUpload.plan);
+  SESSION_LOADS.push({ ritmo: pendingUpload.ritmo, monthKey: pendingUpload.monthKey, fileName: pendingUpload.fileName,
+    totalRows: pendingUpload.totalRows, kept: pendingUpload.rows.length, matched: _pl.matched.length,
+    nuevos: _nuevos, vinculados: _pl.newPlayers.length - _nuevos, migraciones: _pl.migrations.filter(m=>m.isMigration!==false).length });
+  if(typeof refreshExportBox==='function') refreshExportBox();
   await saveDb();
   pendingUpload = null;
   document.getElementById('reviewSection').style.display='none';
-  document.getElementById('uploadStatus').textContent='Mes guardado correctamente.';
+  document.getElementById('uploadStatus').textContent='Mes guardado en esta sesión. Para publicarlo, ve al paso 4 y descarga el HTML actualizado (en el sitio publicado los datos no se conservan al recargar la página).';
   fileInput.value='';
   populateMonthSelects();
   renderPanel();
@@ -1572,7 +1643,7 @@ init();
 
 
 /* ===== Generación de imágenes PNG de ranking (Top 50 / Top 25 Juvenil) ===== */
-const SITE_VERSION = 16;
+const SITE_VERSION = 17;
 function _siteVer(){
   const el = document.getElementById('siteVersionInput');
   let v = (el && el.value!=null && el.value.trim()!=='') ? el.value.trim()
@@ -1805,18 +1876,18 @@ document.getElementById('dlImg25').addEventListener('click', ()=>_dlRankImg('sub
 
 ## Qué es este proyecto
 
-Sitio de seguimiento del rating FENAMAC de los jugadores de **Guanajuato**, publicado por el Club de Ajedrez Polgar (León, Gto.) en `https://www.ajedrezpolgar.com/rating/`. Vista pública: Inicio (top 5 Libre y Sub-18 del último mes), Rankings mensuales por ritmo, ficha de Jugador con historial. Vista privada (Panel de trabajo, clave `polgar`): carga mensual de listados FENAMAC, revisión antes de guardar, generación de rankings e imágenes para redes, base de jugadores, categorías CONADE, debuts FIDE, respaldo JSON y este documento.
+Sitio de seguimiento del rating FENAMAC de los jugadores de **Guanajuato**, publicado por el Club de Ajedrez Polgar (León, Gto.) en `https://www.ajedrezpolgar.com/rating/`. Vista pública: Inicio (top 5 Libre y Sub-18 del último mes), Rankings mensuales por ritmo, ficha de Jugador con historial. Vista privada (Panel de trabajo, clave `polgar`): carga mensual de listados FENAMAC (acepta el archivo nacional completo y filtra Guanajuato), revisión antes de guardar, descarga del HTML actualizado para publicar, generación de rankings e imágenes para redes, base de jugadores, categorías CONADE, debuts FIDE, respaldo JSON y este documento.
 
 Fronteras: es uno de los sitios hermanos del repositorio `ajedrezpolgar.com` (GitHub @Max-Verne) junto con Portada, Inscripciones, Liga MTL y **Rating Nacional** (`/nacional/`). Rating Nacional tiene su **propia numeración y su propio documento de contexto**; este proyecto nunca hereda ni continúa su numeración.
 
 ## Estado actual
 
-* **Versión vigente:** v16
-* **Archivo entregado:** `RatingGTO_v16.html` (Pedro lo renombra a `index.html` en la carpeta `/rating/` antes de subirlo).
+* **Versión vigente:** v17
+* **Archivo entregado:** `RatingGTO_v17.html` (Pedro lo renombra a `index.html` en la carpeta `/rating/` antes de subirlo).
 * **Dónde vive este documento:** `[x]` Fusionado en el artefacto — sección "Control de versiones y contexto del proyecto", al final del Panel de trabajo (detrás de la clave), con botón para descargarlo como `.md`. `[ ]` `.md` aparte.
 * **Modelo de IA utilizado:** Claude (Cowork), modelo configurado `claude-opus-5-5`.
 * **Traspaso a nuevo chat:** no hace falta subir nada si la versión ya está publicada — la IA la baja con su terminal: `curl -o index.html https://raw.githubusercontent.com/Max-Verne/ajedrezpolgar.com/main/rating/index.html` (usar raw.githubusercontent.com, no la URL de GitHub Pages). Si aún no está publicada, subir `RatingGTO_v#.html` y pedir: *"Continúa con Rating GTO siguiendo estas convenciones"*. (Ruta y rama confirmadas en v16: devolvía la v14 publicada.)
-* **Datos cargados (al cierre de v16):** Estándar con 51 meses (2017-10 … 2026-10; FENAMAC **no emitió lista en 2026-09**); Rápido con 27 meses y Blitz con 18 meses (carga histórica parcial, último Rápido 2026-05, último Blitz 2026-01). 3,554 jugadores con historial completo, 0 en índice resumido; 215 activos en Estándar a 2026-10.
+* **Datos cargados (al cierre de v17):** Estándar con 51 meses (2017-10 … 2026-10; FENAMAC **no emitió lista en 2026-09**); Rápido con 27 meses y Blitz con 18 meses (carga histórica parcial, último Rápido 2026-05, último Blitz 2026-01). 3,554 jugadores con historial completo, 0 en índice resumido; 215 activos en Estándar a 2026-10.
 * **Tamaño:** ~4.7 MB (🟢 muy por debajo de los umbrales de GitHub).
 
 ## Contrato del Artefacto (límites normativos)
@@ -1842,20 +1913,22 @@ Fronteras: es uno de los sitios hermanos del repositorio `ajedrezpolgar.com` (Gi
 
 ## Arquitectura / Convenciones (normativo)
 
-* **Carga mensual (panel o horneado por la IA):** se toman solo filas con `ClubName` = Guanajuato. Emparejamiento en este orden: Fide_No → ID_No → nombre normalizado + fecha de nacimiento. Sin coincidencia = jugador nuevo. Al aplicar una fila se actualizan idNo, fideNo, título, nombre y fecha de nacimiento del registro, y se escribe `hist[ritmo][mes]`.
+* **Flujo mensual vigente (desde v17):** (1) en el sitio publicado, entrar al Panel; (2) paso 1: elegir ritmo y mes y subir el archivo de FENAMAC (nacional completo o ya filtrado); (3) paso 2: revisar y guardar; (4) paso 4: "Descargar HTML actualizado" con el número de versión siguiente, en la misma sesión; (5) renombrar a `index.html`, subir a `/rating/` con el commit que muestra el panel. Alternativa: traer el archivo nacional a Claude para que hornee el mes (como en v15).
+* **Filtro de entidad en el panel:** al subir un archivo se conservan solo las filas cuya `ClubName` normalizada sea GUANAJUATO / GTO / EDO GUANAJUATO / ESTADO DE GUANAJUATO; se descartan las demás y las que vienen sin estado. Si el archivo no trae `ClubName` con datos, se toman todas las filas y se avisa (se asume ya filtrado). Si hay `ClubName` pero ninguna de Guanajuato, no se carga nada.
+* **Carga (panel y horneado por la IA usan la misma lógica):** sobre las filas de Guanajuato, emparejamiento en este orden: Fide_No → ID_No → nombre normalizado + fecha de nacimiento. Sin coincidencia = jugador nuevo. Al aplicar una fila se actualizan idNo, fideNo, título, nombre y fecha de nacimiento del registro, y se escribe `hist[ritmo][mes]`.
 * **Cuando la IA hornea un mes directamente en `SEED`**, debe replicar exactamente esa lógica del panel y comprobarlo cargando el mismo archivo por el panel de la versión anterior en un navegador sin interfaz y comparando el resultado jugador por jugador.
 * **Actividad (regla de cercanía):** un cambio de rating solo cuenta como actividad si el dato previo está a ≤2 meses; partidas > 0 siempre cuentan. Así, un hueco de un mes sin lista (ej. 2026-09) no rompe la actividad.
 * **Ajustes sistémicos:** en 2024-03 se descuenta el ajuste FIDE/FENAMAC (2000−Elo)×0.40 para Elo < 2000 antes de evaluar actividad.
 * **Rankings:** se calculan al abrir el sitio a partir de `SEED` (no se guardan horneados): Libre = top 50 activos por rating nacional; Sub-18 = top 25 activos nacidos en o después de (año del mes − 18). La comparación de mes contra mes (flechas, "Sale/Entra" en imágenes) usa el **mes cargado anterior**, no el mes calendario anterior.
-* **Persistencia:** `window.storage` (API del preview de Claude.ai, clave `polgar-rating-db-v2`). En GitHub Pages no existe, así que el sitio en vivo siempre arranca desde `SEED`. No usa `localStorage`; por eso no aplica el patrón de reconciliación aditiva del método mientras siga así. Si algún día se agrega `localStorage`, ese patrón es obligatorio desde el diseño.
+* **Persistencia:** `window.storage` (API del preview de Claude.ai, clave `polgar-rating-db-v2`). En GitHub Pages no existe, así que el sitio en vivo siempre arranca desde `SEED` y **lo cargado en el panel se pierde al recargar**: la única forma de publicar una carga es el paso 4 (exportar HTML) en la misma sesión. No usa `localStorage`; por eso no aplica el patrón de reconciliación aditiva del método mientras siga así. Si algún día se agrega `localStorage`, ese patrón es obligatorio desde el diseño.
+* **Exportar HTML (paso 4 del panel):** obtiene el código del propio sitio con `fetch(location.href)` (funciona en GitHub Pages); si no puede (archivo abierto localmente o vista previa), pide elegir el HTML actual. Reemplaza la línea `const SEED = …` por `{active: DB.players, index: DB.index, months: DB.months}` (escapando `</`), cambia `SITE_VERSION` y el placeholder de versión, y en este documento actualiza "Versión vigente", "Archivo entregado", "Datos cargados" y agrega al Historial una entrada con las cargas guardadas en la sesión (`SESSION_LOADS`), marcada "Pendiente de prueba". Exige versión mayor a la actual y bloquea si hay una carga en revisión sin guardar. Muestra commit message y descripción listos para GitHub Desktop. La línea `const SEED = ` debe seguir empezando en la columna 0 y en una sola línea, y este documento debe seguir dentro de `<script type="text/plain" id="ctxDocSrc">`, porque el exportador depende de eso.
+* **Ids internos de jugador:** `DB.nextPid` se calcula ignorando claves no numéricas heredadas (211 jugadores con ids tipo `n55592`); antes de v17 daba NaN.
 * **Versión del sitio:** constante `SITE_VERSION` (se agrega como `_v#` a respaldos e imágenes descargadas). Debe coincidir con la versión vigente de este documento.
 * **Entrega:** cada versión se entrega con commit message `vN: resumen` (≤50 caracteres) y descripción para GitHub Desktop en párrafos de una sola línea, dirigida a Pedro como administrador.
 * **Identidad visual:** paleta negro/dorado heredada de versiones anteriores (fuentes Fraunces / IBM Plex).
 
 ## Tareas Pendientes
 
-- [ ] Filtro de Guanajuato automático al subir al panel un archivo **nacional** (hoy el panel toma todas las filas del archivo; para cargar desde el panel hay que subir un archivo ya filtrado a GTO).
-- [ ] Botón en el panel para exportar el HTML con los datos actualizados horneados en `SEED`.
 - [ ] Actualizar `CONADE_SNAPSHOT` (Región III y top nacional), que sigue en la instantánea de 2026-07 — se puede regenerar desde el archivo nacional del mes más reciente.
 - [ ] Revisar si la paleta negro/dorado debe pasar a la paleta institucional del club (navy/azul); el negro/dorado está reservado para Liga MTL. Decisión de Pedro.
 
@@ -1867,6 +1940,13 @@ Fronteras: es uno de los sitios hermanos del repositorio `ajedrezpolgar.com` (Gi
 - [ ] Un registro del archivo FENAMAC 2026-10 trae la fecha de nacimiento como texto "01/01/1963" (formato no reconocido); se conserva la fecha ya registrada en la base.
 
 ## Historial de cambios (histórico)
+
+**v17 — Filtro de Guanajuato y exportación de HTML en el panel; corrección del documento**
+* Panel paso 1: acepta el archivo nacional de FENAMAC y conserva solo las filas con `ClubName` de Guanajuato, informando cuántas se tomaron y cuántas se descartaron; aviso si el mes ya estaba cargado. Antes, el panel tomaba todas las filas del archivo (un archivo nacional habría metido ~74,000 jugadores de otros estados como "nuevos").
+* Panel paso 4 nuevo: "Descargar HTML actualizado" — genera `RatingGTO_v#.html` con los datos actuales en `SEED`, actualiza este documento (versión, datos cargados, entrada de Historial automática) y muestra el commit para GitHub Desktop.
+* Corrección de bug latente: `nextPid` era NaN por los ids no numéricos heredados (`n…`), así que todos los jugadores nuevos de una carga por panel habrían quedado bajo el mismo id "NaN", pisándose entre sí. No llegó a afectar datos publicados (las cargas recientes se hornearon fuera del panel o no tuvieron nuevos).
+* Corrección del documento: v16 decía en Arquitectura que el panel filtraba Guanajuato, lo cual no era cierto hasta esta versión. Se agregó el flujo mensual vigente. Sin cambios en datos ni en la vista pública.
+* *Verificación: Pendiente de prueba (Pedro debe hacer una carga real en el sitio publicado y descargar el HTML).*
 
 **v16 — Arranque formal del control de versiones fusionado**
 * Primera versión con el método de Control de Contexto y Versionado aplicado a este artefacto: se agregó este documento (Contrato, Arquitectura, Pendientes, Bugs, Historial) dentro del Panel de trabajo, detrás de la clave, con botón "Descargar contexto (.md)". Desde ahora no se lleva un archivo de control de cambios aparte.
@@ -1929,6 +2009,149 @@ Fronteras: es uno de los sitios hermanos del repositorio `ajedrezpolgar.com` (Gi
   document.getElementById('ctxDownload').addEventListener('click', () => {
     downloadFile('CONTEXTO_RatingGTO_v' + SITE_VERSION + '.md', raw, 'text/markdown;charset=utf-8');
   });
+})();
+</script>
+
+<script>
+/* =========================================================
+   PANEL: exportar HTML con los datos actuales horneados en SEED
+   ========================================================= */
+(function(){
+  const $ = id => document.getElementById(id);
+  const MESES = {'01':'enero','02':'febrero','03':'marzo','04':'abril','05':'mayo','06':'junio','07':'julio','08':'agosto','09':'septiembre','10':'octubre','11':'noviembre','12':'diciembre'};
+  const mesTxt = mk => MESES[mk.slice(5,7)] + ' de ' + mk.slice(0,4);
+  const fmt = n => Number(n).toLocaleString('es-MX');
+
+  window.refreshExportBox = function(){
+    const v = $('exportVersion'); if(v && !v.value) v.value = SITE_VERSION + 1;
+    const info = $('exportSessionInfo'); if(!info) return;
+    info.innerHTML = SESSION_LOADS.length
+      ? 'Cargas guardadas en esta sesión: ' + SESSION_LOADS.map(l => `<strong>${RITMO_LABEL[l.ritmo]} ${monthLabel(l.monthKey)}</strong> (${fmt(l.kept)} jugadores de Guanajuato)`).join(' · ')
+      : 'Todavía no has guardado ningún mes en esta sesión. Si exportas ahora, el archivo sale con los mismos datos que ya tiene el sitio.';
+  };
+
+  function dataSummaryLine(ver){
+    const parts = RITMOS.map(r => {
+      const ms = (DB.months[r]||[]).slice().sort();
+      if(!ms.length) return `${RITMO_LABEL[r]} sin meses`;
+      return `${RITMO_LABEL[r]} con ${ms.length} meses (${ms[0]} … ${ms[ms.length-1]})`;
+    });
+    const lm = latestMonth('estandar');
+    const act = lm ? Object.keys(DB.players).filter(pid=>isActiveAt(pid,'estandar',lm)).length : 0;
+    return `* **Datos cargados (al cierre de v${ver}):** ${parts.join('; ')}. ${fmt(Object.keys(DB.players).length)} jugadores con historial completo, ${fmt(Object.keys(DB.index).length)} en índice resumido; ${fmt(act)} activos en Estándar a ${lm||'—'}. Meses sin lista de FENAMAC conocidos: 2026-09.`;
+  }
+
+  function historyEntry(ver){
+    const loads = SESSION_LOADS;
+    const title = loads.length
+      ? 'Carga mensual desde el panel: ' + loads.map(l => `${RITMO_LABEL[l.ritmo]} ${l.monthKey}`).join(', ')
+      : 'Exportación desde el panel sin cargas nuevas';
+    const lines = [`**v${ver} — ${title}**`];
+    if(loads.length){
+      loads.forEach(l => {
+        const origen = l.totalRows > l.kept ? `de ${fmt(l.totalRows)} filas del archivo \`${l.fileName||'—'}\`` : `archivo \`${l.fileName||'—'}\``;
+        lines.push(`* ${RITMO_LABEL[l.ritmo]} ${l.monthKey}: ${fmt(l.kept)} jugadores de Guanajuato (${origen}); ${fmt(l.matched)} coincidencias, ${fmt(l.nuevos)} nuevos, ${fmt(l.vinculados)} vinculados a mano, ${fmt(l.migraciones)} migraciones de ID confirmadas.`);
+      });
+    } else {
+      lines.push('* Se descargó el HTML desde el panel sin guardar meses nuevos en la sesión; los datos son los mismos de la versión anterior.');
+    }
+    lines.push('* Generado automáticamente por el botón "Descargar HTML actualizado" del panel. Sin cambios en diseño ni funciones.');
+    lines.push('* *Verificación: Pendiente de prueba.*');
+    return lines.join('\n');
+  }
+
+  function updateCtxDoc(html, ver){
+    const open = '<script type="text/plain" id="ctxDocSrc">';
+    const a = html.indexOf(open); if(a<0) return html;
+    const b = html.indexOf('</' + 'script>', a); if(b<0) return html;
+    let md = html.slice(a + open.length, b);
+    md = md.replace(/(\* \*\*Versión vigente:\*\*) v\d+/, `$1 v${ver}`)
+           .replace(/(\* \*\*Archivo entregado:\*\* `RatingGTO_v)\d+(\.html`)/, `$1${ver}$2`)
+           .replace(/^\* \*\*Datos cargados[^\n]*$/m, dataSummaryLine(ver).replace(/\$/g,'$$$$'));
+    md = md.replace('## Historial de cambios (histórico)\n\n', () => '## Historial de cambios (histórico)\n\n' + historyEntry(ver) + '\n\n');
+    return html.slice(0, a + open.length) + md + html.slice(b);
+  }
+
+  function buildExport(src, ver){
+    const lines = src.split('\n');
+    const i = lines.findIndex(l => l.startsWith('const SEED = '));
+    if(i < 0) throw new Error('No se encontró la sección de datos (SEED) en el archivo.');
+    const seed = { active: DB.players, index: DB.index, months: DB.months };
+    lines[i] = 'const SEED = ' + JSON.stringify(seed).replace(/<\//g, '<\\/') + ';';
+    let out = lines.join('\n');
+    out = out.replace(/^const SITE_VERSION = \d+;/m, 'const SITE_VERSION = ' + ver + ';')
+             .replace(/(id="siteVersionInput"[^>]*placeholder=")\d+(")/, '$1' + ver + '$2');
+    return updateCtxDoc(out, ver);
+  }
+
+  function commitTexts(ver){
+    const loads = SESSION_LOADS;
+    let msg, desc;
+    if(loads.length){
+      const l = loads[loads.length-1];
+      msg = `v${ver}: Rating ${RITMO_LABEL[l.ritmo]} ${mesTxt(l.monthKey)}`;
+      if(loads.length > 1) msg = `v${ver}: Rating ` + loads.map(x => x.monthKey).join(', ');
+      if(msg.length > 50) msg = `v${ver}: Carga mensual de rating`;
+      const p1 = 'Se cargó en el sitio ' + loads.map(x => `la lista de rating ${RITMO_LABEL[x.ritmo]} de ${mesTxt(x.monthKey)} publicada por FENAMAC, con ${fmt(x.kept)} jugadores registrados en Guanajuato`).join('; también ') + '.';
+      const p2 = 'Los rankings, las variaciones y las imágenes del mes ahora toman como referencia el mes más reciente cargado. El historial de versiones del documento de contexto se actualizó con el detalle de esta carga.';
+      desc = [p1, p2, 'Este cambio solo actualiza datos; el diseño y las funciones del sitio son los mismos.'].join('\n\n');
+    } else {
+      msg = `v${ver}: Exportación sin cambios de datos`;
+      desc = 'Se generó una nueva copia del sitio desde el panel, sin cargar meses nuevos.\n\nEste cambio no tocó datos.';
+    }
+    return { msg, desc };
+  }
+
+  function finish(src){
+    const ver = parseInt($('exportVersion').value, 10);
+    if(!Number.isFinite(ver) || ver < 1){ $('exportStatus').textContent = 'Escribe un número de versión válido.'; return; }
+    if(ver <= SITE_VERSION){ $('exportStatus').textContent = `La versión debe ser mayor a la actual (v${SITE_VERSION}). El método nunca reutiliza un número.`; return; }
+    try{
+      const out = buildExport(src, ver);
+      const name = `RatingGTO_v${ver}.html`;
+      downloadFile(name, out, 'text/html;charset=utf-8');
+      const t = commitTexts(ver);
+      $('exportCommitMsg').value = t.msg;
+      $('exportCommitDesc').value = t.desc;
+      $('exportCommitBox').style.display = 'block';
+      $('exportStatus').innerHTML = `Listo: se descargó <strong>${name}</strong> (${(out.length/1048576).toFixed(1)} MB). Renómbralo a <code>index.html</code>, súbelo a la carpeta <code>/rating/</code> y usa abajo el texto del commit.`;
+      showToast('HTML actualizado descargado');
+    }catch(err){
+      console.error(err);
+      $('exportStatus').textContent = 'No se pudo generar el HTML: ' + err.message;
+    }
+  }
+
+  async function ownSource(){
+    try{
+      const r = await fetch(location.href.split('#')[0], { cache: 'no-store' });
+      if(r.ok){ const t = await r.text(); if(t.indexOf('\nconst SEED = ') > -1) return t; }
+    }catch(e){ /* file:// o vista previa: no se puede leer el propio archivo */ }
+    return null;
+  }
+
+  $('exportHtmlBtn').addEventListener('click', async () => {
+    if(pendingUpload){ $('exportStatus').textContent = 'Tienes una carga en revisión sin guardar. Guárdala o cancélala antes de descargar el HTML.'; return; }
+    $('exportStatus').textContent = 'Preparando el archivo…';
+    const src = await ownSource();
+    if(src){ finish(src); return; }
+    $('exportHtmlPick').style.display = 'inline-block';
+    $('exportStatus').textContent = 'Desde aquí el navegador no puede leer el archivo del sitio. Elige el archivo HTML actual (el mismo que tienes abierto) para generar la copia actualizada.';
+  });
+  $('exportHtmlPick').addEventListener('click', () => $('exportHtmlFile').click());
+  $('exportHtmlFile').addEventListener('change', () => {
+    const f = $('exportHtmlFile').files[0]; if(!f) return;
+    const rd = new FileReader();
+    rd.onload = e => {
+      const t = String(e.target.result || '');
+      if(t.indexOf('\nconst SEED = ') < 0){ $('exportStatus').textContent = 'Ese archivo no parece ser el sitio de Rating GTO.'; return; }
+      finish(t);
+    };
+    rd.readAsText(f, 'utf-8');
+    $('exportHtmlFile').value = '';
+  });
+  ['exportCommitMsg','exportCommitDesc'].forEach(id => $(id).addEventListener('focus', e => e.target.select()));
+  refreshExportBox();
 })();
 </script>
 </body>
