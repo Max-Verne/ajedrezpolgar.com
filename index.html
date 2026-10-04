@@ -4,6 +4,85 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Club de Ajedrez Polgar — León, Guanajuato</title>
+<meta name="description" content="Club de Ajedrez Polgar, León, Guanajuato. Desde el 28 de octubre de 2017. Organizador de la Liga Escolar Marcha Triunfal Leonesa (MTL), Rating Guanajuato y Rating Nacional." />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>♛</text></svg>">
+<!--
+=====================================================================
+CONTEXTO Y CONTROL DE CAMBIOS — PORTADA (www.ajedrezpolgar.com/)
+Método: Control de Contexto y Versionado (fusionado dentro del artefacto)
+=====================================================================
+
+QUÉ ES ESTE PROYECTO
+Página principal del Club de Ajedrez Polgar. Presenta al club y enlaza a
+los sitios hermanos: /inscripciones/, /liga/, /rating/, /nacional/,
+/aviso-de-privacidad/. No recaba datos personales por sí misma.
+
+ESTADO ACTUAL
+* Versión vigente: v4
+* Archivo entregado: Portada_v4.html (se renombra a index.html al subir)
+* Este documento: fusionado en el artefacto (este comentario HTML).
+* Traspaso a nuevo chat: bajar con
+  curl -o index.html https://raw.githubusercontent.com/Max-Verne/ajedrezpolgar.com/main/index.html
+  y pedir "Continúa con la Portada siguiendo estas convenciones".
+
+CONTRATO DEL ARTEFACTO
+* DEBE: ser un solo HTML autocontenido, responsivo, paleta Polgar
+  (navy #0D2B4E / azul #1E6FBF / azul claro #4A90D9 / acentos rojos).
+* DEBE: mostrar solo datos verificables. Nada de cifras, nombres, fechas
+  o precios de ejemplo.
+* DEBE: fecha de fundación 28-oct-2017; años de historia calculados solos.
+* DEBE: nombre "Club de Ajedrez Polgar" (no "Polgar Chess Club").
+* DEBE: enlazar el Aviso de Privacidad en el pie.
+* NO DEBE: publicar nombres, fotos ni ratings de alumnos menores en la
+  Portada (para jugadores se enlaza a Rating GTO).
+* NO DEBE: nombrar colegios o instituciones sin su autorización.
+* NO DEBE: anunciar eventos que el club no organiza, ni superlativos no
+  comprobables ("el centro del ajedrez en Guanajuato", "campeones").
+* NO DEBE: usar ® ni presentar al club como persona moral.
+
+ARQUITECTURA / CONVENCIONES
+* AJUSTES (inicio del <script>): EN_CONSTRUCCION, FUNDACION, contacto.
+* CALENDARIO: copia mínima (id, título, fecha) del catálogo EVENTOS de
+  /inscripciones/. La FUENTE DE VERDAD es /inscripciones/; sede, costo y
+  convocatoria NO se duplican aquí — se enlazan. Si cambia una fecha
+  allá, cambiarla aquí con los mismos id.
+* Evento "próximo" = primero con fecha >= hoy (hora de León). Pasados en
+  gris. ?hoy=AAAA-MM-DD simula fecha para revisar.
+
+TAREAS PENDIENTES
+- [ ] Confirmar teléfono/WhatsApp: v3 decía (477) 525-2657 y Liga MTL dice
+      477 525 2697. En v4 se usa 2697 (el de Liga) — CONFIRMAR.
+- [ ] Decidir si se quita el aviso "en construcción" el 28-oct-2017+9.
+- [ ] Tienda: integrar catálogo real o enlace cuando tenga URL pública.
+- [ ] Logos de patrocinadores (colores institucionales reales).
+- [ ] Fechas de noticias del ON CONADE 2026 y Día del Ajedrecista.
+- [ ] Instagram (si existe).
+- [ ] Menú en celular (hoy los enlaces de sección se ocultan; la barra de
+      sitios sí se ve).
+
+BUGS CONOCIDOS / DEUDA TÉCNICA
+- (ninguno registrado)
+
+HISTORIAL DE CAMBIOS
+v4 — Contenido real sustituye al de ejemplo
+* Fundación 28-oct-2017 (antes "2010"); años calculados automáticamente.
+* Nombre unificado "Club de Ajedrez Polgar".
+* Hero: cifras verificables (años, 3ª Liga MTL, 32 estados, +77 mil
+  jugadores en Rating Nacional) en vez de 120+/15/8/14 inventados.
+* Integrantes ficticios → "Equipo": ficha del presidente con
+  credenciales FENAMAC/FIDE + enlace a Rating GTO.
+* Eventos inventados → calendario real 3ª Liga MTL 2026-2027 (6 eventos +
+  Gala), con próximo resaltado y pasados en gris.
+* Tienda: sin precios ni botones falsos; pedidos por WhatsApp/correo.
+* Noticias inventadas → noticias reales del club y sus sitios.
+* Pie: Aviso de Privacidad, Facebook real, mailto/WhatsApp funcionales.
+* Aviso de construcción reescrito y controlable con AJUSTES.
+* Contexto y changelog fusionados en este comentario (antes no existían).
+* Verificación: Pendiente de prueba.
+v1–v3 — Previas al método (sin historial registrado). v3 = plantilla con
+  contenido de ejemplo y aviso de construcción.
+=====================================================================
+-->
 <style>
   :root {
     --azul-oscuro:  #0d2b4e;
@@ -20,82 +99,46 @@
   }
   * { margin:0; padding:0; box-sizing:border-box; }
   html { scroll-behavior:smooth; }
-  body { background:var(--blanco); color:var(--azul-oscuro); font-family:'Segoe UI',sans-serif; }
-  /* Compensar la barra fija (nav-top + nav-main + banner). El valor exacto lo ajusta
-     el script al final según la altura real (cambia en celular). */
-  body { padding-top: 130px; }
-
-  /* BANNER CONSTRUCCIÓN */
-  #banner-construccion {
-    width:100%;
-    background:#f5c518; color:#1a1a1a;
-    text-align:center; padding:0.45rem 1rem;
-    font-size:0.82rem; font-weight:600;
-    border-bottom:1px solid #d4a800;
-    display:flex; align-items:center; justify-content:center; gap:0.6rem;
-    flex-wrap:wrap;
-  }
+  body { background:var(--blanco); color:var(--azul-oscuro); font-family:'Segoe UI',system-ui,sans-serif; padding-top:130px; }
   section { scroll-margin-top:150px; }
-  #banner-construccion a {
-    color:#0d2b4e; font-weight:700; text-decoration:underline;
+
+  /* BANNER */
+  #banner-construccion {
+    width:100%; background:#f5c518; color:#1a1a1a;
+    text-align:center; padding:0.45rem 1rem; font-size:0.82rem; font-weight:600;
+    border-bottom:1px solid #d4a800;
+    display:flex; align-items:center; justify-content:center; gap:0.6rem; flex-wrap:wrap;
   }
-  #banner-construccion a:hover { color:#1e6fbf; }
+  #banner-construccion[hidden] { display:none; }
+  #banner-construccion a { color:#0d2b4e; font-weight:700; text-decoration:underline; }
 
   /* NAV */
-  nav {
-    position:fixed; top:0; width:100%; z-index:100;
-    background:rgba(13,43,78,0.97);
-    border-bottom:2px solid var(--azul-vivo);
-    display:flex; flex-direction:column;
-    backdrop-filter:blur(10px);
-  }
-  /* Barra superior — sitios hermanos */
-  .nav-top {
-    display:flex; align-items:center; gap:0;
-    overflow-x:auto; white-space:nowrap; scrollbar-width:none;
-    background:var(--azul-oscuro);
-    border-bottom:1px solid rgba(255,255,255,0.08);
-    padding:0 2.5rem;
-    font-size:0.72rem;
-  }
+  nav { position:fixed; top:0; width:100%; z-index:100; background:rgba(13,43,78,0.97); border-bottom:2px solid var(--azul-vivo); display:flex; flex-direction:column; backdrop-filter:blur(10px); }
+  .nav-top { display:flex; align-items:center; overflow-x:auto; white-space:nowrap; scrollbar-width:none; background:var(--azul-oscuro); border-bottom:1px solid rgba(255,255,255,0.08); padding:0 2.5rem; font-size:0.72rem; }
   .nav-top span { color:rgba(255,255,255,0.35); margin-right:0.8rem; letter-spacing:1px; text-transform:uppercase; font-size:0.65rem; }
-  .nav-top a {
-    color:rgba(255,255,255,0.6); text-decoration:none;
-    padding:0.4rem 0.9rem; border-right:1px solid rgba(255,255,255,0.08);
-    transition:all 0.2s; display:flex; align-items:center; gap:0.4rem;
-  }
-  .nav-top a { flex-shrink:0; }
+  .nav-top a { color:rgba(255,255,255,0.6); text-decoration:none; padding:0.4rem 0.9rem; border-right:1px solid rgba(255,255,255,0.08); transition:all 0.2s; display:flex; align-items:center; gap:0.4rem; flex-shrink:0; }
   .nav-top a:first-of-type { border-left:1px solid rgba(255,255,255,0.08); }
   .nav-top a:hover { background:rgba(255,255,255,0.07); color:var(--blanco); }
   .nav-top a.active { background:rgba(30,111,191,0.3); color:var(--azul-claro); font-weight:700; }
-  /* Barra principal */
-  .nav-main {
-    display:flex; justify-content:space-between; align-items:center;
-    padding:0.75rem 2.5rem;
-  }
-  .nav-logo { display:flex; align-items:center; gap:0.7rem; }
-  .nav-logo .icon { font-size:1.9rem; }
+  .nav-main { display:flex; justify-content:space-between; align-items:center; padding:0.75rem 2.5rem; }
+  .nav-logo { display:flex; align-items:center; gap:0.7rem; text-decoration:none; }
+  .nav-logo .icon { font-size:1.9rem; color:var(--blanco); }
   .nav-logo span { font-size:1.1rem; font-weight:800; color:var(--blanco); letter-spacing:1px; }
   .nav-logo small { display:block; font-size:0.65rem; color:var(--azul-claro); letter-spacing:2px; text-transform:uppercase; }
-  .nav-links { display:flex; gap:1.8rem; list-style:none; }
+  .nav-links { display:flex; gap:1.8rem; list-style:none; align-items:center; }
   .nav-links a { color:rgba(255,255,255,0.85); text-decoration:none; font-size:0.85rem; letter-spacing:0.5px; transition:color 0.2s; }
   .nav-links a:hover { color:var(--azul-claro); }
-  .nav-cta { background:var(--rojo); color:var(--blanco) !important; padding:0.5rem 1.2rem; border-radius:4px; font-weight:700; font-size:0.8rem; text-decoration:none; transition:background 0.2s; }
-  .nav-cta:hover { background:var(--rojo-claro) !important; }
+  .nav-cta { background:var(--rojo); color:var(--blanco) !important; padding:0.5rem 1.2rem; border-radius:4px; font-weight:700; font-size:0.8rem; }
+  .nav-cta:hover { background:var(--rojo-claro); }
 
   /* HERO */
-  #inicio {
-    min-height:100vh;
-    background:linear-gradient(135deg, var(--azul-oscuro) 0%, var(--azul-medio) 60%, #1a5a9a 100%);
-    display:flex; align-items:center; justify-content:center;
-    text-align:center; padding:6rem 2rem 4rem;
-    position:relative; overflow:hidden;
-  }
+  #inicio { min-height:90vh; background:linear-gradient(135deg, var(--azul-oscuro) 0%, var(--azul-medio) 60%, #1a5a9a 100%); display:flex; align-items:center; justify-content:center; text-align:center; padding:5rem 2rem 4rem; position:relative; overflow:hidden; }
   .hero-board { position:absolute; opacity:0.06; font-size:14rem; top:50%; left:50%; transform:translate(-50%,-50%); pointer-events:none; user-select:none; color:#fff; }
+  .hero { position:relative; }
   .hero-badge { display:inline-block; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.3); color:var(--azul-palido); font-size:0.75rem; letter-spacing:3px; text-transform:uppercase; padding:0.4rem 1.2rem; border-radius:20px; margin-bottom:1.5rem; }
   .hero h1 { font-size:3.5rem; font-weight:900; line-height:1.1; margin-bottom:1rem; color:var(--blanco); }
   .hero h1 span { color:var(--azul-claro); }
-  .hero p { font-size:1.1rem; color:rgba(255,255,255,0.75); max-width:550px; margin:0 auto 2.5rem; line-height:1.7; }
+  .hero p { font-size:1.1rem; color:rgba(255,255,255,0.78); max-width:580px; margin:0 auto 2.5rem; line-height:1.7; }
   .hero-btns { display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; }
   .btn-primary { background:var(--rojo); color:var(--blanco); padding:0.8rem 2rem; border-radius:5px; font-weight:700; text-decoration:none; transition:all 0.2s; }
   .btn-primary:hover { background:var(--rojo-claro); transform:translateY(-2px); }
@@ -104,115 +147,126 @@
   .hero-stats { display:flex; gap:3rem; justify-content:center; margin-top:4rem; flex-wrap:wrap; }
   .stat { text-align:center; }
   .stat .num { font-size:2rem; font-weight:900; color:var(--azul-claro); }
-  .stat .lbl { font-size:0.75rem; color:rgba(255,255,255,0.6); letter-spacing:1px; text-transform:uppercase; }
+  .stat .lbl { font-size:0.75rem; color:rgba(255,255,255,0.65); letter-spacing:1px; text-transform:uppercase; }
 
   /* SECCIONES */
   section { padding:5rem 2rem; }
   .section-header { text-align:center; margin-bottom:3.5rem; }
   .section-tag { display:inline-block; color:var(--rojo); font-size:0.75rem; letter-spacing:3px; text-transform:uppercase; margin-bottom:0.6rem; font-weight:700; }
   .section-header h2 { font-size:2.2rem; font-weight:800; color:var(--azul-oscuro); }
-  .section-header p { color:var(--gris-texto); margin-top:0.7rem; font-size:0.95rem; max-width:500px; margin-left:auto; margin-right:auto; }
+  .section-header p { color:var(--gris-texto); margin-top:0.7rem; font-size:0.95rem; max-width:560px; margin-left:auto; margin-right:auto; line-height:1.6; }
   .container { max-width:1100px; margin:0 auto; }
-
-  /* DIVISOR */
   .divider { height:4px; background:linear-gradient(90deg, var(--azul-vivo), var(--azul-claro), var(--rojo)); }
 
-  /* SOBRE NOSOTROS */
+  /* NOSOTROS */
   #nosotros { background:var(--gris-claro); }
   .about-grid { display:grid; grid-template-columns:1fr 1fr; gap:3rem; align-items:center; }
-  .about-text h3 { font-size:1.6rem; font-weight:800; margin-bottom:1rem; color:var(--azul-oscuro); }
+  .about-text h3 { font-size:1.6rem; font-weight:800; margin-bottom:1rem; }
   .about-text h3 span { color:var(--azul-vivo); }
   .about-text p { color:var(--gris-texto); line-height:1.8; margin-bottom:1rem; }
   .about-pillars { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1.5rem; }
-  .pillar { background:var(--blanco); border:1px solid var(--gris-borde); border-left:4px solid var(--azul-vivo); border-radius:8px; padding:1rem; transition:box-shadow 0.2s; }
-  .pillar:hover { box-shadow:0 4px 16px rgba(30,111,191,0.12); }
+  .pillar { background:var(--blanco); border:1px solid var(--gris-borde); border-left:4px solid var(--azul-vivo); border-radius:8px; padding:1rem; }
   .pillar .icon { font-size:1.4rem; margin-bottom:0.4rem; }
-  .pillar h4 { font-size:0.9rem; font-weight:700; color:var(--azul-oscuro); }
-  .pillar p { font-size:0.8rem; color:var(--gris-texto); margin:0; }
-  .about-visual { background:linear-gradient(135deg, var(--azul-oscuro), var(--azul-medio)); border-radius:16px; padding:3rem 2rem; text-align:center; font-size:8rem; line-height:1; color:var(--blanco); box-shadow:0 8px 32px rgba(13,43,78,0.25); }
+  .pillar h4 { font-size:0.9rem; font-weight:700; }
+  .pillar p { font-size:0.8rem; color:var(--gris-texto); margin:0; line-height:1.5; }
+  .about-visual { background:linear-gradient(135deg, var(--azul-oscuro), var(--azul-medio)); border-radius:16px; padding:3rem 2rem; text-align:center; color:var(--blanco); box-shadow:0 8px 32px rgba(13,43,78,0.25); }
+  .about-visual .q { font-size:8rem; line-height:1; }
+  .about-visual .t { font-size:1rem; color:var(--azul-claro); letter-spacing:3px; margin-top:0.5rem; }
+  .about-visual .f { font-size:0.85rem; color:rgba(255,255,255,0.7); margin-top:1.2rem; }
 
-  /* INTEGRANTES */
-  #integrantes { background:var(--blanco); }
-  .members-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1.5rem; }
-  .member-card { background:var(--blanco); border:1px solid var(--gris-borde); border-radius:12px; padding:1.5rem; text-align:center; transition:all 0.3s; cursor:pointer; }
-  .member-card:hover { border-color:var(--azul-vivo); box-shadow:0 6px 24px rgba(30,111,191,0.15); transform:translateY(-4px); }
-  .member-avatar { width:72px; height:72px; border-radius:50%; background:linear-gradient(135deg, var(--azul-medio), var(--azul-claro)); display:flex; align-items:center; justify-content:center; font-size:1.9rem; margin:0 auto 1rem; border:3px solid var(--azul-claro); color:white; }
-  .member-card h4 { font-size:0.95rem; font-weight:700; color:var(--azul-oscuro); margin-bottom:0.3rem; }
-  .member-card .rank { font-size:0.75rem; color:var(--azul-vivo); letter-spacing:0.5px; font-weight:600; }
-  .member-card .elo { font-size:0.8rem; color:var(--gris-texto); margin-top:0.3rem; }
+  /* EQUIPO */
+  #equipo { background:var(--blanco); }
+  .team-grid { display:grid; grid-template-columns:minmax(0,1.2fr) minmax(0,1fr); gap:1.5rem; align-items:stretch; }
+  .coach-card { border:1px solid var(--gris-borde); border-radius:12px; padding:2rem; display:flex; gap:1.5rem; align-items:flex-start; }
+  .member-avatar { width:80px; height:80px; flex-shrink:0; border-radius:50%; background:linear-gradient(135deg, var(--azul-medio), var(--azul-claro)); display:flex; align-items:center; justify-content:center; font-size:2.2rem; border:3px solid var(--azul-claro); color:white; }
+  .coach-card h4 { font-size:1.1rem; font-weight:800; }
+  .coach-card .role { font-size:0.8rem; color:var(--rojo); font-weight:700; letter-spacing:1px; text-transform:uppercase; margin:0.2rem 0 0.8rem; }
+  .creds { list-style:none; display:flex; flex-direction:column; gap:0.4rem; }
+  .creds li { font-size:0.88rem; color:var(--gris-texto); padding-left:1.4rem; position:relative; }
+  .creds li::before { content:"♟"; position:absolute; left:0; color:var(--azul-vivo); }
+  .players-card { background:linear-gradient(135deg, var(--azul-oscuro), var(--azul-medio)); color:var(--blanco); border-radius:12px; padding:2rem; display:flex; flex-direction:column; justify-content:center; gap:1rem; }
+  .players-card h4 { font-size:1.1rem; font-weight:800; }
+  .players-card p { font-size:0.9rem; color:rgba(255,255,255,0.78); line-height:1.6; }
+  .players-card .row { display:flex; gap:0.7rem; flex-wrap:wrap; }
+  .btn-light { background:var(--blanco); color:var(--azul-oscuro); padding:0.6rem 1.1rem; border-radius:5px; font-weight:700; font-size:0.85rem; text-decoration:none; }
+  .btn-light:hover { background:var(--azul-palido); }
+  .btn-ghost { border:1.5px solid rgba(255,255,255,0.6); color:var(--blanco); padding:0.55rem 1.1rem; border-radius:5px; font-weight:600; font-size:0.85rem; text-decoration:none; }
+  .btn-ghost:hover { background:rgba(255,255,255,0.1); }
 
   /* EVENTOS */
   #eventos { background:var(--gris-claro); }
-  .events-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:1.5rem; }
-  .event-card { background:var(--blanco); border:1px solid var(--gris-borde); border-radius:12px; overflow:hidden; transition:all 0.3s; }
-  .event-card:hover { border-color:var(--azul-vivo); box-shadow:0 6px 24px rgba(30,111,191,0.12); transform:translateY(-3px); }
-  .event-header { background:linear-gradient(135deg, var(--azul-oscuro), var(--azul-medio)); padding:1.2rem 1.5rem; display:flex; align-items:center; gap:1rem; }
-  .event-date { background:var(--rojo); color:var(--blanco); border-radius:8px; padding:0.5rem 0.8rem; text-align:center; min-width:52px; }
+  .serie { text-align:center; font-weight:700; color:var(--azul-medio); margin:-2rem 0 2rem; font-size:0.95rem; }
+  .events-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:1rem; }
+  .event-card { background:var(--blanco); border:1px solid var(--gris-borde); border-radius:12px; overflow:hidden; display:flex; align-items:center; gap:1rem; padding:1rem 1.2rem; }
+  .event-date { background:var(--azul-oscuro); color:var(--blanco); border-radius:8px; padding:0.5rem 0.7rem; text-align:center; min-width:58px; }
   .event-date .day { font-size:1.4rem; font-weight:900; line-height:1; }
   .event-date .month { font-size:0.65rem; font-weight:700; text-transform:uppercase; }
-  .event-info h4 { font-size:1rem; font-weight:700; color:var(--blanco); }
-  .event-info span { font-size:0.75rem; color:var(--azul-palido); }
-  .event-body { padding:1rem 1.5rem 1.5rem; }
-  .event-body p { font-size:0.85rem; color:var(--gris-texto); margin-bottom:1rem; line-height:1.6; }
-  .event-meta { display:flex; gap:0.6rem; flex-wrap:wrap; }
-  .event-tag { background:var(--azul-palido); color:var(--azul-medio); font-size:0.7rem; padding:0.25rem 0.7rem; border-radius:20px; font-weight:600; }
+  .event-info h4 { font-size:0.95rem; font-weight:700; }
+  .event-info span { font-size:0.75rem; color:var(--gris-texto); }
+  .event-card.proximo { border:2px solid var(--rojo); box-shadow:0 6px 24px rgba(192,57,43,0.15); }
+  .event-card.proximo .event-date { background:var(--rojo); }
+  .event-card.proximo .badge { display:inline-block; background:var(--rojo); color:#fff; font-size:0.62rem; font-weight:800; letter-spacing:1px; text-transform:uppercase; padding:0.15rem 0.5rem; border-radius:10px; margin-bottom:0.25rem; }
+  .event-card .badge { display:none; }
+  .event-card.pasado { opacity:0.5; }
+  .event-card.pasado .event-date { background:#8a99aa; }
+  .events-cta { text-align:center; margin-top:2rem; }
+  .events-note { text-align:center; margin-top:0.8rem; font-size:0.82rem; color:var(--gris-texto); }
 
   /* INSCRIPCIÓN */
   #inscripcion { background:var(--azul-oscuro); }
   #inscripcion .section-header h2 { color:var(--blanco); }
   #inscripcion .section-tag { color:var(--azul-claro); }
-  #inscripcion .section-header p { color:rgba(255,255,255,0.65); }
-  .form-card { background:var(--blanco); border-radius:14px; padding:2.5rem; max-width:650px; margin:0 auto; box-shadow:0 8px 40px rgba(0,0,0,0.3); }
-  .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
-  .form-group { display:flex; flex-direction:column; gap:0.4rem; }
-  .form-group.full { grid-column:1/-1; }
-  .form-group label { font-size:0.8rem; color:var(--azul-medio); letter-spacing:0.5px; font-weight:700; }
-  .form-group input, .form-group select { background:var(--gris-claro); border:1.5px solid var(--gris-borde); border-radius:6px; padding:0.7rem 1rem; color:var(--azul-oscuro); font-size:0.9rem; outline:none; transition:border 0.2s; }
-  .form-group input:focus, .form-group select:focus { border-color:var(--azul-vivo); background:var(--blanco); }
-  .btn-form { width:100%; background:var(--rojo); color:var(--blanco); padding:0.9rem; border:none; border-radius:6px; font-size:1rem; font-weight:700; cursor:pointer; margin-top:1rem; transition:background 0.2s; letter-spacing:0.5px; }
+  #inscripcion .section-header p { color:rgba(255,255,255,0.7); }
+  .form-card { background:var(--blanco); border-radius:14px; padding:2.5rem; max-width:650px; margin:0 auto; box-shadow:0 8px 40px rgba(0,0,0,0.3); text-align:center; }
+  .form-card p { font-size:1.05rem; margin-bottom:1.4rem; line-height:1.6; }
+  .btn-form { display:inline-block; background:var(--rojo); color:var(--blanco); padding:0.9rem 2.2rem; border-radius:6px; font-size:1rem; font-weight:700; text-decoration:none; }
   .btn-form:hover { background:var(--rojo-claro); }
+  .form-card small { display:block; margin-top:1rem; font-size:0.85rem; opacity:0.7; }
 
   /* TIENDA */
   #tienda { background:var(--blanco); }
-  .shop-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1.5rem; }
-  .product-card { background:var(--blanco); border:1px solid var(--gris-borde); border-radius:12px; overflow:hidden; transition:all 0.3s; }
-  .product-card:hover { border-color:var(--azul-vivo); box-shadow:0 6px 24px rgba(30,111,191,0.15); transform:translateY(-4px); }
-  .product-img { background:linear-gradient(135deg, var(--azul-oscuro), var(--azul-medio)); height:160px; display:flex; align-items:center; justify-content:center; font-size:4rem; }
-  .product-info { padding:1.2rem; }
-  .product-info h4 { font-size:0.95rem; font-weight:700; color:var(--azul-oscuro); margin-bottom:0.3rem; }
-  .product-info p { font-size:0.8rem; color:var(--gris-texto); margin-bottom:0.8rem; }
-  .product-footer { display:flex; justify-content:space-between; align-items:center; }
-  .price { font-size:1.1rem; font-weight:800; color:var(--azul-vivo); }
-  .btn-add { background:var(--azul-vivo); color:var(--blanco); border:none; border-radius:5px; padding:0.4rem 0.9rem; font-size:0.8rem; font-weight:700; cursor:pointer; transition:background 0.2s; }
-  .btn-add:hover { background:var(--azul-claro); }
+  .shop-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1.2rem; }
+  .product-card { border:1px solid var(--gris-borde); border-radius:12px; overflow:hidden; }
+  .product-img { background:linear-gradient(135deg, var(--azul-oscuro), var(--azul-medio)); height:120px; display:flex; align-items:center; justify-content:center; font-size:3.2rem; color:#fff; }
+  .product-info { padding:1rem 1.2rem; }
+  .product-info h4 { font-size:0.95rem; font-weight:700; }
+  .shop-cta { display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; margin-top:2rem; }
+  .btn-blue { background:var(--azul-vivo); color:#fff; padding:0.75rem 1.6rem; border-radius:5px; font-weight:700; text-decoration:none; }
+  .btn-blue:hover { background:var(--azul-claro); }
+  .btn-outline { border:2px solid var(--azul-vivo); color:var(--azul-vivo); padding:0.7rem 1.6rem; border-radius:5px; font-weight:700; text-decoration:none; }
+  .btn-outline:hover { background:var(--azul-palido); }
 
   /* NOTICIAS */
   #noticias { background:var(--gris-claro); }
   .news-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1.5rem; }
-  .news-card { background:var(--blanco); border:1px solid var(--gris-borde); border-top:4px solid var(--azul-vivo); border-radius:10px; padding:1.5rem; transition:all 0.3s; }
-  .news-card:hover { box-shadow:0 6px 24px rgba(30,111,191,0.12); transform:translateY(-3px); }
+  .news-card { background:var(--blanco); border:1px solid var(--gris-borde); border-top:4px solid var(--azul-vivo); border-radius:10px; padding:1.5rem; display:flex; flex-direction:column; }
   .news-date { font-size:0.72rem; color:var(--rojo); letter-spacing:1px; text-transform:uppercase; margin-bottom:0.5rem; font-weight:700; }
-  .news-card h4 { font-size:1rem; font-weight:700; color:var(--azul-oscuro); margin-bottom:0.6rem; line-height:1.4; }
-  .news-card p { font-size:0.83rem; color:var(--gris-texto); line-height:1.6; }
-  .news-link { display:inline-block; color:var(--azul-vivo); font-size:0.8rem; margin-top:0.8rem; text-decoration:none; font-weight:600; }
+  .news-card h4 { font-size:1rem; font-weight:700; margin-bottom:0.6rem; line-height:1.4; }
+  .news-card p { font-size:0.85rem; color:var(--gris-texto); line-height:1.6; flex:1; }
+  .news-link { display:inline-block; color:var(--azul-vivo); font-size:0.82rem; margin-top:0.8rem; text-decoration:none; font-weight:700; }
   .news-link:hover { color:var(--rojo); text-decoration:underline; }
 
   /* FOOTER */
   footer { background:var(--azul-oscuro); border-top:3px solid var(--azul-vivo); padding:3rem 2rem 1.5rem; }
   .footer-grid { display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:2rem; max-width:1100px; margin:0 auto; }
-  .footer-brand p { font-size:0.85rem; color:rgba(255,255,255,0.6); line-height:1.7; margin-top:0.8rem; max-width:260px; }
+  .footer-brand p { font-size:0.85rem; color:rgba(255,255,255,0.6); line-height:1.7; margin-top:0.8rem; max-width:280px; }
   .footer-col h5 { font-size:0.85rem; font-weight:700; color:var(--azul-claro); letter-spacing:1px; text-transform:uppercase; margin-bottom:1rem; }
   .footer-col ul { list-style:none; display:flex; flex-direction:column; gap:0.5rem; }
-  .footer-col a { color:rgba(255,255,255,0.65); text-decoration:none; font-size:0.85rem; transition:color 0.2s; }
+  .footer-col a, .footer-col li { color:rgba(255,255,255,0.68); text-decoration:none; font-size:0.85rem; word-break:break-word; }
   .footer-col a:hover { color:var(--azul-claro); }
-  .footer-bottom { text-align:center; margin-top:2.5rem; padding-top:1.5rem; border-top:1px solid rgba(255,255,255,0.1); font-size:0.78rem; color:rgba(255,255,255,0.4); }
+  .footer-bottom { text-align:center; margin-top:2.5rem; padding-top:1.5rem; border-top:1px solid rgba(255,255,255,0.1); font-size:0.78rem; color:rgba(255,255,255,0.45); }
+  .footer-bottom a { color:rgba(255,255,255,0.65); }
 
   @media(max-width:768px) {
     .hero h1 { font-size:2.2rem; }
-    .about-grid, .form-grid, .footer-grid { grid-template-columns:1fr; }
+    .hero-stats { gap:1.8rem; }
+    .about-grid, .team-grid, .footer-grid { grid-template-columns:1fr; }
+    .coach-card { flex-direction:column; align-items:center; text-align:center; }
+    .creds li { text-align:left; }
     .nav-links { display:none; }
+    .nav-top, .nav-main { padding-left:1rem; padding-right:1rem; }
+    section { padding:3.5rem 1rem; }
     #banner-construccion { font-size:0.72rem; padding:0.3rem 0.8rem; }
-    #banner-construccion .b-sitios { display:none; } /* en celular los sitios ya están en la barra superior */
   }
 </style>
 </head>
@@ -220,7 +274,6 @@
 
 <!-- NAV -->
 <nav>
-  <!-- Barra superior: navegación entre sitios -->
   <div class="nav-top">
     <span>Sitios</span>
     <a href="https://www.ajedrezpolgar.com/" class="active">🏠 Club Polgar</a>
@@ -229,32 +282,22 @@
     <a href="https://www.ajedrezpolgar.com/rating/">📊 Rating GTO</a>
     <a href="https://www.ajedrezpolgar.com/nacional/">🌐 Rating Nacional</a>
   </div>
-  <!-- Barra principal -->
   <div class="nav-main">
-    <div class="nav-logo">
+    <a class="nav-logo" href="#inicio">
       <span class="icon">♛</span>
-      <div>
-        <span>Polgar Chess Club</span>
-        <small>León, Guanajuato</small>
-      </div>
-    </div>
+      <div><span>Club de Ajedrez Polgar</span><small>León, Guanajuato</small></div>
+    </a>
     <ul class="nav-links">
       <li><a href="#nosotros">Nosotros</a></li>
-      <li><a href="#integrantes">Integrantes</a></li>
-      <li><a href="#eventos">Eventos</a></li>
+      <li><a href="#equipo">Equipo</a></li>
+      <li><a href="#eventos">Calendario</a></li>
       <li><a href="#tienda">Tienda</a></li>
       <li><a href="#noticias">Noticias</a></li>
       <li><a href="https://www.ajedrezpolgar.com/inscripciones/" class="nav-cta">Inscribirse</a></li>
     </ul>
   </div>
-  <!-- Aviso de sitio en construcción: dentro de la barra fija, debajo del menú -->
   <div id="banner-construccion">
-    <span>🚧 Sitio en construcción — el contenido mostrado es de ejemplo y no refleja datos reales del club.</span>
-    <span class="b-sitios">&nbsp;|&nbsp; Visita nuestros sitios activos:
-    <a href="https://www.ajedrezpolgar.com/inscripciones/">📝 Inscripciones</a>
-    <a href="https://www.ajedrezpolgar.com/liga/">🏆 Liga MTL</a>
-    <a href="https://www.ajedrezpolgar.com/rating/">📊 Rating GTO</a>
-    <a href="https://www.ajedrezpolgar.com/nacional/">🌐 Rating Nacional</a></span>
+    <span>🚧 Sitio en renovación — algunas secciones se completarán en los próximos días.</span>
   </div>
 </nav>
 
@@ -262,18 +305,18 @@
 <section id="inicio">
   <div class="hero-board">♟</div>
   <div class="hero">
-    <div class="hero-badge">♟ León, Guanajuato · Desde 2010</div>
+    <div class="hero-badge">♟ León, Guanajuato · Desde 2017</div>
     <h1>Club de Ajedrez<br/><span>Polgar</span></h1>
-    <p>El centro del ajedrez competitivo en Guanajuato. Torneos, formación y comunidad para todos los niveles.</p>
+    <p>Formación, competencia y comunidad ajedrecística en León. Organizadores de la Liga Escolar <b>Marcha Triunfal Leonesa</b> y de las consultas públicas de rating de Guanajuato y de México.</p>
     <div class="hero-btns">
-      <a href="https://www.ajedrezpolgar.com/inscripciones/" class="btn-primary">Inscríbete a un torneo</a>
-      <a href="#eventos" class="btn-secondary">Ver eventos</a>
+      <a href="https://www.ajedrezpolgar.com/inscripciones/" class="btn-primary">Inscríbete al próximo evento</a>
+      <a href="#eventos" class="btn-secondary">Ver calendario</a>
     </div>
     <div class="hero-stats">
-      <div class="stat"><div class="num">120+</div><div class="lbl">Miembros</div></div>
-      <div class="stat"><div class="num">15</div><div class="lbl">Torneos al año</div></div>
-      <div class="stat"><div class="num">8</div><div class="lbl">Campeones estatales</div></div>
-      <div class="stat"><div class="num">14</div><div class="lbl">Años de historia</div></div>
+      <div class="stat"><div class="num" id="statAnios">—</div><div class="lbl">Años de historia</div></div>
+      <div class="stat"><div class="num">3ª</div><div class="lbl">Liga Escolar MTL</div></div>
+      <div class="stat"><div class="num">32</div><div class="lbl">Estados en Rating Nacional</div></div>
+      <div class="stat"><div class="num">77 mil+</div><div class="lbl">Jugadores consultables</div></div>
     </div>
   </div>
 </section>
@@ -285,82 +328,73 @@
     <div class="about-grid">
       <div class="about-text">
         <div class="section-tag">Sobre nosotros</div>
-        <h3>Forjando <span>grandes jugadores</span> en Guanajuato</h3>
-        <p>El Club de Ajedrez Polgar nació con la misión de llevar el ajedrez competitivo y formativo a León y a todo el estado de Guanajuato. Honramos el legado de Judit Polgar, la mejor jugadora de ajedrez de todos los tiempos.</p>
-        <p>Contamos con jugadores de todos los niveles, desde principiantes hasta maestros con rating FIDE, y organizamos torneos locales, estatales y nacionales.</p>
+        <h3>Ajedrez <span>formativo y competitivo</span> en León</h3>
+        <p>El Club de Ajedrez Polgar nació en León, Guanajuato, el 28 de octubre de 2017, con la misión de acercar el ajedrez formativo y competitivo a niñas, niños, jóvenes y familias. Su nombre honra a Judit Polgar, considerada la mejor jugadora de ajedrez de la historia.</p>
+        <p>Hoy el club organiza la Liga Escolar Marcha Triunfal Leonesa, imparte clases de ajedrez escolar y mantiene herramientas públicas de consulta de rating para la comunidad ajedrecística de Guanajuato y de todo México.</p>
         <div class="about-pillars">
-          <div class="pillar"><div class="icon">🏆</div><h4>Competencia</h4><p>Torneos regulares con rating oficial</p></div>
-          <div class="pillar"><div class="icon">📚</div><h4>Formación</h4><p>Clases para niños y adultos</p></div>
-          <div class="pillar"><div class="icon">🤝</div><h4>Comunidad</h4><p>Un espacio inclusivo y apasionado</p></div>
-          <div class="pillar"><div class="icon">🌍</div><h4>Representación</h4><p>Guanajuato en torneos nacionales</p></div>
+          <div class="pillar"><div class="icon">🏆</div><h4>Liga Escolar MTL</h4><p>Temporada por etapas para escolares, con categorías por año de nacimiento</p></div>
+          <div class="pillar"><div class="icon">📚</div><h4>Formación</h4><p>Clases de ajedrez escolar en colegios de León</p></div>
+          <div class="pillar"><div class="icon">⚖️</div><h4>Organización y arbitraje</h4><p>Torneos dirigidos por árbitro y organizador nacional FENAMAC</p></div>
+          <div class="pillar"><div class="icon">📊</div><h4>Rating abierto</h4><p>Consulta pública del rating FENAMAC de Guanajuato y de México</p></div>
         </div>
       </div>
-      <div class="about-visual">♛<br/><small style="font-size:1rem;color:var(--azul-claro);letter-spacing:3px;">POLGAR</small></div>
+      <div class="about-visual">
+        <div class="q">♛</div>
+        <div class="t">POLGAR</div>
+        <div class="f">Fundado el 28 de octubre de 2017</div>
+      </div>
     </div>
   </div>
 </section>
 <div class="divider"></div>
 
-<!-- INTEGRANTES -->
-<section id="integrantes">
+<!-- EQUIPO -->
+<section id="equipo">
   <div class="container">
     <div class="section-header">
       <div class="section-tag">Nuestro equipo</div>
-      <h2>Integrantes del Club</h2>
-      <p>Conoce a los jugadores que representan al Club Polgar en torneos locales, estatales y nacionales.</p>
+      <h2>Equipo del Club</h2>
+      <p>Quién está detrás del club y dónde consultar a nuestros jugadores.</p>
     </div>
-    <div class="members-grid">
-      <div class="member-card"><div class="member-avatar">♛</div><h4>Carlos Méndez</h4><div class="rank">Maestro FIDE</div><div class="elo">ELO 2210</div></div>
-      <div class="member-card"><div class="member-avatar">♚</div><h4>Valeria Torres</h4><div class="rank">Candidata a Maestra</div><div class="elo">ELO 2050</div></div>
-      <div class="member-card"><div class="member-avatar">♟</div><h4>Luis Ramírez</h4><div class="rank">Experto</div><div class="elo">ELO 1980</div></div>
-      <div class="member-card"><div class="member-avatar">♜</div><h4>Ana Gutiérrez</h4><div class="rank">Experta</div><div class="elo">ELO 1870</div></div>
-      <div class="member-card"><div class="member-avatar">♞</div><h4>Marco Herrera</h4><div class="rank">Avanzado</div><div class="elo">ELO 1740</div></div>
-      <div class="member-card"><div class="member-avatar">♝</div><h4>Sofía Castillo</h4><div class="rank">Intermedio</div><div class="elo">ELO 1580</div></div>
+    <div class="team-grid">
+      <div class="coach-card">
+        <div class="member-avatar">♛</div>
+        <div>
+          <h4>Pedro José Zambrano Zambrano</h4>
+          <div class="role">Presidente del club</div>
+          <ul class="creds">
+            <li>Entrenador certificado FIDE</li>
+            <li>Árbitro Nacional — FENAMAC</li>
+            <li>Organizador Nacional — FENAMAC</li>
+            <li>Coordinador de la Liga Escolar Marcha Triunfal Leonesa</li>
+          </ul>
+        </div>
+      </div>
+      <div class="players-card">
+        <h4>📊 Nuestros jugadores</h4>
+        <p>El rating y la actividad de cada jugador se consultan directamente en nuestras listas, actualizadas cada mes con los archivos oficiales de FENAMAC.</p>
+        <div class="row">
+          <a class="btn-light" href="https://www.ajedrezpolgar.com/rating/">Rating Guanajuato</a>
+          <a class="btn-ghost" href="https://www.ajedrezpolgar.com/nacional/">Rating Nacional</a>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 <div class="divider"></div>
 
-<!-- EVENTOS -->
+<!-- CALENDARIO -->
 <section id="eventos">
   <div class="container">
     <div class="section-header">
       <div class="section-tag">Calendario</div>
-      <h2>Próximos Torneos y Eventos</h2>
-      <p>Participa en nuestros torneos y lleva tu juego al siguiente nivel.</p>
+      <h2>Próximos eventos</h2>
+      <p>Sede, horario, costo y convocatoria de cada evento se publican en Inscripciones.</p>
     </div>
-    <div class="events-grid">
-      <div class="event-card">
-        <div class="event-header">
-          <div class="event-date"><div class="day">21</div><div class="month">Jun</div></div>
-          <div class="event-info"><h4>Torneo Abierto Polgar</h4><span>Torneo oficial con rating FIDE</span></div>
-        </div>
-        <div class="event-body">
-          <p>Torneo mensual abierto a todos los niveles. Sistema suizo a 7 rondas. Premios para los 3 primeros lugares.</p>
-          <div class="event-meta"><span class="event-tag">📍 León, Gto.</span><span class="event-tag">⏱ 7 rondas</span><span class="event-tag">🏅 Con rating</span></div>
-        </div>
-      </div>
-      <div class="event-card">
-        <div class="event-header">
-          <div class="event-date"><div class="day">05</div><div class="month">Jul</div></div>
-          <div class="event-info"><h4>Campeonato Estatal Juvenil</h4><span>Categorías Sub-12, Sub-16, Sub-20</span></div>
-        </div>
-        <div class="event-body">
-          <p>El torneo más importante del estado para jóvenes talentos. Clasificatorio al campeonato nacional.</p>
-          <div class="event-meta"><span class="event-tag">📍 Guanajuato</span><span class="event-tag">👦 Juvenil</span><span class="event-tag">🥇 Clasificatorio</span></div>
-        </div>
-      </div>
-      <div class="event-card">
-        <div class="event-header">
-          <div class="event-date"><div class="day">19</div><div class="month">Jul</div></div>
-          <div class="event-info"><h4>Torneo Blitz Nocturno</h4><span>Partidas rápidas 3+2</span></div>
-        </div>
-        <div class="event-body">
-          <p>Torneo informal de partidas rápidas para pasar una noche de adrenalina y ajedrez. Entrada libre para socios.</p>
-          <div class="event-meta"><span class="event-tag">⚡ Blitz 3+2</span><span class="event-tag">🌙 Nocturno</span><span class="event-tag">🆓 Socios gratis</span></div>
-        </div>
-      </div>
-    </div>
+    <div class="serie">3ra Liga MTL 2026-2027</div>
+    <div class="events-grid" id="eventosGrid"></div>
+    <div class="events-cta"><a href="https://www.ajedrezpolgar.com/inscripciones/" class="btn-primary">Ver convocatoria e inscribirse</a></div>
+    <div class="events-note">Las fechas pueden ajustarse; la información vigente siempre está en www.ajedrezpolgar.com/inscripciones</div>
   </div>
 </section>
 <div class="divider"></div>
@@ -371,12 +405,12 @@
     <div class="section-header">
       <div class="section-tag">Registro</div>
       <h2>Inscripción a Torneos</h2>
-      <p>Consulta la convocatoria vigente y completa tu registro.</p>
+      <p>Una sola dirección y un solo QR para todos los torneos del club.</p>
     </div>
-    <div class="form-card" style="text-align:center">
-      <p style="font-size:1.05rem;margin-bottom:1.4rem">Las inscripciones a todos los torneos del club se hacen en línea, en una sola dirección que siempre muestra el torneo con inscripción abierta.</p>
-      <a href="https://www.ajedrezpolgar.com/inscripciones/" class="btn-form" style="display:inline-block;width:auto;padding:0.9rem 2.2rem;text-decoration:none">Ir a Inscripciones →</a>
-      <p style="margin-top:1rem;font-size:0.85rem;opacity:0.7">www.ajedrezpolgar.com/inscripciones</p>
+    <div class="form-card">
+      <p>Las inscripciones se hacen en línea, en una dirección que siempre muestra el torneo con inscripción abierta.</p>
+      <a href="https://www.ajedrezpolgar.com/inscripciones/" class="btn-form">Ir a Inscripciones →</a>
+      <small>www.ajedrezpolgar.com/inscripciones</small>
     </div>
   </div>
 </section>
@@ -386,15 +420,19 @@
 <section id="tienda">
   <div class="container">
     <div class="section-header">
-      <div class="section-tag">Tienda en línea</div>
+      <div class="section-tag">Tienda</div>
       <h2>Material de Ajedrez</h2>
-      <p>Todo lo que necesitas para jugar y mejorar tu nivel.</p>
+      <p>Material para entrenar y competir. Pregunta por existencias y precios; los pedidos se atienden por WhatsApp o correo.</p>
     </div>
     <div class="shop-grid">
-      <div class="product-card"><div class="product-img">♟</div><div class="product-info"><h4>Set Staunton Profesional</h4><p>Piezas de madera torneada, peso ideal para torneo.</p><div class="product-footer"><span class="price">$850 MXN</span><button class="btn-add">+ Agregar</button></div></div></div>
-      <div class="product-card"><div class="product-img">♞</div><div class="product-info"><h4>Tablero de Torneo</h4><p>Vinilo enrollable 50×50 cm, cuadros de 5 cm, certificado FIDE.</p><div class="product-footer"><span class="price">$320 MXN</span><button class="btn-add">+ Agregar</button></div></div></div>
-      <div class="product-card"><div class="product-img">⏱</div><div class="product-info"><h4>Reloj DGT 3000</h4><p>Reloj digital programable, usado en torneos oficiales.</p><div class="product-footer"><span class="price">$1,450 MXN</span><button class="btn-add">+ Agregar</button></div></div></div>
-      <div class="product-card"><div class="product-img">📚</div><div class="product-info"><h4>Pack Libros Iniciación</h4><p>3 libros esenciales para aperturas, táctica y finales.</p><div class="product-footer"><span class="price">$580 MXN</span><button class="btn-add">+ Agregar</button></div></div></div>
+      <div class="product-card"><div class="product-img">♞</div><div class="product-info"><h4>Piezas</h4></div></div>
+      <div class="product-card"><div class="product-img">▦</div><div class="product-info"><h4>Tableros</h4></div></div>
+      <div class="product-card"><div class="product-img">⏱</div><div class="product-info"><h4>Relojes</h4></div></div>
+      <div class="product-card"><div class="product-img">📚</div><div class="product-info"><h4>Libros y material de estudio</h4></div></div>
+    </div>
+    <div class="shop-cta">
+      <a class="btn-blue js-wa" href="#" target="_blank" rel="noopener">💬 Pedir por WhatsApp</a>
+      <a class="btn-outline js-mail" href="#">📧 Pedir por correo</a>
     </div>
   </div>
 </section>
@@ -405,13 +443,16 @@
   <div class="container">
     <div class="section-header">
       <div class="section-tag">Actualidad</div>
-      <h2>Noticias del Ajedrez en Guanajuato</h2>
-      <p>Mantente al día con lo más reciente del ajedrez local y nacional.</p>
+      <h2>Noticias del Club</h2>
+      <p>Lo más reciente del Club de Ajedrez Polgar y sus sitios.</p>
     </div>
     <div class="news-grid">
-      <div class="news-card"><div class="news-date">1 Jun 2026</div><h4>Carlos Méndez obtiene 2° lugar en el Campeonato Nacional de Maestros</h4><p>El representante del Club Polgar finalizó en segundo lugar tras 9 rondas de alto nivel en la Ciudad de México.</p><a href="#" class="news-link">Leer más →</a></div>
-      <div class="news-card"><div class="news-date">18 May 2026</div><h4>Guanajuato albergará la Copa Regional de Ajedrez 2026</h4><p>León fue seleccionada como sede oficial del torneo regional que reunirá a jugadores de 8 estados del país.</p><a href="#" class="news-link">Leer más →</a></div>
-      <div class="news-card"><div class="news-date">5 May 2026</div><h4>Clases abiertas de ajedrez para niños este verano</h4><p>El Club Polgar abre inscripciones para el programa vacacional de ajedrez dirigido a niños de 6 a 14 años.</p><a href="#" class="news-link">Leer más →</a></div>
+      <div class="news-card"><div class="news-date">Octubre 2026</div><h4>Arranca la 3ra Liga Escolar MTL 2026-2027</h4><p>El 1er evento e Inauguración se celebra el sábado 10 de octubre de 2026 en Plaza Mayor, León. La temporada contempla seis eventos y una Gala de Premiación Final.</p><a href="https://www.ajedrezpolgar.com/inscripciones/" class="news-link">Ver convocatoria →</a></div>
+      <div class="news-card"><div class="news-date">Octubre 2026</div><h4>Listas de rating de octubre 2026 cargadas</h4><p>Rating Guanajuato y Rating Nacional ya muestran la lista Estándar de octubre 2026 publicada por FENAMAC. En septiembre FENAMAC no emitió lista.</p><a href="https://www.ajedrezpolgar.com/rating/" class="news-link">Consultar rating →</a></div>
+      <div class="news-card"><div class="news-date">Septiembre 2026</div><h4>Nueva dirección única de Inscripciones</h4><p>Todas las inscripciones del club se hacen ahora en una sola dirección con un solo QR, que muestra automáticamente el evento con inscripción abierta.</p><a href="https://www.ajedrezpolgar.com/inscripciones/" class="news-link">Ir a Inscripciones →</a></div>
+      <div class="news-card"><div class="news-date">2026</div><h4>Rating Nacional: los 32 estados en un solo lugar</h4><p>Nuestra consulta pública reúne el rating Estándar FENAMAC de jugadores de todo México, con historial mensual desde julio de 2025.</p><a href="https://www.ajedrezpolgar.com/nacional/" class="news-link">Explorar →</a></div>
+      <div class="news-card"><div class="news-date">2026</div><h4>Olimpiada Nacional CONADE 2026: 1 oro, 5 platas y 1 bronce</h4><p>Maestro Pedro Zambrano formó parte del cuerpo técnico de la delegación en la etapa nacional, con seis atletas, tres de ellos de León.</p></div>
+      <div class="news-card"><div class="news-date">II Liga MTL</div><h4>Concluye la II Liga MTL</h4><p>La segunda edición cerró con su Gala de Premiación. Agradecemos a Medical Brisas su respaldo como patrocinador principal de la temporada.</p><a href="https://www.ajedrezpolgar.com/liga/" class="news-link">Ver resultados →</a></div>
     </div>
   </div>
 </section>
@@ -421,21 +462,92 @@
 <footer>
   <div class="footer-grid">
     <div class="footer-brand">
-      <span style="font-size:1.8rem;">♛</span>
-      <span style="font-weight:800;color:var(--blanco);font-size:1rem;margin-left:0.5rem;">Polgar Chess Club</span>
-      <p>El hogar del ajedrez competitivo en León, Guanajuato. Formando campeones desde 2010.</p>
+      <span style="font-size:1.8rem;color:#fff;">♛</span>
+      <span style="font-weight:800;color:var(--blanco);font-size:1rem;margin-left:0.5rem;">Club de Ajedrez Polgar</span>
+      <p>Ajedrez formativo y competitivo en León, Guanajuato, desde el 28 de octubre de 2017.</p>
     </div>
-    <div class="footer-col"><h5>Menú</h5><ul><li><a href="#nosotros">Nosotros</a></li><li><a href="#integrantes">Integrantes</a></li><li><a href="#eventos">Eventos</a></li><li><a href="#noticias">Noticias</a></li></ul></div>
-    <div class="footer-col"><h5>Participa</h5><ul><li><a href="https://www.ajedrezpolgar.com/inscripciones/">Inscripción</a></li><li><a href="#tienda">Tienda</a></li><li><a href="#">Membresía</a></li><li><a href="#">Clases</a></li></ul></div>
-    <div class="footer-col"><h5>Contacto</h5><ul><li><a href="#">📍 León, Gto.</a></li><li><a href="#">📧 pedro.zambrano@ajedrezpolgar.com</a></li><li><a href="#">📱 (477) 525-2657</a></li><li><a href="#">Instagram</a></li></ul></div>
+    <div class="footer-col"><h5>Menú</h5><ul><li><a href="#nosotros">Nosotros</a></li><li><a href="#equipo">Equipo</a></li><li><a href="#eventos">Calendario</a></li><li><a href="#noticias">Noticias</a></li></ul></div>
+    <div class="footer-col"><h5>Sitios</h5><ul><li><a href="https://www.ajedrezpolgar.com/inscripciones/">Inscripciones</a></li><li><a href="https://www.ajedrezpolgar.com/liga/">Liga MTL</a></li><li><a href="https://www.ajedrezpolgar.com/rating/">Rating GTO</a></li><li><a href="https://www.ajedrezpolgar.com/nacional/">Rating Nacional</a></li></ul></div>
+    <div class="footer-col"><h5>Contacto</h5><ul>
+      <li>📍 León, Guanajuato</li>
+      <li><a class="js-mail" href="#">📧 <span class="js-mail-txt"></span></a></li>
+      <li><a class="js-wa" href="#" target="_blank" rel="noopener">💬 WhatsApp <span class="js-wa-txt"></span></a></li>
+      <li><a class="js-fb" href="#" target="_blank" rel="noopener">Facebook</a></li>
+    </ul></div>
   </div>
-  <div class="footer-bottom">© 2026 Club de Ajedrez Polgar · León, Guanajuato · Todos los derechos reservados</div>
+  <div class="footer-bottom">© 2017–<span id="anioActual">2026</span> Club de Ajedrez Polgar · León, Guanajuato · <a href="https://www.ajedrezpolgar.com/aviso-de-privacidad/">Aviso de Privacidad y Uso de Imagen</a></div>
 </footer>
 
 <script>
-  // Ajusta el espacio superior a la altura real de la barra fija (incluye el aviso amarillo).
-  const ajustarNav = () => { document.body.style.paddingTop = document.querySelector('nav').offsetHeight + 'px'; };
-  ajustarNav(); addEventListener('resize', ajustarNav);
+/* =====================================================================
+   AJUSTES — lo que normalmente se edita
+   ===================================================================== */
+const AJUSTES = {
+  EN_CONSTRUCCION: true,              // false = oculta el aviso amarillo
+  FUNDACION: '2017-10-28',
+  correo: 'pedro.zambrano@ajedrezpolgar.com',
+  whatsapp: '524775252697',           // ⚠️ confirmar (v3 decía 477 525 2657)
+  facebook: 'https://www.facebook.com/ajedrezpolgar'
+};
+
+/* Copia mínima del catálogo EVENTOS de /inscripciones/ (fuente de verdad allá).
+   Mismos id; si cambia una fecha allá, cambiarla aquí. */
+const CALENDARIO = [
+  { id:'mtl3-e1',   titulo:'1er evento e Inauguración',             fecha:'2026-10-10' },
+  { id:'mtl3-e2',   titulo:'2do evento',                            fecha:'2026-11-07' },
+  { id:'mtl3-e3',   titulo:'3er evento',                            fecha:'2026-12-05' },
+  { id:'mtl3-e4',   titulo:'4to evento',                            fecha:'2027-01-23' },
+  { id:'mtl3-e5',   titulo:'5to evento',                            fecha:'2027-02-20' },
+  { id:'mtl3-e6',   titulo:'6to evento',                            fecha:'2027-03-13' },
+  { id:'mtl3-gala', titulo:'Gala de Celebración y Premiación Final', fecha:'2027-04-24' }
+];
+/* ===================================================================== */
+
+const TZ = 'America/Mexico_City';
+const qHoy = new URLSearchParams(location.search).get('hoy');
+const HOY = /^\d{4}-\d{2}-\d{2}$/.test(qHoy || '') ? qHoy
+  : new Intl.DateTimeFormat('en-CA', { timeZone: TZ }).format(new Date()); // AAAA-MM-DD en hora de León
+
+// Años de historia (cumplidos)
+(() => {
+  const [fy, fm, fd] = AJUSTES.FUNDACION.split('-').map(Number);
+  const [y, m, d] = HOY.split('-').map(Number);
+  let anios = y - fy; if (m < fm || (m === fm && d < fd)) anios--;
+  document.getElementById('statAnios').textContent = anios;
+  document.getElementById('anioActual').textContent = y;
+})();
+
+// Calendario
+(() => {
+  const grid = document.getElementById('eventosGrid');
+  const proximo = CALENDARIO.find(e => e.fecha >= HOY);
+  const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  grid.innerHTML = CALENDARIO.map(e => {
+    const [y, m, d] = e.fecha.split('-').map(Number);
+    const dia = new Date(Date.UTC(y, m - 1, d, 12)).toLocaleDateString('es-MX', { weekday:'long', timeZone:'UTC' });
+    const cls = e === proximo ? 'proximo' : (e.fecha < HOY ? 'pasado' : '');
+    return `<div class="event-card ${cls}">
+      <div class="event-date"><div class="day">${String(d).padStart(2,'0')}</div><div class="month">${meses[m-1]} ${String(y).slice(2)}</div></div>
+      <div class="event-info"><div class="badge">Próximo</div><h4>${e.titulo}</h4><span>${dia.charAt(0).toUpperCase() + dia.slice(1)}</span></div>
+    </div>`;
+  }).join('');
+})();
+
+// Contacto
+(() => {
+  const wa = 'https://wa.me/' + AJUSTES.whatsapp + '?text=' + encodeURIComponent('Hola, me interesa información del Club de Ajedrez Polgar.');
+  const n = AJUSTES.whatsapp.slice(-10);
+  document.querySelectorAll('.js-wa').forEach(a => a.href = wa);
+  document.querySelectorAll('.js-wa-txt').forEach(s => s.textContent = n.slice(0,3) + ' ' + n.slice(3,6) + ' ' + n.slice(6));
+  document.querySelectorAll('.js-mail').forEach(a => a.href = 'mailto:' + AJUSTES.correo);
+  document.querySelectorAll('.js-mail-txt').forEach(s => s.textContent = AJUSTES.correo);
+  document.querySelectorAll('.js-fb').forEach(a => a.href = AJUSTES.facebook);
+  document.getElementById('banner-construccion').hidden = !AJUSTES.EN_CONSTRUCCION;
+})();
+
+// Compensar la barra fija
+const ajustarNav = () => { document.body.style.paddingTop = document.querySelector('nav').offsetHeight + 'px'; };
+ajustarNav(); addEventListener('resize', ajustarNav);
 </script>
 </body>
 </html>
