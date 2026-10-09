@@ -23,8 +23,8 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
 /aviso-de-privacidad/ (proyecto propio, numeración propia, texto del proyecto legal).
 
 ## Estado actual
-* Versión vigente: v7
-* Archivo entregado: Inscripciones_v7.html + carpeta convocatorias/ (PDF e imágenes) → se sube como /inscripciones/index.html
+* Versión vigente: v8
+* Archivo entregado: Inscripciones_v8.html + carpetas convocatorias/, certificados/ y lib/ → se sube como /inscripciones/index.html
 * Dónde vive este documento: [x] Fusionado en el artefacto (este comentario HTML,
   invisible para el visitante). No en pestaña visible porque es una página pública.
 * Traspaso a nuevo chat: la IA descarga el archivo con
@@ -55,11 +55,23 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
   obligatoria. Imagen y boletines son opcionales y no condicionan la inscripción.
 * DEBE: enviar al backend qué se aceptó y la versión del aviso (AVISO_VERSION).
 * NO DEBE: abrir inscripciones de un evento con sede sin confirmar.
+* CAMBIO DE CONTRATO v8: inscripción extemporánea. Tras el cierre de la convocatoria el formulario
+  sigue abierto hasta cierreTardio (si el evento lo define) con aviso visible de que el certificado
+  podría entregarse solo en digital; el envío lleva tardia:true (Code.gs v3 lo guarda como
+  "Extemporánea").
+* DEBE (v8): la vista previa pública del certificado usa solo la imagen de muestra de baja
+  resolución con marca de agua (certificados/<id>-muestra.jpg). La plantilla limpia NUNCA se publica
+  en el repositorio: el organizador la elige desde su computadora en el panel.
+* DEBE (v8): el panel (#panel) no contiene la clave; la valida Code.gs (CLAVE_PANEL). Sin clave
+  correcta el servidor no entrega datos de los inscritos.
+* CAMBIO DE CONTRATO v8: el panel carga jsPDF desde /inscripciones/lib/jspdf.umd.min.js (alojado en
+  el propio sitio, licencia MIT), solo al usar el panel; la página pública no lo descarga.
 
 ## Glosario
 * Evento activo: el primero del catálogo cuya fecha es hoy o posterior
   (o el que indique FORZAR_ACTIVO). Solo hay uno a la vez.
-* Estado de inscripción del activo: "abierta" | "cerrada" (pasó el cierre,
+* Estado de inscripción del activo: "abierta" | "tardia" (pasó el cierre de la convocatoria
+  pero sigue abierta hasta cierreTardio, con aviso) | "cerrada" (pasó el cierre,
   pero el evento aún no ocurre) | "proximamente" (antes de apertura o sede
   por confirmar) | "sin-formulario" (evento informativo, p. ej. Gala).
 * Pasado: fecha del evento < hoy (se vuelve gris el día siguiente al evento).
@@ -72,7 +84,15 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
   (AAAA-MM-DD), sede (null = por confirmar), direccion, mapsUrl, horario,
   costo, cupo, categorias, apertura (opcional), cierre (opcional; por defecto
   2 días antes del evento a las 23:59), formulario ('mtl' | URL externa |
-  null), convocatoria ({pdf, paginas[]} o null), resultadosUrl.
+  null), convocatoria ({pdf, paginas[]} o null), resultadosUrl, cierreTardio (opcional),
+  certificado ({muestra} o null).
+* Certificado: diseño en CERT (coordenadas sobre plantilla 3300×2550 = carta horizontal 300 dpi);
+  líneas nombre / institución / "Categoría X · Rama Y", centradas y con auto-reducción para nombres
+  largos. Rama del certificado: Femenil solo si la categoría tiene ≥10 inscritas (convocatoria);
+  si no, Mixta. Los varones siempre Mixta. El panel permite ajustar por categoría.
+* Panel: www.ajedrezpolgar.com/inscripciones/#panel → lista (admin_lista), PDF de imprenta (todas
+  las hojas en un PDF), marcar impresos (admin_marcar), envío por correo de PDF individuales
+  (admin_enviar), PDF/WhatsApp manual y CSV. Excluye filas con Notas que empiezan con ANULADO/PRUEBA.
 * Enlace directo a la convocatoria del torneo activo: /inscripciones/#convocatoria
 * Zona horaria fija America/Mexico_City (México sin horario de verano desde 2022 → -06:00).
 * Parámetro de prueba: ?hoy=AAAA-MM-DD simula la fecha (solo para revisar).
@@ -81,7 +101,10 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
 ## Tareas Pendientes
 - [ ] Probar un envío real de punta a punta (folio, fila con consentimientos, comprobante en Drive, correo de aviso).
 - [ ] Corregir Transitorios de la convocatoria: hoy dice que al inscribirse se acepta la autorización de uso de imagen; el aviso la hace opcional y separada.
-- [ ] Confirmar fecha de cierre por evento (por defecto: jueves previo 23:59).
+- [ ] Confirmar fecha de cierre por evento (por defecto: jueves previo 23:59) y si cada evento tendrá cierreTardio.
+- [ ] Instalar Code.gs v3 (CLAVE_PANEL) y probar el panel con datos reales.
+- [ ] Validación de fechas también en Code.gs (hoy el cierre lo controla solo la página).
+- [ ] Imagen de muestra y plantilla limpia para cada evento siguiente (cambia el sello "1ª etapa").
 - [ ] Cupo de 150 por evento: el backend no lo controla todavía.
 - [ ] Agregar "Inscripciones" a la barra de sitios compartida en Portada, Liga, Rating GTO y Rating Nacional.
 - [ ] (Opcional) Cargar eventos de la 2ª Liga 25-26 como historial.
@@ -90,6 +113,22 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
 - [ ] Portada v3 enlaza a los sitios hermanos vía max-verne.github.io en la barra superior y vía www en el banner — inconsistencia heredada, no se toca aquí.
 
 ## Historial de cambios
+
+**v8 — Inscripción extemporánea, vista previa del certificado y panel de certificados**
+* Tras el cierre de la convocatoria (jue 8-oct 23:59) el 1er evento sigue aceptando inscripciones hasta
+  sáb 10-oct 07:00 (cierreTardio), con aviso naranja en la tarjeta, en el formulario y en la pantalla
+  final: el certificado podría no imprimirse y entonces se envía en digital. El envío marca tardia:true.
+* Paso 2 y paso 4: vista previa del certificado sobre imagen de muestra con marca de agua (baja
+  resolución + marca dibujada encima del texto); paso 4 agrega categoría y rama.
+* Panel protegido (#panel, clave validada por Code.gs v3): resumen, ramas por categoría (regla ≥10
+  inscritas), PDF de imprenta carta horizontal con todas las hojas, marcar impresos, envío por correo
+  de PDF individuales a los pendientes, alternativas manuales (PDF, WhatsApp, marcar enviado) y CSV.
+* Nuevos archivos: certificados/mtl3-e1-muestra.jpg y lib/jspdf.umd.min.js (jsPDF 2.5.1, MIT).
+* Requiere Code.gs v3 para el panel y la columna "Inscripción"; sin él la página sigue inscribiendo
+  normalmente (los campos nuevos se ignoran).
+* Verificación: flujo público (en tiempo, extemporáneo y cerrado) y panel probados en navegador
+  automatizado con un servidor simulado; PDF generado y revisado. Conexión real con Apps Script v3:
+  PENDIENTE DE PRUEBA.
 **v7 — CLABE con formato oficial**
 * La CLABE se mostraba en grupos de 4 (0122 2500 4731 778742) y parecía número de tarjeta.
   Ahora se muestra en el formato oficial 3-3-11-1: 012 225 00473177874 2 (mismos 18 dígitos;
@@ -218,6 +257,22 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
   .chip.st-abierta{background:#dff3e7;color:#135c33}
   .chip.st-cerrada{background:#fbe3e0;color:#8e2219}
   .chip.st-proximamente,.chip.st-sin-formulario{background:#fff3d6;color:#7a5510}
+  .chip.st-tardia{background:#ffe2c2;color:#8a3d00}
+  .aviso-tardio{border-left-color:#e07b00;background:#fff4e6;color:#5a3000}
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .aviso-tardio{background:#3a2610;color:#ffd9a8} }
+  canvas.cert-prev{display:block;width:100%;height:auto;margin:10px 0 4px;border-radius:8px;border:1px solid var(--gris-borde);background:#0d2b4e;-webkit-user-select:none;user-select:none}
+  .sel{width:100%;padding:11px 12px;border:1px solid var(--gris-borde);border-radius:10px;background:var(--suave);color:var(--texto);font:inherit}
+  .p-barra{display:flex;justify-content:space-between;align-items:center;gap:.6rem;flex-wrap:wrap}
+  .p-acc{display:flex;gap:.4rem;flex-wrap:wrap}
+  .p-acc .btn-sm, .p-acc a.btn-sm{text-decoration:none;color:var(--texto);border:1px solid var(--gris-borde);background:var(--tarjeta);display:inline-block}
+  .p-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.6rem;margin:.8rem 0}
+  .p-kpi{background:var(--suave);border:1px solid var(--gris-borde);border-radius:10px;padding:.6rem .8rem}
+  .p-kpi b{display:block;font-size:1.5rem;color:var(--azul-vivo)}
+  .p-kpi span{font-size:.8rem;color:var(--gris-texto)}
+  .p-tabla-wrap{overflow-x:auto;margin:.6rem 0}
+  .p-tabla{border-collapse:collapse;width:100%;font-size:.88rem;min-width:560px}
+  .p-tabla th,.p-tabla td{border-bottom:1px solid var(--gris-borde);padding:.45rem .5rem;text-align:left;vertical-align:top}
+  .p-tabla th{font-size:.75rem;text-transform:uppercase;letter-spacing:.5px;color:var(--gris-texto)}
   @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .chip{background:#1f3b5e;color:#d6e6f8} }
   .activo h3{font-size:1.7rem;line-height:1.2;font-weight:850}
   .activo .sub{color:var(--gris-texto);margin-top:.2rem}
@@ -372,6 +427,7 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
     <form id="frm" novalidate>
       <ol class="steps" aria-hidden="true"><li></li><li></li><li></li><li></li></ol>
 
+      <div class="aviso aviso-tardio hidden" id="avisoTardio" style="margin-bottom:14px"></div>
       <section class="card step" data-step="1">
         <h3>Datos del evento</h3>
         <dl class="facts" id="facts"></dl>
@@ -416,6 +472,9 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
         <div class="preview"><span class="small">Así aparecerá en el certificado:</span><b id="prevNombre">—</b>
           <span class="prevLinea"><span class="small">Institución educativa:</span> <span id="prevInst">—</span></span>
           <span class="prevLinea"><span class="small">Rama:</span> <span id="prevRama">—</span></span>
+          <div class="cert-prev-box"><span class="small">Vista de muestra de tu certificado (con marca de agua):</span>
+            <canvas id="certPrev" class="cert-prev" width="1100" height="850" aria-label="Vista de muestra del certificado"></canvas>
+            <span class="small">La categoría y la rama se agregan al final, después de elegir la categoría.</span></div>
           <label class="opt confirma"><input type="checkbox" id="confirmaDatos"> <span>Revisé el nombre completo, la institución educativa y la rama, y están escritos correctamente. <span class="req">*</span></span></label>
           <div class="err" data-for="confirmaDatos"></div>
         </div>
@@ -436,6 +495,9 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
         <input type="file" id="comprobante" accept="image/*,application/pdf">
         <div class="err" data-for="comprobante"></div>
         <div class="notice" style="margin-top:16px" id="resumen"></div>
+        <div class="cert-prev-box" style="margin-top:12px"><span class="small">Así se verá el certificado (muestra con marca de agua):</span>
+          <canvas id="certPrev4" class="cert-prev" width="1100" height="850" aria-label="Vista de muestra del certificado con categoría"></canvas>
+          <span class="small" id="notaRama"></span></div>
         <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
       </section>
 
@@ -452,6 +514,7 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
       <h3>¡Inscripción recibida!</h3>
       <p>Tu folio es</p>
       <p class="folio" id="folio"></p>
+      <p class="aviso aviso-tardio hidden" id="okTardio" style="text-align:left">Tu inscripción quedó registrada como <b>extemporánea</b>. Si tu certificado de participación ya no alcanza a imprimirse, te lo enviaremos en formato digital al correo que registraste.</p>
       <p class="hint">Guarda este folio. El pago se valida manualmente; la lista de jugadores y los emparejamientos se publican en <a id="lnkCR" target="_blank" rel="noopener">Chess-Results</a>.</p>
       <button type="button" onclick="location.reload()">Inscribir a otro jugador</button>
     </section>
@@ -471,6 +534,60 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
       <p class="small" style="margin-top:.4rem">Este enlace y este código QR son permanentes: siempre llevan al torneo con inscripción vigente, aunque se hayan impreso en material de eventos anteriores.</p>
     </div>
   </div>
+  <!-- ============ PANEL DE CERTIFICADOS (acceso con clave del Apps Script) ============ -->
+  <section id="panel" class="hidden">
+    <h2 class="sec">Panel de certificados</h2>
+    <div class="card" id="panelLogin">
+      <h3>Acceso</h3>
+      <p class="hint">Solo para el organizador. La clave la valida el servidor (Apps Script); no está guardada en esta página.</p>
+      <div class="row">
+        <div><label class="f" for="pClave">Clave del panel</label><input type="password" id="pClave" autocomplete="current-password"></div>
+        <div><label class="f" for="pEvento">Evento</label><select id="pEvento" class="sel"></select></div>
+      </div>
+      <div class="fnav"><span></span><button type="button" class="primary" id="pEntrar">Entrar</button></div>
+      <p class="err" id="pErr"></p>
+    </div>
+
+    <div id="panelApp" class="hidden">
+      <div class="card">
+        <div class="p-barra"><h3 id="pTitulo">Resumen</h3><div class="p-acc"><button type="button" id="pRecargar" class="btn-sm">↻ Actualizar</button><button type="button" id="pCsv" class="btn-sm">⬇ Lista CSV</button><button type="button" id="pSalir" class="btn-sm">Salir</button></div></div>
+        <div id="pResumen" class="p-kpis"></div>
+        <p class="small" id="pNotaResumen"></p>
+      </div>
+
+      <div class="card">
+        <h3>1. Fondo del certificado</h3>
+        <p class="hint">Selecciona la imagen <b>limpia</b> del certificado de este evento (la que no tiene nombres). No se sube a ningún lado: solo se usa en esta computadora para armar los PDF.</p>
+        <input type="file" id="pFondo" accept="image/*">
+        <canvas id="pVista" width="1100" height="850" class="cert-prev hidden"></canvas>
+        <p class="small" id="pVistaNota"></p>
+      </div>
+
+      <div class="card">
+        <h3>2. Ramas por categoría</h3>
+        <p class="hint">Según la convocatoria, la rama femenil se juega por separado solo si hay al menos 10 inscritas en la categoría; si no, las jugadoras compiten en rama mixta. Esto define lo que dice el certificado. Puedes cambiarlo si el día del evento se decide otra cosa.</p>
+        <div id="pRamas"></div>
+      </div>
+
+      <div class="card">
+        <h3>3. PDF para imprenta</h3>
+        <p class="hint">Una hoja tamaño carta (horizontal) por participante, ordenadas por categoría, rama y apellidos. No incluye filas con «ANULADO» o «PRUEBA» en Notas.</p>
+        <label class="opt"><input type="checkbox" id="pSoloSin" checked> <span>Solo participantes que todavía no tienen certificado (ni impreso ni digital)</span></label>
+        <label class="opt"><input type="checkbox" id="pSoloPago"> <span>Solo con «Pago validado» marcado en la hoja</span></label>
+        <div class="fnav"><span class="small" id="pCuentaImp"></span><button type="button" class="primary" id="pImprimir">⬇ Descargar PDF para imprenta</button></div>
+        <div id="pConfirmar" class="aviso hidden"></div>
+      </div>
+
+      <div class="card">
+        <h3>4. Certificados digitales pendientes</h3>
+        <p class="hint">Participantes sin certificado impreso (por ejemplo, inscritos después del envío a imprenta). Se envía a cada correo un PDF individual y la hoja se marca como «Digital enviado».</p>
+        <div class="p-tabla-wrap"><table class="p-tabla"><thead><tr><th><input type="checkbox" id="pTodos" checked></th><th>Folio</th><th>Jugador</th><th>Correo</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="pPend"></tbody></table></div>
+        <div class="fnav"><span class="small" id="pCuota"></span><button type="button" class="primary" id="pEnviar">✉ Enviar por correo a los seleccionados</button></div>
+        <p class="small">Si el correo falla: usa <b>PDF</b> para descargar el certificado y <b>WhatsApp</b> para abrir el chat con la familia (adjunta el PDF a mano); después pulsa <b>Marcar enviado</b>.</p>
+      </div>
+    </div>
+  </section>
+
 </main>
 
 <footer>
@@ -478,6 +595,7 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
     <a href="https://www.ajedrezpolgar.com/aviso-de-privacidad/">Aviso de Privacidad y Uso de Imagen</a>
     <a href="https://www.facebook.com/ajedrezpolgar" target="_blank" rel="noopener">Facebook</a>
     <a href="mailto:pedro.zambrano@ajedrezpolgar.com">pedro.zambrano@ajedrezpolgar.com</a>
+    <a href="#panel" id="lnkPanel">Panel</a>
   </div>
   © <span id="anio"></span> Club de Ajedrez Polgar · León, Guanajuato
 </footer>
@@ -525,6 +643,10 @@ const MTL3 = { serie:'3ra Liga MTL 2026-2027', mtl:true, horario:'Registro 8:30 
 // Orden cronológico. Los id NUNCA se reutilizan ni se cambian.
 const EVENTOS = [
   { ...MTL3, id:'mtl3-e1', etapa:'1er evento', titulo:'1er evento e Inauguración', fecha:'2026-10-10',
+    // Cierre de la convocatoria: jueves 8-oct 23:59 (regla por defecto). Después, inscripción extemporánea
+    // hasta cierreTardio, con aviso de que el certificado podría llegar solo en digital.
+    cierreTardio:'2026-10-10T07:00:00-06:00',
+    certificado:{ muestra:'/inscripciones/certificados/mtl3-e1-muestra.jpg' },
     sede:'Plaza Mayor', direccion:'Blvd. Juan Alonso de Torres Pte. 2002, Valle del Campestre, 37150 León, Gto.',
     mapsUrl:'https://maps.google.com/?q=Plaza+Mayor,+Blvd.+Juan+Alonso+de+Torres+Pte.+2002,+León,+Gto.',
     convocatoria:{ pdf:'/inscripciones/convocatorias/mtl3-e1.pdf',
@@ -555,6 +677,7 @@ const FORM_LISTO = AJUSTES.AVISO_PUBLICADO && (!!AJUSTES.scriptUrl || DEMO);
 
 const fechaLarga = iso => { const s = new Date(iso + 'T12:00:00' + OFFSET).toLocaleDateString('es-MX', { timeZone:TZ, weekday:'long', day:'numeric', month:'long', year:'numeric' }); return s.charAt(0).toUpperCase() + s.slice(1); };
 const fechaCorta = iso => new Date(iso + 'T12:00:00' + OFFSET).toLocaleDateString('es-MX', { timeZone:TZ, day:'numeric', month:'short', year:'numeric' });
+const fechaHoraLarga = d => d.toLocaleDateString('es-MX', { timeZone:TZ, weekday:'long', day:'numeric', month:'long' }) + ' a las ' + d.toLocaleTimeString('es-MX', { timeZone:TZ, hour:'2-digit', minute:'2-digit', hour12:false }) + ' h';
 const fechaHora = d => d.toLocaleString('es-MX', { timeZone:TZ, dateStyle:'long', timeStyle:'short' });
 
 function cierreDe(ev){
@@ -562,16 +685,21 @@ function cierreDe(ev){
   const d = new Date(ev.fecha + 'T23:59:00' + OFFSET); d.setDate(d.getDate() - 2); return d; // jueves previo 23:59
 }
 function aperturaDe(ev){ return ev.apertura ? new Date(ev.apertura) : null; }
+function cierreTardioDe(ev){ return ev.cierreTardio ? new Date(ev.cierreTardio) : null; }
+const admite = st => st === 'abierta' || st === 'tardia'; // estados en los que el formulario acepta inscripciones
 
 function estadoDe(ev){
   if (!ev.formulario) return 'sin-formulario';
   if (!ev.sede) return 'proximamente';
   const ap = aperturaDe(ev);
   if (ap && AHORA < ap) return 'proximamente';
-  if (AHORA > cierreDe(ev)) return 'cerrada';
+  if (AHORA > cierreDe(ev)){
+    const t = cierreTardioDe(ev);
+    return (t && AHORA <= t) ? 'tardia' : 'cerrada';
+  }
   return 'abierta';
 }
-const ETIQUETA = { 'abierta':'Inscripción abierta', 'cerrada':'Inscripción cerrada', 'proximamente':'Inscripción próximamente', 'sin-formulario':'Evento sin inscripción' };
+const ETIQUETA = { 'tardia':'Inscripción extemporánea abierta', 'abierta':'Inscripción abierta', 'cerrada':'Inscripción cerrada', 'proximamente':'Inscripción próximamente', 'sin-formulario':'Evento sin inscripción' };
 
 const futuros = EVENTOS.filter(e => e.fecha >= HOY);
 const ACTIVO = (AJUSTES.FORZAR_ACTIVO && EVENTOS.find(e => e.id === AJUSTES.FORZAR_ACTIVO)) || futuros[0] || null;
@@ -587,21 +715,23 @@ function renderActivo(){
     return;
   }
   const ev = ACTIVO, st0 = estadoDe(ev);
-  const puedeInscribir = st0 === 'abierta' && FORM_LISTO;
-  const st = (st0 === 'abierta' && !FORM_LISTO) ? 'proximamente' : st0;
+  const puedeInscribir = admite(st0) && FORM_LISTO;
+  const st = (admite(st0) && !FORM_LISTO) ? 'proximamente' : st0;
   const datos = [
     ['Fecha', fechaLarga(ev.fecha)],
     ['Sede', ev.sede ? esc(ev.sede) + (ev.mapsUrl ? ` · <a href="${esc(ev.mapsUrl)}" target="_blank" rel="noopener">Ver mapa</a>` : '') : 'Por confirmar'],
     ev.horario ? ['Horario', esc(ev.horario)] : null,
     ev.costo ? ['Inscripción', money(ev.costo) + ' por jugador'] : null,
     ev.cupo ? ['Cupo', ev.cupo + ' jugadores'] : null,
-    ev.formulario && ev.sede ? ['Cierre de inscripción', fechaHora(cierreDe(ev))] : null
+    ev.formulario && ev.sede ? [st0 === 'tardia' ? 'Cierre según convocatoria' : 'Cierre de inscripción', fechaHora(cierreDe(ev))] : null,
+    st0 === 'tardia' ? ['Inscripción extemporánea hasta', fechaHora(cierreTardioDe(ev))] : null
   ].filter(Boolean);
 
   let aviso = '';
-  if (st0 === 'abierta' && !FORM_LISTO) aviso = 'La inscripción en línea abrirá en breve. Vuelve a esta misma dirección.';
+  if (admite(st0) && !FORM_LISTO) aviso = 'La inscripción en línea abrirá en breve. Vuelve a esta misma dirección.';
   else if (st0 === 'proximamente') aviso = !ev.sede ? 'La inscripción se abrirá en esta misma dirección en cuanto se confirme la sede.' : `La inscripción abre el ${fechaHora(aperturaDe(ev))}.`;
   else if (st === 'cerrada') aviso = 'El periodo de inscripción terminó. Esta dirección mostrará el siguiente torneo al día siguiente del evento.';
+  else if (st === 'tardia') aviso = textoTardio(ev);
 
   box.innerHTML = `<article class="activo">
     <div class="chips">
@@ -618,12 +748,16 @@ function renderActivo(){
       ${puedeInscribir ? (ev.formulario === 'mtl' ? '<a class="btn btn-rojo" href="#inscribir" id="btnAbrir">Inscribirme</a>' : `<a class="btn btn-rojo" href="${esc(ev.formulario)}" target="_blank" rel="noopener">Inscribirme</a>`) : ''}
       ${ev.convocatoria ? `<a class="btn btn-borde" href="#convocatoria" id="btnConv">Ver convocatoria</a>` : ''}
     </div>
-    ${aviso ? `<div class="aviso">${aviso}</div>` : ''}
+    ${aviso ? `<div class="aviso${st === 'tardia' ? ' aviso-tardio' : ''}">${aviso}</div>` : ''}
   </article>`;
   const b = $('#btnAbrir');
   if (b) b.addEventListener('click', e => { e.preventDefault(); abrirFormulario(); });
   const c = $('#btnConv');
   if (c) c.addEventListener('click', e => { e.preventDefault(); abrirConvocatoria(ev, true); });
+}
+
+function textoTardio(ev){
+  return `El plazo de inscripción establecido en la convocatoria terminó el ${fechaHoraLarga(cierreDe(ev))}. <b>Aún puedes inscribirte</b>; sin embargo, es posible que tu certificado de participación ya no alcance a imprimirse. En ese caso, te lo enviaremos en formato digital al correo que registres.`;
 }
 
 function abrirConvocatoria(ev, desplazar){
@@ -674,12 +808,15 @@ function prepararFormulario(){
     ['Fecha', fechaLarga(ev.fecha)],
     ['Sede', esc(ev.sede)],
     ev.direccion ? ['Dirección', esc(ev.direccion) + (ev.mapsUrl ? ` · <a href="${esc(ev.mapsUrl)}" target="_blank" rel="noopener">Ver mapa</a>` : '')] : null,
-    ['Cierre de inscripción', fechaHora(cierreDe(ev))],
+    [estadoDe(ev) === 'tardia' ? 'Cierre según convocatoria' : 'Cierre de inscripción', fechaHora(cierreDe(ev))],
+    estadoDe(ev) === 'tardia' ? ['Inscripción extemporánea hasta', fechaHora(cierreTardioDe(ev))] : null,
     ['Inscripción', money(ev.costo) + ' por jugador'],
     ['Resultados', `<a href="${AJUSTES.chessResultsUrl}" target="_blank" rel="noopener">Chess-Results</a>`]
   ].filter(Boolean);
   $('#facts').innerHTML = facts.map(([k,v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('');
   $('#lnkConv').href = ev.convocatoria ? ev.convocatoria.pdf : '#activo';
+  if (estadoDe(ev) === 'tardia'){ $('#avisoTardio').innerHTML = textoTardio(ev); $('#avisoTardio').classList.remove('hidden'); }
+  prepararMuestra();
   $('#lnkCR').href = AJUSTES.chessResultsUrl;
   $('#costo').textContent = money(ev.costo);
   $('#maxMb').textContent = AJUSTES.maxArchivoMb;
@@ -716,6 +853,7 @@ function updatePreview(){
   $('#prevRama').textContent = r ? (r.value === 'V' ? 'Varonil' : 'Femenil') : '—';
   if ($('#confirmaDatos').checked){ $('#confirmaDatos').checked = false; }
   syncNext();
+  dibujarPrevias();
 }
 ['nombres','apellidos','institucion'].forEach(id => $('#'+id).addEventListener('input', updatePreview));
 document.querySelectorAll('input[name=sexo]').forEach(el => el.addEventListener('change', updatePreview));
@@ -779,7 +917,8 @@ function payload(){
     correo: val('correo').toLowerCase(), telefono: val('telefono').replace(/\D/g,''),
     categoria: cat.nombre, aceptaConvocatoria: $('#acepta').checked, aceptaPrivacidad: $('#privacidad').checked,
     autorizaImagen: $('#imagen').checked, autorizaBoletines: $('#boletines').checked,
-    versionAviso: AJUSTES.AVISO_VERSION
+    versionAviso: AJUSTES.AVISO_VERSION,
+    tardia: estadoDe(ACTIVO) === 'tardia'
   };
 }
 
@@ -788,6 +927,10 @@ function renderResumen(){
   $('#resumen').innerHTML = `<b>Revisa antes de enviar</b><br>${esc(p.nombres)} ${esc(p.apellidos)} · ${p.sexo==='V'?'Varonil':'Femenil'} · ${esc(p.nacimiento)}<br>
     ${esc(p.institucion)}<br>Categoría: <b>${esc(p.categoria)}</b><br><span class="small">Contacto: ${esc(p.tutor)} · ${esc(p.correo)} · ${esc(p.telefono)}</span><br>
     <span class="small">Uso de imagen: <b>${p.autorizaImagen ? 'autorizado' : 'no autorizado'}</b> · Boletines: <b>${p.autorizaBoletines ? 'sí' : 'no'}</b></span>`;
+  if ($('#notaRama')) $('#notaRama').textContent = p.sexo === 'F'
+    ? 'Rama: según la convocatoria, la rama femenil se juega por separado si hay al menos 10 inscritas en la categoría; si no, el certificado dirá «Rama Mixta».'
+    : 'Rama: los jugadores compiten en la rama mixta.';
+  setTimeout(dibujarPrevias, 0);
 }
 
 function show(s){
@@ -799,6 +942,7 @@ function show(s){
   $('#btnSend').classList.toggle('hidden', s !== 4);
   if (s === 3) renderCats();
   if (s === 4) renderResumen();
+  if (s === 2) dibujarPrevias();
   syncNext();
   if (s > 1) $('#inscribir').scrollIntoView({ behavior:'smooth' });
 }
@@ -811,7 +955,7 @@ $('#frm').addEventListener('submit', async e => {
   e.preventDefault();
   if (step !== 4 || !validate(4)) return;
   if (document.querySelector('input[name=website]').value) return; // bot
-  if (estadoDe(ACTIVO) !== 'abierta' || !FORM_LISTO) { $('#errGlobal').textContent = 'La inscripción de este evento no está abierta.'; return; }
+  if (!admite(estadoDe(ACTIVO)) || !FORM_LISTO) { $('#errGlobal').textContent = 'La inscripción de este evento no está abierta.'; return; }
   const btn = $('#btnSend'); btn.disabled = true; btn.textContent = 'Enviando…'; $('#errGlobal').textContent = '';
   try {
     const f = $('#comprobante').files[0];
@@ -826,6 +970,7 @@ $('#frm').addEventListener('submit', async e => {
     }
     if (!res.ok) throw new Error(res.error || 'No se pudo registrar.');
     $('#folio').textContent = res.folio;
+    if (data.tardia) $('#okTardio').classList.remove('hidden');
     $('#frm').classList.add('hidden'); $('#ok').classList.remove('hidden');
     $('#inscribir').scrollIntoView();
   } catch (err) {
@@ -833,6 +978,288 @@ $('#frm').addEventListener('submit', async e => {
     btn.disabled = false; btn.textContent = 'Enviar inscripción';
   }
 });
+
+/* ================= CERTIFICADO: diseño compartido (vista previa y PDF) =================
+   Coordenadas en píxeles de la plantilla original (3300 × 2550 = carta horizontal a 300 dpi).
+   Nombre, institución y categoría·rama se centran en la zona derecha del diseño y se reducen
+   solos si el texto es largo (nunca bajan de "min"). */
+const CERT = {
+  W: 3300, H: 2550,
+  nombre: { cx:2027, base:690, size:140, min:66, maxW:2050, color:'#FFFFFF' },
+  inst:   { cx:2027, base:782, size:66,  min:36, maxW:2050, color:'#FFE9A8' },
+  cat:    { cx:2027, base:876, size:46,  min:30, maxW:1900, color:'#FFFFFF' }
+};
+const FUENTE_CERT = 'Helvetica, Arial, sans-serif';
+function ramaCert(sexo, femenilSeparada){ return (sexo === 'F' && femenilSeparada) ? 'Rama Femenil' : 'Rama Mixta'; }
+function lineaCat(cat, rama){ return [cat ? 'Categoría ' + cat : '', rama || ''].filter(Boolean).join('   ·   '); }
+
+function dibujarCert(ctx, img, d, conMarca){
+  const W = ctx.canvas.width, H = ctx.canvas.height, s = W / CERT.W;
+  ctx.clearRect(0, 0, W, H);
+  if (img && img.complete && img.naturalWidth) ctx.drawImage(img, 0, 0, W, H);
+  const linea = (t, L) => {
+    if (!t) return;
+    let size = L.size;
+    const f = () => { ctx.font = `bold ${size * s}px ${FUENTE_CERT}`; };
+    f(); while (ctx.measureText(t).width > L.maxW * s && size > L.min){ size -= 2; f(); }
+    ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+    ctx.shadowColor = 'rgba(0,0,0,.45)'; ctx.shadowBlur = 8 * s; ctx.shadowOffsetY = 3 * s;
+    ctx.fillStyle = L.color; ctx.fillText(t, L.cx * s, L.base * s);
+    ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
+  };
+  linea(d.nombre, CERT.nombre); linea(d.inst, CERT.inst); linea(d.cat, CERT.cat);
+  if (conMarca){ // marca de agua encima de todo: la vista previa no sirve como certificado
+    ctx.save(); ctx.translate(W/2, H/2); ctx.rotate(-0.38);
+    ctx.font = `bold ${Math.round(W/26)}px ${FUENTE_CERT}`; ctx.textAlign = 'center';
+    ctx.fillStyle = 'rgba(255,255,255,.2)';
+    for (let y = -H; y <= H; y += W/9) for (let x = -W; x <= W; x += W/2.6) ctx.fillText('IMAGEN DE MUESTRA', x + ((y/(W/9))%2 ? W/5.2 : 0), y);
+    ctx.restore();
+  }
+}
+
+// --- Vista previa en el formulario (pasos 2 y 4) con imagen de muestra de baja resolución ---
+const imgMuestra = new Image();
+function prepararMuestra(){
+  if (!ACTIVO || !ACTIVO.certificado) { document.querySelectorAll('.cert-prev-box').forEach(b => b.classList.add('hidden')); return; }
+  imgMuestra.onload = () => { dibujarPrevias(); };
+  imgMuestra.src = ACTIVO.certificado.muestra;
+  document.querySelectorAll('canvas.cert-prev').forEach(c => c.addEventListener('contextmenu', e => e.preventDefault()));
+}
+function datosPrevios(conCategoria){
+  const n = titleCase(val('nombres')), a = titleCase(val('apellidos'));
+  const r = document.querySelector('input[name=sexo]:checked');
+  const catSel = document.querySelector('input[name=categoria]:checked');
+  const cat = conCategoria && catSel ? (ACTIVO.categorias.find(c => c.id === catSel.value) || {}).nombre : '';
+  return {
+    nombre: (n || a) ? `${n} ${a}`.trim() : 'Nombre(s) y apellidos del jugador',
+    inst: val('institucion').replace(/\s+/g,' ') || 'Institución educativa',
+    cat: conCategoria ? lineaCat(cat, r ? ramaCert(r.value, true) : '') : ''
+  };
+}
+function dibujarPrevias(){
+  if (!ACTIVO || !ACTIVO.certificado) return;
+  const c2 = $('#certPrev'), c4 = $('#certPrev4');
+  if (c2) dibujarCert(c2.getContext('2d'), imgMuestra, datosPrevios(false), true);
+  if (c4 && step === 4) dibujarCert(c4.getContext('2d'), imgMuestra, datosPrevios(true), true);
+}
+
+/* ================= PANEL DE CERTIFICADOS =================
+   La clave NO vive en esta página: se envía al Apps Script, que la compara con CLAVE_PANEL.
+   Sin clave correcta el servidor no entrega ningún dato. Los PDF se arman en este navegador
+   (jsPDF alojado en /inscripciones/lib/, se carga solo al usar el panel). */
+const P = { clave:'', ev:null, filas:[], fondo:null, override:{}, lote:[], cuota:null };
+const EVENTOS_PANEL = EVENTOS.filter(e => e.formulario === 'mtl' && e.sede);
+const esValida = f => !/^\s*(ANULAD|PRUEBA)/i.test(f.notas || '');
+const ahoraTxt = () => new Date().toLocaleString('es-MX', { timeZone:TZ, day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit', hour12:false }).replace(',', '');
+
+function abrirPanel(){
+  $('#panel').classList.remove('hidden');
+  const sel = $('#pEvento');
+  if (!sel.options.length){
+    const hoyMas = new Date(AHORA.getTime() + 3*864e5).toISOString().slice(0,10);
+    const pre = [...EVENTOS_PANEL].reverse().find(e => e.fecha <= hoyMas) || EVENTOS_PANEL[0];
+    sel.innerHTML = EVENTOS_PANEL.map(e => `<option value="${e.id}" ${e === pre ? 'selected' : ''}>${esc(e.titulo)} · ${fechaCorta(e.fecha)}</option>`).join('');
+  }
+  $('#panel').scrollIntoView({ behavior:'smooth' });
+  setTimeout(() => $('#pClave').focus(), 400);
+}
+async function api(body){
+  const r = await fetch(AJUSTES.scriptUrl, { method:'POST', headers:{ 'Content-Type':'text/plain;charset=utf-8' },
+    body: JSON.stringify({ ...body, clave:P.clave, etapa:P.ev.etapa }) });
+  const j = await r.json();
+  if (!j.ok) throw new Error(j.error || 'Error del servidor.');
+  return j;
+}
+async function cargarDatos(){
+  const j = await api({ accion:'admin_lista' });
+  P.filas = j.filas || []; P.cuota = j.cuota;
+  renderPanel();
+}
+$('#pEntrar').onclick = async () => {
+  $('#pErr').textContent = '';
+  P.clave = $('#pClave').value.trim();
+  P.ev = EVENTOS.find(e => e.id === $('#pEvento').value);
+  if (!P.clave) { $('#pErr').textContent = 'Escribe la clave.'; return; }
+  const b = $('#pEntrar'); b.disabled = true; b.textContent = 'Verificando…';
+  try {
+    await cargarDatos();
+    $('#panelLogin').classList.add('hidden'); $('#panelApp').classList.remove('hidden');
+  } catch (e) { $('#pErr').textContent = e.message; P.clave = ''; }
+  b.disabled = false; b.textContent = 'Entrar';
+};
+$('#pClave').addEventListener('keydown', e => { if (e.key === 'Enter') $('#pEntrar').click(); });
+$('#pSalir').onclick = () => { P.clave = ''; P.filas = []; $('#pClave').value = ''; $('#panelApp').classList.add('hidden'); $('#panelLogin').classList.remove('hidden'); };
+$('#pRecargar').onclick = async () => { try { await cargarDatos(); } catch (e) { alertaPanel(e.message); } };
+
+function alertaPanel(msg){ $('#pNotaResumen').innerHTML = `<span style="color:var(--err)">${esc(msg)}</span>`; }
+
+// Rama femenil separada por categoría: automático (≥10 inscritas) salvo que se cambie a mano.
+function femenilSeparada(cat){
+  if (cat in P.override) return P.override[cat];
+  return P.filas.filter(f => esValida(f) && f.categoria === cat && f.rama === 'Femenil').length >= 10;
+}
+function ordenCat(cat){ const i = (P.ev.categorias || []).findIndex(c => c.nombre === cat); return i < 0 ? 99 : i; }
+function datosCert(f){
+  return { nombre: `${f.nombres} ${f.apellidos}`.replace(/\s+/g,' ').trim(), inst: f.institucion.replace(/\s+/g,' ').trim(),
+           cat: lineaCat(f.categoria, ramaCert(f.rama === 'Femenil' ? 'F' : 'V', femenilSeparada(f.categoria))) };
+}
+const ordenar = arr => arr.slice().sort((a,b) => ordenCat(a.categoria) - ordenCat(b.categoria)
+  || datosCert(a).cat.localeCompare(datosCert(b).cat) || a.apellidos.localeCompare(b.apellidos, 'es') || a.nombres.localeCompare(b.nombres, 'es'));
+const loteImpresion = () => ordenar(P.filas.filter(f => esValida(f) && (!$('#pSoloSin').checked || !f.certificado) && (!$('#pSoloPago').checked || f.pago)));
+const pendientesDigitales = () => ordenar(P.filas.filter(f => esValida(f) && !/^Impreso/i.test(f.certificado || '')));
+
+function renderPanel(){
+  const v = P.filas.filter(esValida);
+  const imp = v.filter(f => /^Impreso/i.test(f.certificado||'')).length;
+  const dig = v.filter(f => /^Digital/i.test(f.certificado||'')).length;
+  const sin = v.length - imp - dig, ext = v.filter(f => f.inscripcion === 'Extemporánea').length, pag = v.filter(f => f.pago).length;
+  $('#pTitulo').textContent = 'Resumen · ' + P.ev.titulo;
+  const k = (n, t) => `<div class="p-kpi"><b>${n}</b><span>${t}</span></div>`;
+  $('#pResumen').innerHTML = k(v.length,'inscritos válidos') + k(pag,'pago validado') + k(imp,'certificado impreso') + k(dig,'digital enviado') + k(sin,'sin certificado') + k(ext,'extemporáneos');
+  $('#pNotaResumen').textContent = `${P.filas.length - v.length} fila(s) anuladas o de prueba no se cuentan.` + (P.cuota != null ? ` Correos disponibles hoy en Google: ${P.cuota}.` : '');
+  // Ramas
+  const cats = (P.ev.categorias || []).map(c => c.nombre);
+  $('#pRamas').innerHTML = `<div class="p-tabla-wrap"><table class="p-tabla"><thead><tr><th>Categoría</th><th>Inscritas</th><th>Inscritos</th><th>Rama femenil por separado</th></tr></thead><tbody>${
+    cats.map(c => { const fem = v.filter(f => f.categoria === c && f.rama === 'Femenil').length, var_ = v.filter(f => f.categoria === c && f.rama !== 'Femenil').length;
+      return `<tr><td>${esc(c)}</td><td>${fem}</td><td>${var_}</td><td><label><input type="checkbox" data-cat="${esc(c)}" ${femenilSeparada(c) ? 'checked' : ''}> ${femenilSeparada(c) ? 'Sí (Rama Femenil)' : 'No (todas en Rama Mixta)'}</label>${c in P.override ? ' <span class="small">· ajustado a mano</span>' : ''}</td></tr>`; }).join('')
+  }</tbody></table></div>`;
+  $('#pRamas').querySelectorAll('input[data-cat]').forEach(i => i.onchange = () => { P.override[i.dataset.cat] = i.checked; renderPanel(); });
+  $('#pCuentaImp').textContent = `${loteImpresion().length} certificado(s) en el lote`;
+  // Pendientes digitales
+  const pend = pendientesDigitales();
+  $('#pPend').innerHTML = pend.length ? pend.map(f => {
+    const enviado = /^Digital/i.test(f.certificado||'');
+    return `<tr data-folio="${esc(f.folio)}"><td><input type="checkbox" class="pSel" ${enviado ? '' : 'checked'}></td><td>${esc(f.folio)}</td>
+      <td>${esc(f.nombres)} ${esc(f.apellidos)}<br><span class="small">${esc(f.categoria)}${f.inscripcion === 'Extemporánea' ? ' · extemporánea' : ''}${f.pago ? '' : ' · <b>pago sin validar</b>'}</span></td>
+      <td class="small">${esc(f.correo)}</td><td class="pEst small">${enviado ? '✅ ' + esc(f.certificado) : 'Pendiente'}</td>
+      <td class="p-acc"><button type="button" class="btn-sm pPdf">PDF</button><a class="btn-sm pWa" target="_blank" rel="noopener" href="${waLink(f)}">WhatsApp</a><button type="button" class="btn-sm pMan">Marcar enviado</button></td></tr>`;
+  }).join('') : '<tr><td colspan="6" class="small">No hay certificados digitales pendientes.</td></tr>';
+  $('#pCuota').textContent = P.cuota != null ? `Cuota de correo disponible hoy: ${P.cuota}` : '';
+  $('#pPend').querySelectorAll('tr[data-folio]').forEach(tr => {
+    const f = P.filas.find(x => x.folio === tr.dataset.folio);
+    tr.querySelector('.pPdf').onclick = () => descargarIndividual(f).catch(e => estadoFila(f.folio, '⚠️ ' + e.message));
+    tr.querySelector('.pMan').onclick = async () => { try { await api({ accion:'admin_marcar', folios:[f.folio], valor:'Digital enviado (manual) ' + ahoraTxt() }); f.certificado = 'Digital enviado (manual) ' + ahoraTxt(); renderPanel(); } catch (e) { estadoFila(f.folio, '⚠️ ' + e.message); } };
+  });
+}
+$('#pTodos').onchange = () => document.querySelectorAll('.pSel').forEach(c => c.checked = $('#pTodos').checked);
+['pSoloSin','pSoloPago'].forEach(id => $('#'+id).onchange = () => { $('#pCuentaImp').textContent = `${loteImpresion().length} certificado(s) en el lote`; });
+
+function waLink(f){
+  const tel = String(f.telefono || '').replace(/\D/g,'').slice(-10);
+  const txt = `Hola, ${f.tutor || ''}. Le compartimos el certificado de participación de ${f.nombres} ${f.apellidos} en el ${P.ev.titulo} de la ${P.ev.serie}. Gracias por participar. — Club de Ajedrez Polgar`;
+  return `https://wa.me/52${tel}?text=${encodeURIComponent(txt)}`;
+}
+function estadoFila(folio, txt){ const td = document.querySelector(`tr[data-folio="${CSS.escape(folio)}"] .pEst`); if (td) td.textContent = txt; }
+
+// --- Fondo limpio elegido por el organizador ---
+$('#pFondo').onchange = () => {
+  const file = $('#pFondo').files[0]; if (!file) return;
+  const img = new Image();
+  img.onload = () => {
+    P.fondo = img;
+    const ok = Math.abs(img.naturalWidth / img.naturalHeight - CERT.W / CERT.H) < 0.02;
+    $('#pVistaNota').textContent = `${img.naturalWidth} × ${img.naturalHeight} px` + (ok ? ' · proporción carta horizontal correcta.' : ' · ⚠️ la proporción no es carta horizontal; el diseño se deformará.');
+    const c = $('#pVista'); c.classList.remove('hidden');
+    const ej = ordenar(P.filas.filter(esValida)).sort((a,b) => (b.nombres + b.apellidos).length - (a.nombres + a.apellidos).length)[0];
+    dibujarCert(c.getContext('2d'), img, ej ? datosCert(ej) : { nombre:'Nombre Completo del Participante', inst:'Institución educativa', cat:lineaCat('Sub-12','Rama Mixta') }, false);
+    if (ej) $('#pVistaNota').textContent += ' Vista con el nombre más largo inscrito.';
+  };
+  img.src = URL.createObjectURL(file);
+};
+
+async function cargarJsPDF(){
+  if (window.jspdf) return;
+  await new Promise((res, rej) => { const s = document.createElement('script'); s.src = '/inscripciones/lib/jspdf.umd.min.js';
+    s.onload = res; s.onerror = () => rej(new Error('No se pudo cargar el generador de PDF (inscripciones/lib/jspdf.umd.min.js).')); document.head.appendChild(s); });
+}
+function fondoJPEG(ancho, calidad){
+  const c = document.createElement('canvas'); c.width = ancho; c.height = Math.round(ancho * CERT.H / CERT.W);
+  c.getContext('2d').drawImage(P.fondo, 0, 0, c.width, c.height);
+  return c.toDataURL('image/jpeg', calidad);
+}
+function pdfLinea(doc, t, L){
+  if (!t) return;
+  const k = 279.4 / CERT.W, pt = px => px * 72 / 300;
+  let size = L.size;
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(pt(size));
+  while (doc.getTextWidth(t) > L.maxW * k && size > L.min){ size -= 2; doc.setFontSize(pt(size)); }
+  doc.setTextColor(10, 30, 70); doc.text(t, L.cx * k + 0.25, L.base * k + 0.45, { align:'center' }); // sombra
+  const h = L.color.replace('#',''); doc.setTextColor(parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16));
+  doc.text(t, L.cx * k, L.base * k, { align:'center' });
+}
+function pdfConCerts(filas, jpg){
+  const doc = new window.jspdf.jsPDF({ orientation:'landscape', unit:'mm', format:'letter', compress:true });
+  filas.forEach((f, i) => {
+    if (i) doc.addPage('letter', 'landscape');
+    doc.addImage(jpg, 'JPEG', 0, 0, 279.4, 215.9, 'fondo', 'FAST');
+    const d = datosCert(f);
+    pdfLinea(doc, d.nombre, CERT.nombre); pdfLinea(doc, d.inst, CERT.inst); pdfLinea(doc, d.cat, CERT.cat);
+  });
+  doc.setProperties({ title: 'Certificados · ' + P.ev.titulo, author: 'Club de Ajedrez Polgar' });
+  return doc;
+}
+const nombreArchivo = s => s.normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^\w\- ]+/g,'').trim().replace(/\s+/g,'_');
+function exigirFondo(){ if (!P.fondo) throw new Error('Primero selecciona la imagen limpia del certificado (paso 1 del panel).'); }
+
+$('#pImprimir').onclick = async () => {
+  const box = $('#pConfirmar'); box.classList.remove('hidden');
+  try {
+    exigirFondo();
+    const lote = loteImpresion();
+    if (!lote.length) throw new Error('No hay certificados en el lote con los filtros elegidos.');
+    box.textContent = `Generando ${lote.length} certificado(s)…`;
+    await cargarJsPDF();
+    const doc = pdfConCerts(lote, fondoJPEG(CERT.W, 0.92));
+    doc.save(`Certificados_${nombreArchivo(P.ev.id)}_imprenta_${nombreArchivo(ahoraTxt())}.pdf`);
+    P.lote = lote.map(f => f.folio);
+    box.innerHTML = `Se descargó el PDF con <b>${lote.length}</b> certificado(s), ordenados por categoría, rama y apellidos. Ábrelo y revísalo. Cuando lo mandes a imprimir, márcalos para que los siguientes inscritos queden como <b>pendientes de certificado digital</b>.
+      <div class="fnav"><span></span><button type="button" class="primary" id="pMarcarImp">Marcar ${lote.length} como impresos</button></div>`;
+    $('#pMarcarImp').onclick = async () => {
+      const b = $('#pMarcarImp'); b.disabled = true; b.textContent = 'Marcando…';
+      try { const j = await api({ accion:'admin_marcar', folios:P.lote, valor:'Impreso ' + ahoraTxt() }); box.textContent = `Listo: ${j.marcados} certificado(s) marcados como impresos en la hoja.`; await cargarDatos(); }
+      catch (e) { box.textContent = '⚠️ ' + e.message; }
+    };
+  } catch (e) { box.textContent = '⚠️ ' + e.message; }
+};
+
+async function pdfIndividual(f){
+  exigirFondo(); await cargarJsPDF();
+  if (!P.jpgDigital) P.jpgDigital = fondoJPEG(2200, 0.85);
+  return pdfConCerts([f], P.jpgDigital);
+}
+async function descargarIndividual(f){ const doc = await pdfIndividual(f); doc.save(`Certificado_${nombreArchivo(f.nombres + ' ' + f.apellidos)}.pdf`); }
+$('#pFondo').addEventListener('change', () => { P.jpgDigital = null; });
+
+$('#pEnviar').onclick = async () => {
+  const sel = [...document.querySelectorAll('#pPend tr[data-folio]')].filter(tr => tr.querySelector('.pSel').checked).map(tr => P.filas.find(f => f.folio === tr.dataset.folio));
+  if (!sel.length) { $('#pCuota').textContent = 'Selecciona al menos un participante.'; return; }
+  const b = $('#pEnviar'); b.disabled = true;
+  let ok = 0;
+  for (const f of sel){
+    estadoFila(f.folio, 'Enviando…');
+    try {
+      const doc = await pdfIndividual(f);
+      const pdf = doc.output('datauristring').split(',')[1];
+      const j = await api({ accion:'admin_enviar', folio:f.folio, pdf, archivo:`Certificado ${f.nombres} ${f.apellidos}.pdf`, evento:`${P.ev.titulo} de la ${P.ev.serie}` });
+      f.certificado = 'Digital enviado ' + ahoraTxt(); estadoFila(f.folio, '✅ Enviado'); ok++; P.cuota = j.cuota;
+    } catch (e) {
+      estadoFila(f.folio, '⚠️ ' + e.message);
+      if (/cuota|quota|Service invoked too many times/i.test(e.message)) break;
+    }
+  }
+  b.disabled = false;
+  $('#pCuota').textContent = `Enviados: ${ok} de ${sel.length}.` + (P.cuota != null ? ` Cuota restante hoy: ${P.cuota}.` : '');
+  try { await cargarDatos(); $('#pCuota').textContent = `Enviados: ${ok} de ${sel.length}. Cuota restante hoy: ${P.cuota}.`; } catch (_) {}
+};
+
+$('#pCsv').onclick = () => {
+  const cols = ['Folio','Nombres','Apellidos','Institución','Categoría','Rama en certificado','Sexo','Pago validado','Autoriza imagen','Inscripción','Certificado','Tutor','Correo','Teléfono'];
+  const filas = ordenar(P.filas.filter(esValida)).map(f => [f.folio, f.nombres, f.apellidos, f.institucion, f.categoria,
+    ramaCert(f.rama === 'Femenil' ? 'F' : 'V', femenilSeparada(f.categoria)), f.rama, f.pago ? 'Sí' : 'No', f.imagen, f.inscripcion, f.certificado, f.tutor, f.correo, f.telefono]);
+  const csv = '﻿' + [cols, ...filas].map(r => r.map(x => `"${String(x ?? '').replace(/"/g,'""')}"`).join(',')).join('\r\n');
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type:'text/csv;charset=utf-8' }));
+  a.download = `Inscritos_${nombreArchivo(P.ev.id)}_${nombreArchivo(ahoraTxt())}.csv`; a.click();
+};
 
 /* ================= ARRANQUE ================= */
 // El enlace directo www.ajedrezpolgar.com/inscripciones/#convocatoria abre la convocatoria del torneo activo.
@@ -842,7 +1269,10 @@ $('#anio').textContent = HOY.slice(0,4);
 renderActivo();
 renderListas();
 if (location.hash === '#convocatoria' && ACTIVO && ACTIVO.convocatoria) abrirConvocatoria(ACTIVO, true);
-if (ACTIVO && ACTIVO.formulario === 'mtl' && estadoDe(ACTIVO) === 'abierta' && FORM_LISTO){
+// Panel del organizador: www.ajedrezpolgar.com/inscripciones/#panel (o el enlace «Panel» del pie de página).
+$('#lnkPanel').addEventListener('click', e => { e.preventDefault(); abrirPanel(); });
+if (location.hash === '#panel') abrirPanel();
+if (ACTIVO && ACTIVO.formulario === 'mtl' && admite(estadoDe(ACTIVO)) && FORM_LISTO){
   prepararFormulario();
   if (location.hash === '#inscribir') abrirFormulario();
 }
