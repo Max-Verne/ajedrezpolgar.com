@@ -23,8 +23,9 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
 /aviso-de-privacidad/ (proyecto propio, numeración propia, texto del proyecto legal).
 
 ## Estado actual
-* Versión vigente: v8
-* Archivo entregado: Inscripciones_v8.html + carpetas convocatorias/, certificados/ y lib/ → se sube como /inscripciones/index.html
+* Versión vigente: v9
+* Archivo entregado: Inscripciones_v9.html → se sube como /inscripciones/index.html (carpetas convocatorias/,
+  certificados/ y lib/ sin cambios). Requiere Code.gs v4 (Code_v4.gs) para la sección 5 del panel.
 * Dónde vive este documento: [x] Fusionado en el artefacto (este comentario HTML,
   invisible para el visitante). No en pestaña visible porque es una página pública.
 * Traspaso a nuevo chat: la IA descarga el archivo con
@@ -66,6 +67,13 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
   correcta el servidor no entrega datos de los inscritos.
 * CAMBIO DE CONTRATO v8: el panel carga jsPDF desde /inscripciones/lib/jspdf.umd.min.js (alojado en
   el propio sitio, licencia MIT), solo al usar el panel; la página pública no lo descarga.
+* CAMBIO DE CONTRATO v9: el panel registra inscripciones externas (organizaciones autorizadas) sin
+  script por evento: captura rápida o archivo (.xlsx Swiss-Manager / .xlsx / .csv / pegado de Excel),
+  con revisión obligatoria antes de enviar. El .xlsx se lee en el navegador sin librerías externas.
+* DEBE (v9): las filas externas se crean SOLO con la clave del panel (Code.gs admin_agregar) y quedan con
+  aviso «Pendiente (vía <org>)» y uso de imagen «No»; nunca se marcan como aceptadas por la familia.
+* NO DEBE (v9): registrar a quien ya está en la hoja del evento (mismo nombre completo en cualquier orden
+  + fecha de nacimiento); ni la página ni Code.gs lo permiten.
 
 ## Glosario
 * Evento activo: el primero del catálogo cuya fecha es hoy o posterior
@@ -93,6 +101,16 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
 * Panel: www.ajedrezpolgar.com/inscripciones/#panel → lista (admin_lista), PDF de imprenta (todas
   las hojas en un PDF), marcar impresos (admin_marcar), envío por correo de PDF individuales
   (admin_enviar), PDF/WhatsApp manual y CSV. Excluye filas con Notas que empiezan con ANULADO/PRUEBA.
+* Panel, sección 5 (v9): externos → admin_agregar (Code.gs v4). Folio MTL-<n>-E## consecutivo por pestaña.
+  Columnas: Comprobante «Por cobrar» o «Pagado vía <org>», Pago validado (casilla) según lo elegido, Notas
+  «Por cobrar <org>» / «Pagado <org>», Acepta aviso «Pendiente (vía <org>)», Imagen «No», Boletines «No»,
+  Versión «—», Inscripción «Externa – <org>», Tutor = <org>, sin correo ni teléfono.
+  Organizaciones: Propiedades del script (ORGS), iniciales Escuderos y Juan Becerra; crecen al registrar.
+  Lectura de archivos: encabezados reconocidos sin acentos (Name/Nombre(s)/Nombre completo, Apellidos o
+  Apellido paterno/materno, Birthday/Fecha de nacimiento, Sex/Sexo/Rama, ClubName/Escuela/Institución,
+  Notas/Organización/Responsable, Categoría). Swiss: «Apellido Apellido Nombre(s)», Sex w = femenil, filas sin
+  Notas = inscritos por la página (desmarcadas). Fechas dd/mm/aaaa, aaaa-mm-dd o número de Excel.
+  Sin encabezados se asume: Nombre(s), Apellidos, Nacimiento, Rama, Escuela, Organización.
 * Enlace directo a la convocatoria del torneo activo: /inscripciones/#convocatoria
 * Zona horaria fija America/Mexico_City (México sin horario de verano desde 2022 → -06:00).
 * Parámetro de prueba: ?hoy=AAAA-MM-DD simula la fecha (solo para revisar).
@@ -102,7 +120,9 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
 - [ ] Probar un envío real de punta a punta (folio, fila con consentimientos, comprobante en Drive, correo de aviso).
 - [ ] Corregir Transitorios de la convocatoria: hoy dice que al inscribirse se acepta la autorización de uso de imagen; el aviso la hace opcional y separada.
 - [ ] Confirmar fecha de cierre por evento (por defecto: jueves previo 23:59) y si cada evento tendrá cierreTardio.
-- [ ] Instalar Code.gs v3 (CLAVE_PANEL) y probar el panel con datos reales.
+- [ ] Instalar Code.gs v4 (CLAVE_PANEL; reemplaza a v3) y probar el panel con datos reales.
+- [ ] Recabar el aviso de privacidad y autorización de imagen firmados de los inscritos vía organización.
+- [ ] (Opcional) Quitar o renombrar organizaciones: hoy solo se agregan (Propiedades del script «ORGS»).
 - [ ] Validación de fechas también en Code.gs (hoy el cierre lo controla solo la página).
 - [ ] Imagen de muestra y plantilla limpia para cada evento siguiente (cambia el sello "1ª etapa").
 - [ ] Cupo de 150 por evento: el backend no lo controla todavía.
@@ -113,6 +133,22 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
 - [ ] Portada v3 enlaza a los sitios hermanos vía max-verne.github.io en la barra superior y vía www en el banner — inconsistencia heredada, no se toca aquí.
 
 ## Historial de cambios
+
+**v9 — Inscripciones externas desde el panel**
+* Nueva sección 5 del panel: organizaciones autorizadas (Escuderos, Juan Becerra o una nueva) registran
+  jugadores sin script por evento. Captura rápida (nombre, apellidos, nacimiento, rama, escuela opcional,
+  categoría automática con opción superior) o archivo: Swiss-Manager .xlsx, cualquier .xlsx/.csv o filas
+  pegadas desde Excel; plantilla CSV descargable para las organizaciones.
+* Tabla de revisión editable: división nombre/apellidos dudosa, rama ambigua («M»), fecha inválida,
+  categoría superior, escuela escrita distinto a una ya registrada (botón «Usar»), repetidos. Quien ya está
+  inscrito no entra a la lista. Nombres en MAYÚSCULAS o minúsculas se pasan a formato Nombre Propio.
+* Code.gs v4: acción admin_agregar (folios E##), lista de organizaciones persistente, admin_lista devuelve
+  nacimiento y organizaciones y funciona aunque el evento aún no tenga pestaña; detección de duplicados sin
+  importar el orden de las palabras (también en el formulario público); textos que empiezan con = + - @ se
+  guardan como texto. Ya no hace falta ImportarExternos.
+* Verificación: probado en navegador automatizado con el código real de Code_v4.gs sobre una hoja simulada
+  (archivo Swiss del 1er evento: 72 ya inscritos omitidos, 28 externos con E01–E28 idénticos a la importación
+  manual salvo las correcciones hechas a mano por el titular). Conexión real con Apps Script v4: PENDIENTE DE PRUEBA.
 
 **v8 — Inscripción extemporánea, vista previa del certificado y panel de certificados**
 * Tras el cierre de la convocatoria (jue 8-oct 23:59) el 1er evento sigue aceptando inscripciones hasta
@@ -273,6 +309,18 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
   .p-tabla{border-collapse:collapse;width:100%;font-size:.88rem;min-width:560px}
   .p-tabla th,.p-tabla td{border-bottom:1px solid var(--gris-borde);padding:.45rem .5rem;text-align:left;vertical-align:top}
   .p-tabla th{font-size:.75rem;text-transform:uppercase;letter-spacing:.5px;color:var(--gris-texto)}
+  .x-sub{margin-top:1.1rem;padding-top:.9rem;border-top:1px dashed var(--gris-borde)}
+  .x-sub h4{font-size:1rem;margin-bottom:.2rem}
+  .x-tabla{min-width:1280px}
+  .x-tabla [data-k=nombres]{min-width:140px}.x-tabla [data-k=apellidos]{min-width:150px}.x-tabla [data-k=esc]{min-width:210px}
+  .x-tabla [data-k=org]{min-width:130px}.x-tabla [data-k=sexo],.x-tabla [data-k=pagado]{min-width:105px}.x-tabla [data-k=cat]{min-width:120px}
+  .x-tabla input,.x-tabla select{width:100%;min-width:70px;padding:5px 6px;border:1px solid var(--gris-borde);border-radius:6px;background:var(--suave);color:var(--texto);font:inherit;font-size:.85rem}
+  .x-tabla input[type=checkbox]{width:auto;min-width:0}
+  .x-tabla tr.x-off td{opacity:.55}
+  .x-tabla .x-est{font-size:.8rem;min-width:170px}
+  .x-warn{color:#b25e00}
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .x-warn{color:#ffb35c} }
+  textarea.x-pegar{width:100%;min-height:90px;margin-top:8px;padding:10px 12px;border:1px solid var(--gris-borde);border-radius:10px;background:var(--suave);color:var(--texto);font:inherit;font-size:.85rem}
   @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .chip{background:#1f3b5e;color:#d6e6f8} }
   .activo h3{font-size:1.7rem;line-height:1.2;font-weight:850}
   .activo .sub{color:var(--gris-texto);margin-top:.2rem}
@@ -584,6 +632,48 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
         <div class="p-tabla-wrap"><table class="p-tabla"><thead><tr><th><input type="checkbox" id="pTodos" checked></th><th>Folio</th><th>Jugador</th><th>Correo</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="pPend"></tbody></table></div>
         <div class="fnav"><span class="small" id="pCuota"></span><button type="button" class="primary" id="pEnviar">✉ Enviar por correo a los seleccionados</button></div>
         <p class="small">Si el correo falla: usa <b>PDF</b> para descargar el certificado y <b>WhatsApp</b> para abrir el chat con la familia (adjunta el PDF a mano); después pulsa <b>Marcar enviado</b>.</p>
+      </div>
+
+      <div class="card" id="pExternos">
+        <h3>5. Inscripciones externas (organizaciones autorizadas)</h3>
+        <p class="hint">Para jugadores que inscribe una escuela u organización autorizada sin llenar el formulario. Quedan en la hoja con folio <b>E##</b>, «Por cobrar &lt;organización&gt;» (o «Pagado»), aviso de privacidad <b>pendiente vía la organización</b> y uso de imagen <b>No</b>. Entran al resumen, a la imprenta y al CSV como cualquier inscrito.</p>
+        <div class="row">
+          <div><label class="f" for="xOrg">Organización</label><select id="xOrg" class="sel"></select>
+            <input type="text" id="xOrgNueva" class="hidden" placeholder="Nombre de la nueva organización" maxlength="40" style="margin-top:6px"></div>
+          <div><label class="f" for="xPago">Pago de inscripción</label><select id="xPago" class="sel"><option value="no">Por cobrar a la organización</option><option value="si">Ya pagado</option></select></div>
+        </div>
+
+        <div class="x-sub">
+          <h4>Captura rápida (uno por uno)</h4>
+          <div class="row">
+            <div><label class="f" for="xNom">Nombre(s)</label><input type="text" id="xNom" maxlength="60" autocomplete="off"></div>
+            <div><label class="f" for="xApe">Apellidos</label><input type="text" id="xApe" maxlength="60" autocomplete="off"></div>
+            <div><label class="f" for="xNac">Fecha de nacimiento</label><input type="date" id="xNac"></div>
+            <div><label class="f" for="xSexo">Rama</label><select id="xSexo" class="sel"><option value="">Elige…</option><option value="V">Varonil</option><option value="F">Femenil</option></select></div>
+            <div><label class="f" for="xEsc">Escuela <span class="small">(opcional)</span></label><input type="text" id="xEsc" maxlength="90" autocomplete="off" list="xEscuelas"></div>
+            <div><label class="f" for="xCat">Categoría</label><select id="xCat" class="sel"><option value="">— según fecha de nacimiento —</option></select></div>
+          </div>
+          <datalist id="xEscuelas"></datalist>
+          <p class="err" id="xErr"></p>
+          <div class="fnav"><span></span><button type="button" class="btn-sm" id="xAgregar">＋ Agregar a la lista</button></div>
+        </div>
+
+        <div class="x-sub">
+          <h4>Cargar archivo o pegar desde Excel (varios a la vez)</h4>
+          <p class="hint">Acepta el archivo de Swiss-Manager (.xlsx con columnas Name, Sex, ClubName, Birthday, Notas) o cualquier .xlsx / .csv con columnas <b>Nombre(s), Apellidos, Fecha de nacimiento, Rama, Escuela</b> (y opcional Organización). Si la columna Notas dice «Por cobrar Escuderos», se toma esa organización. También puedes copiar las filas en Excel y pegarlas abajo.</p>
+          <div class="p-acc"><input type="file" id="xArchivo" accept=".xlsx,.csv,.txt,text/csv"><button type="button" class="btn-sm" id="xPlantilla">⬇ Plantilla para organizaciones</button></div>
+          <textarea class="x-pegar" id="xPegar" placeholder="…o pega aquí las filas copiadas de Excel (con la fila de encabezados)"></textarea>
+          <div class="fnav"><span class="small" id="xLeido"></span><button type="button" class="btn-sm" id="xLeer">Leer lo pegado</button></div>
+        </div>
+
+        <div class="x-sub">
+          <h4>Revisión antes de registrar <span class="small" id="xCuenta"></span></h4>
+          <p class="hint">Revisa sobre todo la división entre nombre(s) y apellidos (⚠) y la escuela: así saldrán en el certificado. Desmarca a quien no deba registrarse. Quienes ya están en la hoja aparecen desmarcados.</p>
+          <div class="p-tabla-wrap"><table class="p-tabla x-tabla"><thead><tr><th>✓</th><th>Nombre(s)</th><th>Apellidos</th><th>Nacimiento</th><th>Rama</th><th>Escuela</th><th>Categoría</th><th>Organización</th><th>Pago</th><th>Revisión</th><th></th></tr></thead><tbody id="xLista"><tr><td colspan="11" class="small">Aún no hay jugadores en la lista.</td></tr></tbody></table></div>
+          <div class="fnav"><button type="button" class="btn-sm" id="xVaciar">Vaciar lista</button><button type="button" class="primary" id="xRegistrar">Registrar en la hoja</button></div>
+          <div id="xResultado" class="aviso hidden"></div>
+        </div>
+        <datalist id="xOrgs"></datalist>
       </div>
     </div>
   </section>
@@ -1047,7 +1137,7 @@ function dibujarPrevias(){
    La clave NO vive en esta página: se envía al Apps Script, que la compara con CLAVE_PANEL.
    Sin clave correcta el servidor no entrega ningún dato. Los PDF se arman en este navegador
    (jsPDF alojado en /inscripciones/lib/, se carga solo al usar el panel). */
-const P = { clave:'', ev:null, filas:[], fondo:null, override:{}, lote:[], cuota:null };
+const P = { clave:'', ev:null, filas:[], fondo:null, override:{}, lote:[], cuota:null, orgs:[], ext:[] };
 const EVENTOS_PANEL = EVENTOS.filter(e => e.formulario === 'mtl' && e.sede);
 const esValida = f => !/^\s*(ANULAD|PRUEBA)/i.test(f.notas || '');
 const ahoraTxt = () => new Date().toLocaleString('es-MX', { timeZone:TZ, day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit', hour12:false }).replace(',', '');
@@ -1073,7 +1163,9 @@ async function api(body){
 async function cargarDatos(){
   const j = await api({ accion:'admin_lista' });
   P.filas = j.filas || []; P.cuota = j.cuota;
-  renderPanel();
+  if (Array.isArray(j.orgs) && j.orgs.length) P.orgs = j.orgs;
+  else if (!P.orgs.length) P.orgs = ORGS_RESPALDO.slice();
+  renderPanel(); renderExternos();
 }
 $('#pEntrar').onclick = async () => {
   $('#pErr').textContent = '';
@@ -1088,7 +1180,7 @@ $('#pEntrar').onclick = async () => {
   b.disabled = false; b.textContent = 'Entrar';
 };
 $('#pClave').addEventListener('keydown', e => { if (e.key === 'Enter') $('#pEntrar').click(); });
-$('#pSalir').onclick = () => { P.clave = ''; P.filas = []; $('#pClave').value = ''; $('#panelApp').classList.add('hidden'); $('#panelLogin').classList.remove('hidden'); };
+$('#pSalir').onclick = () => { P.clave = ''; P.filas = []; P.ext = []; P.override = {}; $('#pClave').value = ''; $('#panelApp').classList.add('hidden'); $('#panelLogin').classList.remove('hidden'); };
 $('#pRecargar').onclick = async () => { try { await cargarDatos(); } catch (e) { alertaPanel(e.message); } };
 
 function alertaPanel(msg){ $('#pNotaResumen').innerHTML = `<span style="color:var(--err)">${esc(msg)}</span>`; }
@@ -1259,6 +1351,385 @@ $('#pCsv').onclick = () => {
   const csv = '﻿' + [cols, ...filas].map(r => r.map(x => `"${String(x ?? '').replace(/"/g,'""')}"`).join(',')).join('\r\n');
   const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type:'text/csv;charset=utf-8' }));
   a.download = `Inscritos_${nombreArchivo(P.ev.id)}_${nombreArchivo(ahoraTxt())}.csv`; a.click();
+};
+
+/* ================= INSCRIPCIONES EXTERNAS (panel, sección 5) =================
+   Organizaciones autorizadas (Escuderos, Prof. Juan Becerra u otras) que inscriben sin formulario.
+   Captura rápida o archivo (.xlsx de Swiss-Manager / .xlsx / .csv / pegado desde Excel) → lista de
+   revisión → Code.gs v4 (admin_agregar) crea las filas con folio E##. El .xlsx se lee aquí mismo
+   (sin librerías: es un ZIP con XML; se descomprime con DecompressionStream del navegador). */
+const ORGS_RESPALDO = ['Escuderos', 'Juan Becerra'];
+const sinAcento = s => String(s ?? '').normalize('NFD').replace(/[̀-ͯ]/g, '');
+const soloLetras = s => sinAcento(s).toLowerCase().replace(/[^a-z]/g, '');
+// Mismo criterio que Code.gs v4: mismo jugador aunque el orden de las palabras cambie.
+const claveJ = (n, a, nac) => sinAcento(n + ' ' + a).toLowerCase().split(/[^a-z]+/).filter(Boolean).sort().join(' ') + '|' + nac;
+const PARTICULAS = ['de','del','la','las','los','y','van','von','da','di','mc'];
+function tituloSiHaceFalta(s){
+  s = String(s ?? '').replace(/\s+/g, ' ').trim();
+  if (!s || (s !== s.toUpperCase() && s !== s.toLowerCase())) return s;
+  return s.toLowerCase().split(' ').map((w, i) => i && PARTICULAS.includes(w) ? w : w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+}
+// Une partículas al apellido que sigue: "De la Cruz" cuenta como una sola pieza.
+function piezas(s){
+  const t = String(s).replace(/\s+/g, ' ').trim().split(' ').filter(Boolean), out = [];
+  let pend = [];
+  t.forEach(w => { if (PARTICULAS.includes(w.toLowerCase())) pend.push(w); else { out.push([...pend, w].join(' ')); pend = []; } });
+  if (pend.length) out.push(pend.join(' '));
+  return out;
+}
+// Swiss guarda "Apellido Apellido Nombre(s)"; otros listados suelen traer "Nombre(s) Apellido Apellido".
+function dividirNombre(completo, apellidosPrimero){
+  const c = String(completo ?? '').trim();
+  if (c.includes(',')) { const [a, n] = c.split(','); return { nombres:n.trim(), apellidos:a.trim(), dudoso:false }; }
+  const p = piezas(c);
+  if (p.length < 2) return { nombres:c, apellidos:'', dudoso:true };
+  const nAp = p.length >= 3 ? 2 : 1;
+  return apellidosPrimero ? { apellidos:p.slice(0, nAp).join(' '), nombres:p.slice(nAp).join(' '), dudoso:true }
+                          : { nombres:p.slice(0, p.length - nAp).join(' '), apellidos:p.slice(-nAp).join(' '), dudoso:true };
+}
+function parseFecha(v){
+  if (v == null || v === '') return '';
+  const iso = (y, m, d) => { const f = new Date(Date.UTC(y, m - 1, d)); return f.getUTCFullYear() === y && f.getUTCMonth() === m - 1 && f.getUTCDate() === d ? f.toISOString().slice(0, 10) : ''; };
+  if (typeof v === 'number' || /^\d{4,5}(\.\d+)?$/.test(String(v).trim())) {           // número de serie de Excel
+    const n = Math.floor(+v); if (n < 1000 || n > 80000) return '';
+    return new Date(Date.UTC(1899, 11, 30) + n * 864e5).toISOString().slice(0, 10);
+  }
+  const t = String(v).trim();
+  let m = t.match(/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})/);
+  if (m) return iso(+m[1], +m[2], +m[3]);
+  m = t.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{2}|\d{4})$/);                          // dd/mm/aaaa (México)
+  if (m) { let y = +m[3]; if (y < 100) y += y <= +HOY.slice(2, 4) ? 2000 : 1900; return iso(y, +m[2], +m[1]); }
+  return '';
+}
+function parseSexo(v, swiss){
+  const h = soloLetras(v);
+  if (swiss) return /^(w|f)/.test(h) ? 'F' : 'V';                                          // Swiss: w = mujer; vacío/m = hombre
+  if (/^(f|fem|mujer|nina|w)/.test(h)) return 'F';
+  if (/^(v|var|h|hombre|nino|masc)/.test(h)) return 'V';
+  return '';
+}
+const anioDe = nac => nac ? +nac.slice(0, 4) : null;
+const catsPermitidas = nac => { const y = anioDe(nac); return y ? (P.ev.categorias || []).filter(c => y >= c.minYear) : []; };
+const catAuto = nac => { const y = anioDe(nac); const c = y && (P.ev.categorias || []).find(c => y >= c.minYear && y <= c.maxYear); return c ? c.nombre : ''; };
+function catDeTexto(t, nac){
+  const h = soloLetras(t), num = (String(t).match(/\d+/) || [''])[0];
+  const numDe = c => (c.nombre.match(/\d+/) || [''])[0];
+  const c = catsPermitidas(nac).find(c => num ? (numDe(c) !== '' && +numDe(c) === +num) : (h.startsWith('sec') && soloLetras(c.nombre).startsWith('sec')) || (!numDe(c) && soloLetras(c.nombre) === h));
+  return c ? c.nombre : '';
+}
+function orgCanonica(o){
+  const h = soloLetras(o); if (!h) return '';
+  const ex = P.orgs.find(x => soloLetras(x) === h) || P.orgs.find(x => h.includes(soloLetras(x)) || soloLetras(x).includes(h));
+  return ex || String(o).replace(/\s+/g, ' ').trim().slice(0, 40);
+}
+// "Por cobrar Escuderos" → { org:'Escuderos', pagado:false }; "Pagado Juan Becerra" → pagado:true
+function orgDeNota(t){
+  const s = String(t ?? '').trim(); if (!s) return null;
+  const m = s.match(/^(por\s+cobrar|pagad[oa]|pag[oó])\s*(a\s+|por\s+|v[ií]a\s+)?(.*)$/i);
+  if (m) return { org: m[3].replace(/^prof(r|a)?\.?\s+/i, '').trim(), pagado: !/cobrar/i.test(m[1]) };
+  return { org: s.replace(/^prof(r|a)?\.?\s+/i, ''), pagado: null };
+}
+
+function orgActual(){
+  const v = $('#xOrg').value;
+  return v === '__nueva' ? orgCanonica($('#xOrgNueva').value) : v;
+}
+function renderOrgs(){
+  const sel = $('#xOrg'), prev = sel.value;
+  sel.innerHTML = P.orgs.map(o => `<option value="${esc(o)}">${esc(o)}</option>`).join('') + '<option value="__nueva">➕ Nueva organización…</option>';
+  if ([...sel.options].some(o => o.value === prev)) sel.value = prev;
+  $('#xOrgNueva').classList.toggle('hidden', sel.value !== '__nueva');
+  $('#xOrgs').innerHTML = P.orgs.map(o => `<option value="${esc(o)}">`).join('');
+  const escuelas = [...new Set(P.filas.map(f => (f.institucion || '').trim()).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'es'));
+  $('#xEscuelas').innerHTML = escuelas.map(e => `<option value="${esc(e)}">`).join('');
+}
+$('#xOrg').onchange = () => { $('#xOrgNueva').classList.toggle('hidden', $('#xOrg').value !== '__nueva'); if ($('#xOrg').value === '__nueva') $('#xOrgNueva').focus(); };
+
+function opcionesCat(nac, actual){
+  const cs = catsPermitidas(nac);
+  return cs.length ? cs.map(c => `<option ${c.nombre === actual ? 'selected' : ''}>${esc(c.nombre)}</option>`).join('') : '<option value="">—</option>';
+}
+$('#xNac').onchange = () => { const nac = $('#xNac').value; $('#xCat').innerHTML = nac ? opcionesCat(nac, catAuto(nac)) : '<option value="">— según fecha de nacimiento —</option>'; };
+
+// Problemas que impiden registrar (rojos) y avisos (naranjas).
+function revisar(r, i){
+  const prob = [], av = [];
+  const nameRe = /^[\p{L}'´.\- ]{2,}$/u;
+  if (!nameRe.test(r.nombres || '')) prob.push('Falta o no es válido el nombre.');
+  if (!nameRe.test(r.apellidos || '')) prob.push('Faltan apellidos.');
+  const y = anioDe(r.nac), now = +HOY.slice(0, 4);
+  if (!r.nac) prob.push('Fecha de nacimiento no válida.');
+  else if (!(y > now - 25 && y <= now - 3)) prob.push('Año de nacimiento fuera de rango.');
+  if (!r.sexo) prob.push(r.sexoAmbiguo ? 'Rama ambigua («M»): elige Femenil o Varonil.' : 'Falta la rama.');
+  if (!r.cat) prob.push('Sin categoría para ese año.');
+  if (!r.org) prob.push('Falta la organización.');
+  const k = claveJ(r.nombres, r.apellidos, r.nac);
+  const ya = P.filas.find(f => claveJ(f.nombres, f.apellidos, f.nacimiento) === k);
+  if (ya) prob.push(`Ya está en la hoja (folio ${ya.folio}).`);
+  else if (P.ext.some((o, j) => j < i && o.incl && claveJ(o.nombres, o.apellidos, o.nac) === k)) prob.push('Repetido en esta lista.');
+  if (r.nota === 'sin organización') av.push('El archivo no indica organización (por eso quedó desmarcado).');
+  if (r.dudoso) av.push('Revisa la división nombre(s) / apellidos.');
+  if (!r.esc) av.push('Sin escuela (el certificado irá sin esa línea).');
+  const parecida = escuelaParecida(r.esc);
+  if (r.cat && r.cat !== catAuto(r.nac)) av.push('Categoría superior a la de su edad.');
+  return { prob, av, ya, parecida };
+}
+// Misma escuela escrita distinto («Ma.Morelos» / «Ma. Morelos», «King» / «King Jr.»): se sugiere la ya registrada.
+function escuelaParecida(e){
+  const a = soloLetras(e); if (a.length < 6) return '';
+  const ex = [...new Set(P.filas.map(f => (f.institucion || '').trim()).filter(Boolean))];
+  if (ex.includes(e)) return '';
+  return ex.find(x => soloLetras(x) === a) || ex.find(x => { const b = soloLetras(x); return Math.min(a.length, b.length) >= 10 && (a.includes(b) || b.includes(a)); }) || '';
+}
+function estadoHTML(r, i){
+  const { prob, av, parecida } = revisar(r, i);
+  return (prob.map(t => `<div style="color:var(--err)">✖ ${esc(t)}</div>`).join('') + av.map(t => `<div class="x-warn">⚠ ${esc(t)}</div>`).join('') +
+    (parecida ? `<div class="x-warn">⚠ ¿Es «${esc(parecida)}»? <button type="button" class="btn-sm" data-usar-esc="${esc(parecida)}" style="padding:.15rem .5rem;font-size:.75rem">Usar</button></div>` : '')) || '<span style="color:var(--ok)">✓ Lista</span>';
+}
+function renderExternos(){
+  if (!P.ev) return;
+  renderOrgs();
+  const tb = $('#xLista');
+  $('#xCuenta').textContent = P.ext.length ? `· ${P.ext.filter(r => r.incl).length} de ${P.ext.length} marcados` : '';
+  if (!P.ext.length) { tb.innerHTML = '<tr><td colspan="11" class="small">Aún no hay jugadores en la lista.</td></tr>'; return; }
+  tb.innerHTML = P.ext.map((r, i) => `<tr data-i="${i}" class="${r.incl ? '' : 'x-off'}">
+    <td><input type="checkbox" data-k="incl" ${r.incl ? 'checked' : ''}></td>
+    <td><input type="text" data-k="nombres" value="${esc(r.nombres)}" maxlength="60"></td>
+    <td><input type="text" data-k="apellidos" value="${esc(r.apellidos)}" maxlength="60"></td>
+    <td><input type="date" data-k="nac" value="${esc(r.nac)}"></td>
+    <td><select data-k="sexo"><option value="">—</option><option value="V" ${r.sexo === 'V' ? 'selected' : ''}>Varonil</option><option value="F" ${r.sexo === 'F' ? 'selected' : ''}>Femenil</option></select></td>
+    <td><input type="text" data-k="esc" value="${esc(r.esc)}" maxlength="90" list="xEscuelas"></td>
+    <td><select data-k="cat">${opcionesCat(r.nac, r.cat)}</select></td>
+    <td><input type="text" data-k="org" value="${esc(r.org)}" maxlength="40" list="xOrgs"></td>
+    <td><select data-k="pagado"><option value="no">Por cobrar</option><option value="si" ${r.pagado ? 'selected' : ''}>Pagado</option></select></td>
+    <td class="x-est">${estadoHTML(r, i)}</td>
+    <td><button type="button" class="btn-sm" data-quitar title="Quitar de la lista">✕</button></td></tr>`).join('');
+}
+function refrescarEstados(){
+  document.querySelectorAll('#xLista tr[data-i]').forEach(tr => { const i = +tr.dataset.i; tr.querySelector('.x-est').innerHTML = estadoHTML(P.ext[i], i); tr.classList.toggle('x-off', !P.ext[i].incl); });
+  $('#xCuenta').textContent = P.ext.length ? `· ${P.ext.filter(r => r.incl).length} de ${P.ext.length} marcados` : '';
+}
+// Edición en la tabla sin redibujarla (para no perder el cursor al pasar de una celda a otra).
+$('#xLista').addEventListener('change', e => {
+  const el = e.target, tr = el.closest('tr[data-i]'); if (!tr || !el.dataset.k) return;
+  const r = P.ext[+tr.dataset.i], k = el.dataset.k;
+  if (k === 'incl') r.incl = el.checked;
+  else if (k === 'pagado') r.pagado = el.value === 'si';
+  else if (k === 'org') r.org = orgCanonica(el.value);
+  else r[k] = String(el.value).replace(/\s+/g, ' ').trim();
+  if (k === 'nombres' || k === 'apellidos') r.dudoso = false;
+  if (k === 'nac') { if (!catsPermitidas(r.nac).some(c => c.nombre === r.cat)) r.cat = catAuto(r.nac); tr.querySelector('[data-k=cat]').innerHTML = opcionesCat(r.nac, r.cat); }
+  refrescarEstados();
+});
+$('#xLista').addEventListener('click', e => {
+  const u = e.target.closest('[data-usar-esc]');
+  if (u) { const tr = u.closest('tr[data-i]'); P.ext[+tr.dataset.i].esc = u.dataset.usarEsc; tr.querySelector('[data-k=esc]').value = u.dataset.usarEsc; refrescarEstados(); return; }
+  const b = e.target.closest('[data-quitar]'); if (!b) return;
+  P.ext.splice(+b.closest('tr').dataset.i, 1); renderExternos();
+});
+$('#xVaciar').onclick = () => { if (!P.ext.length || confirm(`¿Quitar los ${P.ext.length} jugadores de la lista? (No borra nada de la hoja.)`)) { P.ext = []; renderExternos(); $('#xResultado').classList.add('hidden'); } };
+
+function nuevaFila(o){
+  const r = { incl:true, nombres:'', apellidos:'', nac:'', sexo:'', esc:'', cat:'', org:'', pagado:false, dudoso:false, sexoAmbiguo:false, ...o };
+  if (!r.cat) r.cat = catAuto(r.nac);
+  if (revisar(r, P.ext.length).ya) r.incl = false;          // ya inscrito: queda en la lista pero desmarcado
+  return r;
+}
+
+$('#xAgregar').onclick = () => {
+  const org = orgActual(), nac = $('#xNac').value;
+  const r = nuevaFila({ nombres:tituloSiHaceFalta($('#xNom').value), apellidos:tituloSiHaceFalta($('#xApe').value), nac, sexo:$('#xSexo').value,
+    esc:$('#xEsc').value.replace(/\s+/g, ' ').trim(), cat:$('#xCat').value || catAuto(nac), org, pagado:$('#xPago').value === 'si' });
+  const { prob } = revisar(r, P.ext.length);
+  if (prob.length) { $('#xErr').textContent = prob.join(' '); return; }
+  $('#xErr').textContent = '';
+  P.ext.push(r); renderExternos();
+  ['xNom','xApe','xNac'].forEach(id => $('#' + id).value = ''); $('#xSexo').value = ''; $('#xNac').onchange();
+  $('#xNom').focus();                                        // la escuela se conserva: suelen venir varios de la misma
+};
+
+// ---------- Lectura de archivos ----------
+function parseDelimitado(txt){
+  txt = txt.replace(/^﻿/, '');
+  const l1 = txt.split(/\r?\n/)[0] || '';
+  const d = l1.includes('\t') ? '\t' : (l1.split(';').length > l1.split(',').length ? ';' : ',');
+  const filas = []; let fila = [], campo = '', q = false;
+  for (let i = 0; i < txt.length; i++){
+    const c = txt[i];
+    if (q){ if (c === '"'){ if (txt[i + 1] === '"'){ campo += '"'; i++; } else q = false; } else campo += c; }
+    else if (c === '"' && campo === '') q = true;
+    else if (c === d){ fila.push(campo); campo = ''; }
+    else if (c === '\n' || c === '\r'){ if (c === '\r' && txt[i + 1] === '\n') i++; fila.push(campo); filas.push(fila); fila = []; campo = ''; }
+    else campo += c;
+  }
+  if (campo !== '' || fila.length){ fila.push(campo); filas.push(fila); }
+  return filas;
+}
+async function leerXlsx(buf){
+  const u8 = new Uint8Array(buf), dv = new DataView(buf), td = new TextDecoder();
+  let e = u8.length - 22; while (e >= 0 && dv.getUint32(e, true) !== 0x06054b50) e--;
+  if (e < 0) throw new Error('El archivo no parece un .xlsx válido.');
+  const zip = {}; let off = dv.getUint32(e + 16, true);
+  for (let i = 0, n = dv.getUint16(e + 10, true); i < n; i++){
+    if (dv.getUint32(off, true) !== 0x02014b50) break;
+    const nl = dv.getUint16(off + 28, true), xl = dv.getUint16(off + 30, true), cl = dv.getUint16(off + 32, true);
+    zip[td.decode(u8.subarray(off + 46, off + 46 + nl))] = { m: dv.getUint16(off + 10, true), cs: dv.getUint32(off + 20, true), lo: dv.getUint32(off + 42, true) };
+    off += 46 + nl + xl + cl;
+  }
+  const leer = async nombre => {
+    const f = zip[nombre]; if (!f) return null;
+    const ini = f.lo + 30 + dv.getUint16(f.lo + 26, true) + dv.getUint16(f.lo + 28, true), datos = u8.subarray(ini, ini + f.cs);
+    if (f.m === 0) return td.decode(datos);
+    if (typeof DecompressionStream === 'undefined') throw new Error('Este navegador no puede abrir .xlsx; guarda el archivo como .csv o pega las filas.');
+    return await new Response(new Blob([datos]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).text();
+  };
+  const xml = t => new DOMParser().parseFromString(t, 'application/xml');
+  const todos = (nodo, tag) => [...nodo.getElementsByTagNameNS('*', tag)];
+  const ss = await leer('xl/sharedStrings.xml');
+  const comp = ss ? todos(xml(ss), 'si').map(si => todos(si, 't').filter(t => t.parentNode.localName !== 'rPh').map(t => t.textContent).join('')) : [];
+  let ruta = 'xl/worksheets/sheet1.xml';
+  try {
+    const wb = xml(await leer('xl/workbook.xml')), rid = todos(wb, 'sheet')[0].getAttribute('r:id') || todos(wb, 'sheet')[0].getAttributeNS('http://schemas.openxmlformats.org/officeDocument/2006/relationships', 'id');
+    const rel = todos(xml(await leer('xl/_rels/workbook.xml.rels')), 'Relationship').find(r => r.getAttribute('Id') === rid);
+    if (rel){ const t = rel.getAttribute('Target'); ruta = t.startsWith('/') ? t.slice(1) : 'xl/' + t; }
+  } catch (_) {}
+  const hojaTxt = await leer(ruta); if (!hojaTxt) throw new Error('No se encontró la primera hoja del archivo.');
+  const filas = [];
+  todos(xml(hojaTxt), 'row').forEach(row => {
+    const f = [];
+    todos(row, 'c').forEach(c => {
+      const ref = (c.getAttribute('r') || '').replace(/\d+/g, ''); let col = 0;
+      for (const ch of ref) col = col * 26 + ch.charCodeAt(0) - 64;
+      const t = c.getAttribute('t'), v = (todos(c, 'v')[0] || {}).textContent;
+      let val = t === 's' ? comp[+v] : t === 'inlineStr' ? todos(c, 't').map(x => x.textContent).join('') : t === 'str' || t === 'b' || t === 'e' ? v : (v == null ? '' : +v);
+      f[(col || f.length + 1) - 1] = val ?? '';
+    });
+    filas[(+row.getAttribute('r') || filas.length + 1) - 1] = f;
+  });
+  return [...filas].map(f => f ? [...f].map(x => x ?? '') : []);
+}
+function claveEncabezado(txt){
+  const h = soloLetras(txt);
+  if (h === 'name') return 'swissNombre';
+  if (h === 'sex') return 'swissSexo';
+  if (h.includes('nacimiento') || h === 'birthday' || h.startsWith('fechanac') || h === 'fnac') return 'nac';
+  if (h.startsWith('apellidopaterno')) return 'apPat';
+  if (h.startsWith('apellidomaterno')) return 'apMat';
+  if (h.startsWith('apellido')) return 'apellidos';
+  if (h === 'nombres' || h === 'nombre') return 'nombres';
+  if (h.startsWith('nombrecompleto') || ['jugador','participante','alumno','alumna'].includes(h)) return 'completo';
+  if (h.startsWith('sexo') || h.startsWith('rama') || h.startsWith('genero')) return 'sexo';
+  if (h === 'clubname' || h === 'club' || h.startsWith('escuela') || h.startsWith('institucion') || h.startsWith('colegio')) return 'esc';
+  if (h.startsWith('organizacion') || h.startsWith('responsable') || h.startsWith('nota') || h.startsWith('observacion')) return 'org';
+  if (h.startsWith('categoria')) return 'cat';
+  return null;
+}
+function interpretar(tabla){
+  tabla = tabla.filter(f => f && f.some(c => String(c).trim() !== ''));
+  if (!tabla.length) throw new Error('No hay filas para leer.');
+  let hi = -1, mapa = {};
+  for (let i = 0; i < Math.min(tabla.length, 6) && hi < 0; i++){
+    const m = {};
+    tabla[i].forEach((c, j) => { const k = claveEncabezado(c); if (k && !(k in m)) m[k] = j; });
+    if (Object.keys(m).length >= 2) { hi = i; mapa = m; }
+  }
+  let sinEncabezados = false;
+  if (hi < 0) { mapa = { nombres:0, apellidos:1, nac:2, sexo:3, esc:4, org:5 }; sinEncabezados = true; }
+  if ('nombres' in mapa && !('apellidos' in mapa) && !('apPat' in mapa)) { mapa.completo = mapa.nombres; delete mapa.nombres; }
+  const g = (f, k) => k in mapa ? f[mapa[k]] ?? '' : '';
+  const defOrg = orgActual(), defPago = $('#xPago').value === 'si', nuevas = [];
+  let omitidas = 0;
+  tabla.slice(hi + 1).forEach(f => {
+    let nombres, apellidos, dudoso = false;
+    if ('swissNombre' in mapa) ({ nombres, apellidos, dudoso } = dividirNombre(g(f, 'swissNombre'), true));
+    else if ('completo' in mapa) ({ nombres, apellidos, dudoso } = dividirNombre(g(f, 'completo'), false));
+    else { nombres = g(f, 'nombres'); apellidos = 'apellidos' in mapa ? g(f, 'apellidos') : (g(f, 'apPat') + ' ' + g(f, 'apMat')); }
+    nombres = tituloSiHaceFalta(nombres); apellidos = tituloSiHaceFalta(apellidos);
+    if (!nombres && !apellidos) { omitidas++; return; }
+    const nac = parseFecha(g(f, 'nac'));
+    const crudoSexo = 'swissSexo' in mapa ? g(f, 'swissSexo') : g(f, 'sexo');
+    const sexo = parseSexo(crudoSexo, 'swissSexo' in mapa);
+    let org = defOrg, pagado = defPago, incl = true, nota = '';
+    if ('org' in mapa) {
+      const o = orgDeNota(g(f, 'org'));
+      if (o && o.org) { org = orgCanonica(o.org); if (o.pagado !== null) pagado = o.pagado; }
+      else if ('swissNombre' in mapa) { incl = false; nota = 'sin organización'; }   // Swiss: sin nota = inscrito por la página
+    }
+    const catArchivo = 'cat' in mapa ? catDeTexto(g(f, 'cat'), nac) : '';
+    nuevas.push(nuevaFila({ nombres, apellidos, nac, sexo, sexoAmbiguo: !sexo && soloLetras(crudoSexo) === 'm',
+      esc: String(g(f, 'esc')).replace(/\s+/g, ' ').trim(), cat: catArchivo || catAuto(nac), org, pagado, incl: incl, dudoso, nota }));
+  });
+  nuevas.forEach(r => { if (r.nota === 'sin organización') r.incl = false; });
+  return { nuevas, sinEncabezados, omitidas, swiss: 'swissNombre' in mapa };
+}
+// Quien ya está en la hoja no entra a la lista (solo se cuenta); los repetidos dentro del archivo quedan desmarcados.
+function agregarLeidas(res, origen){
+  let ya = 0, rep = 0, sinOrg = 0, nuevos = 0;
+  res.nuevas.forEach(r => {
+    const rv = revisar(r, P.ext.length);
+    if (rv.ya) { ya++; return; }
+    if (rv.prob.some(t => /Repetido/.test(t))) { r.incl = false; rep++; }
+    if (r.nota === 'sin organización') sinOrg++;
+    P.ext.push(r); nuevos++;
+  });
+  renderExternos();
+  $('#xLeido').innerHTML = `${esc(origen)}: ${nuevos} jugador(es) agregados a la lista` + (ya ? ` · ${ya} ya estaban inscritos en la hoja (no se agregan)` : '') +
+    (rep ? ` · ${rep} repetidos (desmarcados)` : '') +
+    (sinOrg ? ` · ${sinOrg} sin organización en Notas (desmarcados)` : '') +
+    (res.sinEncabezados ? ' · <b>sin encabezados</b>: se asumió el orden Nombre(s), Apellidos, Nacimiento, Rama, Escuela' : '') +
+    (res.swiss ? ' · formato Swiss: revisa nombre(s)/apellidos' : '');
+}
+$('#xArchivo').onchange = async () => {
+  const file = $('#xArchivo').files[0]; if (!file) return;
+  $('#xLeido').textContent = 'Leyendo…';
+  try {
+    if (!P.ev) throw new Error('Primero entra al panel.');
+    let tabla;
+    if (/\.xlsx$/i.test(file.name)) tabla = await leerXlsx(await file.arrayBuffer());
+    else if (/\.xls$/i.test(file.name)) throw new Error('Formato .xls antiguo: ábrelo en Excel y guárdalo como .xlsx o .csv.');
+    else {
+      const buf = await file.arrayBuffer();
+      let t = new TextDecoder('utf-8').decode(buf);
+      if (t.includes('�')) t = new TextDecoder('windows-1252').decode(buf);   // CSV de Excel en Windows (ANSI)
+      tabla = parseDelimitado(t);
+    }
+    agregarLeidas(interpretar(tabla), file.name);
+  } catch (e) { $('#xLeido').innerHTML = `<span style="color:var(--err)">⚠️ ${esc(e.message)}</span>`; }
+  $('#xArchivo').value = '';
+};
+$('#xLeer').onclick = () => {
+  const t = $('#xPegar').value; if (!t.trim()) { $('#xLeido').textContent = 'No hay nada pegado.'; return; }
+  try { agregarLeidas(interpretar(parseDelimitado(t)), 'Pegado'); $('#xPegar').value = ''; }
+  catch (e) { $('#xLeido').innerHTML = `<span style="color:var(--err)">⚠️ ${esc(e.message)}</span>`; }
+};
+$('#xPlantilla').onclick = () => {
+  const csv = '﻿' + ['Nombre(s)','Apellidos','Fecha de nacimiento (dd/mm/aaaa)','Rama (Femenil/Varonil)','Escuela'].join(',') + '\r\n';
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type:'text/csv;charset=utf-8' }));
+  a.download = 'Plantilla_inscripcion_externa_Polgar.csv'; a.click();
+};
+
+$('#xRegistrar').onclick = async () => {
+  const box = $('#xResultado'); box.classList.remove('hidden');
+  const sel = P.ext.map((r, i) => ({ r, i })).filter(x => x.r.incl);
+  if (!sel.length) { box.textContent = 'No hay jugadores marcados para registrar.'; return; }
+  const malos = sel.filter(x => revisar(x.r, x.i).prob.length);
+  if (malos.length) { box.innerHTML = `⚠️ ${malos.length} jugador(es) marcados tienen datos por corregir (✖ en la columna Revisión). Corrígelos o desmárcalos.`; return; }
+  const porOrg = {}; sel.forEach(x => porOrg[x.r.org] = (porOrg[x.r.org] || 0) + 1);
+  const resumen = Object.entries(porOrg).map(([o, n]) => `${o}: ${n}`).join(' · ');
+  if (!confirm(`Registrar ${sel.length} jugador(es) en «${P.ev.titulo}»?\n${resumen}\n\nSe crearán filas nuevas en la hoja (no se pueden borrar; si algo sale mal se anulan en Notas).`)) return;
+  const b = $('#xRegistrar'); b.disabled = true; b.textContent = 'Registrando…';
+  try {
+    const j = await api({ accion:'admin_agregar', sede:P.ev.sede, filas: sel.map(({ r }) => ({ nombres:r.nombres, apellidos:r.apellidos, nacimiento:r.nac,
+      sexo:r.sexo, institucion:r.esc, categoria:r.cat, org:r.org, pagado:r.pagado })) });
+    if (Array.isArray(j.orgs)) P.orgs = j.orgs;
+    const hechos = new Set((j.agregados || []).map(a => a.nombre));
+    P.ext = P.ext.filter(r => !(r.incl && hechos.has(`${r.nombres} ${r.apellidos}`.trim())));
+    box.innerHTML = `✅ Registrados: <b>${(j.agregados || []).length}</b>` + ((j.agregados || []).length ? ` (${esc(j.agregados[0].folio)}${j.agregados.length > 1 ? ' a ' + esc(j.agregados[j.agregados.length - 1].folio) : ''})` : '') +
+      ((j.omitidos || []).length ? `<br>No registrados: ${j.omitidos.map(o => `${esc(o.nombre)} — ${esc(o.motivo)}`).join('<br>')}` : '');
+    try { await cargarDatos(); P.ext = P.ext.filter(r => !revisar(r, -1).ya); renderExternos(); }   // ya registrados: fuera de la lista
+    catch (e) { box.innerHTML += '<br>(No se pudo actualizar el resumen; pulsa ↻ Actualizar.)'; }
+  } catch (e) { box.textContent = '⚠️ ' + e.message; }
+  b.disabled = false; b.textContent = 'Registrar en la hoja';
 };
 
 /* ================= ARRANQUE ================= */
