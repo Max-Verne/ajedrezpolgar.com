@@ -23,8 +23,8 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
 /aviso-de-privacidad/ (proyecto propio, numeración propia, texto del proyecto legal).
 
 ## Estado actual
-* Versión vigente: v9
-* Archivo entregado: Inscripciones_v9.html → se sube como /inscripciones/index.html (carpetas convocatorias/,
+* Versión vigente: v10
+* Archivo entregado: Inscripciones_v10.html → se sube como /inscripciones/index.html (carpetas convocatorias/,
   certificados/ y lib/ sin cambios). Requiere Code.gs v4 (Code_v4.gs) para la sección 5 del panel.
 * Dónde vive este documento: [x] Fusionado en el artefacto (este comentario HTML,
   invisible para el visitante). No en pestaña visible porque es una página pública.
@@ -94,7 +94,7 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
   2 días antes del evento a las 23:59), formulario ('mtl' | URL externa |
   null), convocatoria ({pdf, paginas[]} o null), resultadosUrl, cierreTardio (opcional),
   certificado ({muestra} o null).
-* Certificado: diseño en CERT (coordenadas sobre plantilla 3300×2550 = carta horizontal 300 dpi);
+* Certificado: diseño por evento en certificado.layout (por defecto CERT; 2ª etapa en adelante CERT_MTL_NARANJA) (coordenadas sobre plantilla 3300×2550 = carta horizontal 300 dpi);
   líneas nombre / institución / "Categoría X · Rama Y", centradas y con auto-reducción para nombres
   largos. Rama del certificado: Femenil solo si la categoría tiene ≥10 inscritas (convocatoria);
   si no, Mixta. Los varones siempre Mixta. El panel permite ajustar por categoría.
@@ -124,7 +124,9 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
 - [ ] Recabar el aviso de privacidad y autorización de imagen firmados de los inscritos vía organización.
 - [ ] (Opcional) Quitar o renombrar organizaciones: hoy solo se agregan (Propiedades del script «ORGS»).
 - [ ] Validación de fechas también en Code.gs (hoy el cierre lo controla solo la página).
-- [ ] Imagen de muestra y plantilla limpia para cada evento siguiente (cambia el sello "1ª etapa").
+- [ ] Imagen de muestra y plantilla limpia para cada evento siguiente (cambia el sello "1ª etapa"). 2do evento: listo (v10).
+- [ ] Promoción hermanos 3×2 (convocatoria 2ª etapa): el formulario cobra y pide comprobante por jugador; el tercer
+      hermano sube el mismo comprobante y se valida a mano (Notas). Evaluar campo propio si se vuelve frecuente.
 - [ ] Cupo de 150 por evento: el backend no lo controla todavía.
 - [ ] Agregar "Inscripciones" a la barra de sitios compartida en Portada, Liga, Rating GTO y Rating Nacional.
 - [ ] (Opcional) Cargar eventos de la 2ª Liga 25-26 como historial.
@@ -133,6 +135,19 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
 - [ ] Portada v3 enlaza a los sitios hermanos vía max-verne.github.io en la barra superior y vía www en el banner — inconsistencia heredada, no se toca aquí.
 
 ## Historial de cambios
+
+**v10 — Sede del 2do evento: Instituto Oviedo, campus Metropolitano**
+* 2do evento (sáb 7-nov-2026): sede Instituto Oviedo campus Metropolitano, Cofradía 202, El Palote, 37130 León,
+  con mapa. Mismas condiciones y categorías que el 1er evento: $250, cupo 150, cierre jue 5-nov 23:59 y
+  extemporánea hasta sáb 7-nov 07:00. El formulario abre solo el dom 11-oct (día siguiente al 1er evento).
+* Certificado de la 2ª etapa (diseño naranja, sede Instituto Oviedo, patrocinador Hospital Médica Brisas): nuevo
+  diseño de texto CERT_MTL_NARANJA (nombre/escuela/categoría entre «OTORGADO A:» y la línea punteada) y muestra
+  con marca de agua certificados/mtl3-e2-muestra.jpg. Cada evento puede traer su propio diseño
+  (certificado.layout); si no, usa CERT (1ª etapa). El panel y los PDF usan el diseño del evento elegido.
+* Convocatoria de la 2ª etapa (11-oct-2026) en convocatorias/mtl3-e2.pdf + mtl3-e2-p1.jpg / -p2.jpg; botón
+  «Ver convocatoria» con visor en la página. Coinciden fecha, sede, cierre, cuota, cupo y categorías con el catálogo.
+* Code.gs no cambia: crea la pestaña «2do evento» con la primera inscripción (folios MTL-2-###).
+* Verificación: simulado con ?hoy=2026-10-11 y ?hoy=2026-11-06 en navegador automatizado. En producción: PENDIENTE DE PRUEBA.
 
 **v9 — Inscripciones externas desde el panel**
 * Nueva sección 5 del panel: organizaciones autorizadas (Escuderos, Juan Becerra o una nueva) registran
@@ -730,6 +745,14 @@ const CATS_MTL_2027 = [
 const MTL3 = { serie:'3ra Liga MTL 2026-2027', mtl:true, horario:'Registro 8:30 h · Inicio 9:00 h · Fin aprox. 13:00 h',
   costo:250, cupo:150, formulario:'mtl', convocatoria:null, resultadosUrl:null };
 
+// Certificado de la 2ª etapa en adelante (diseño naranja): el nombre va entre «OTORGADO A:» y la línea punteada (y≈822),
+// centrado sobre esa línea (x 1040–3174), sin invadir el logotipo de la izquierda ni la cinta dorada.
+const CERT_MTL_NARANJA = {
+  W: 3300, H: 2550,
+  nombre: { cx:2110, base:648, size:132, min:62, maxW:1900, color:'#FFFFFF' },
+  inst:   { cx:2110, base:728, size:62,  min:34, maxW:1900, color:'#FFE9A8' },
+  cat:    { cx:2110, base:796, size:44,  min:30, maxW:1800, color:'#FFFFFF' }
+};
 // Orden cronológico. Los id NUNCA se reutilizan ni se cambian.
 const EVENTOS = [
   { ...MTL3, id:'mtl3-e1', etapa:'1er evento', titulo:'1er evento e Inauguración', fecha:'2026-10-10',
@@ -742,7 +765,16 @@ const EVENTOS = [
     convocatoria:{ pdf:'/inscripciones/convocatorias/mtl3-e1.pdf',
       paginas:['/inscripciones/convocatorias/mtl3-e1-p1.jpg','/inscripciones/convocatorias/mtl3-e1-p2.jpg'] },
     categorias:CATS_MTL_2026 },
-  { ...MTL3, id:'mtl3-e2', etapa:'2do evento', titulo:'2do evento', fecha:'2026-11-07', sede:null, categorias:CATS_MTL_2026 },
+  { ...MTL3, id:'mtl3-e2', etapa:'2do evento', titulo:'2do evento', fecha:'2026-11-07',
+    // Mismas condiciones que el 1er evento: cierre jueves 5-nov 23:59 (regla por defecto) y extemporánea
+    // hasta el sábado del evento a las 07:00. Convocatoria de la 2ª etapa firmada el 11-oct-2026.
+    cierreTardio:'2026-11-07T07:00:00-06:00',
+    certificado:{ muestra:'/inscripciones/certificados/mtl3-e2-muestra.jpg', layout:CERT_MTL_NARANJA },
+    convocatoria:{ pdf:'/inscripciones/convocatorias/mtl3-e2.pdf',
+      paginas:['/inscripciones/convocatorias/mtl3-e2-p1.jpg','/inscripciones/convocatorias/mtl3-e2-p2.jpg'] },
+    sede:'Instituto Oviedo, campus Metropolitano', direccion:'Cofradía 202, El Palote, 37130 León de los Aldama, Gto.',
+    mapsUrl:'https://maps.google.com/?q=Instituto+Oviedo+Campus+Metropolitano,+Cofrad%C3%ADa+202,+El+Palote,+37130+Le%C3%B3n,+Gto.',
+    categorias:CATS_MTL_2026 },
   { ...MTL3, id:'mtl3-e3', etapa:'3er evento', titulo:'3er evento', fecha:'2026-12-05', sede:null, categorias:CATS_MTL_2026 },
   { ...MTL3, id:'mtl3-e4', etapa:'4to evento', titulo:'4to evento', fecha:'2027-01-23', sede:null, categorias:CATS_MTL_2027 },
   { ...MTL3, id:'mtl3-e5', etapa:'5to evento', titulo:'5to evento', fecha:'2027-02-20', sede:null, categorias:CATS_MTL_2027 },
@@ -1079,12 +1111,14 @@ const CERT = {
   inst:   { cx:2027, base:782, size:66,  min:36, maxW:2050, color:'#FFE9A8' },
   cat:    { cx:2027, base:876, size:46,  min:30, maxW:1900, color:'#FFFFFF' }
 };
+// Diseño del certificado de cada evento (si el evento no define uno, se usa el de la 1ª etapa).
+const certDe = ev => (ev && ev.certificado && ev.certificado.layout) || CERT;
 const FUENTE_CERT = 'Helvetica, Arial, sans-serif';
 function ramaCert(sexo, femenilSeparada){ return (sexo === 'F' && femenilSeparada) ? 'Rama Femenil' : 'Rama Mixta'; }
 function lineaCat(cat, rama){ return [cat ? 'Categoría ' + cat : '', rama || ''].filter(Boolean).join('   ·   '); }
 
-function dibujarCert(ctx, img, d, conMarca){
-  const W = ctx.canvas.width, H = ctx.canvas.height, s = W / CERT.W;
+function dibujarCert(ctx, img, d, conMarca, L0){
+  const C = L0 || CERT, W = ctx.canvas.width, H = ctx.canvas.height, s = W / C.W;
   ctx.clearRect(0, 0, W, H);
   if (img && img.complete && img.naturalWidth) ctx.drawImage(img, 0, 0, W, H);
   const linea = (t, L) => {
@@ -1097,7 +1131,7 @@ function dibujarCert(ctx, img, d, conMarca){
     ctx.fillStyle = L.color; ctx.fillText(t, L.cx * s, L.base * s);
     ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
   };
-  linea(d.nombre, CERT.nombre); linea(d.inst, CERT.inst); linea(d.cat, CERT.cat);
+  linea(d.nombre, C.nombre); linea(d.inst, C.inst); linea(d.cat, C.cat);
   if (conMarca){ // marca de agua encima de todo: la vista previa no sirve como certificado
     ctx.save(); ctx.translate(W/2, H/2); ctx.rotate(-0.38);
     ctx.font = `bold ${Math.round(W/26)}px ${FUENTE_CERT}`; ctx.textAlign = 'center';
@@ -1129,8 +1163,8 @@ function datosPrevios(conCategoria){
 function dibujarPrevias(){
   if (!ACTIVO || !ACTIVO.certificado) return;
   const c2 = $('#certPrev'), c4 = $('#certPrev4');
-  if (c2) dibujarCert(c2.getContext('2d'), imgMuestra, datosPrevios(false), true);
-  if (c4 && step === 4) dibujarCert(c4.getContext('2d'), imgMuestra, datosPrevios(true), true);
+  if (c2) dibujarCert(c2.getContext('2d'), imgMuestra, datosPrevios(false), true, certDe(ACTIVO));
+  if (c4 && step === 4) dibujarCert(c4.getContext('2d'), imgMuestra, datosPrevios(true), true, certDe(ACTIVO));
 }
 
 /* ================= PANEL DE CERTIFICADOS =================
@@ -1249,11 +1283,11 @@ $('#pFondo').onchange = () => {
   const img = new Image();
   img.onload = () => {
     P.fondo = img;
-    const ok = Math.abs(img.naturalWidth / img.naturalHeight - CERT.W / CERT.H) < 0.02;
+    const ok = Math.abs(img.naturalWidth / img.naturalHeight - certDe(P.ev).W / certDe(P.ev).H) < 0.02;
     $('#pVistaNota').textContent = `${img.naturalWidth} × ${img.naturalHeight} px` + (ok ? ' · proporción carta horizontal correcta.' : ' · ⚠️ la proporción no es carta horizontal; el diseño se deformará.');
     const c = $('#pVista'); c.classList.remove('hidden');
     const ej = ordenar(P.filas.filter(esValida)).sort((a,b) => (b.nombres + b.apellidos).length - (a.nombres + a.apellidos).length)[0];
-    dibujarCert(c.getContext('2d'), img, ej ? datosCert(ej) : { nombre:'Nombre Completo del Participante', inst:'Institución educativa', cat:lineaCat('Sub-12','Rama Mixta') }, false);
+    dibujarCert(c.getContext('2d'), img, ej ? datosCert(ej) : { nombre:'Nombre Completo del Participante', inst:'Institución educativa', cat:lineaCat('Sub-12','Rama Mixta') }, false, certDe(P.ev));
     if (ej) $('#pVistaNota').textContent += ' Vista con el nombre más largo inscrito.';
   };
   img.src = URL.createObjectURL(file);
@@ -1265,13 +1299,13 @@ async function cargarJsPDF(){
     s.onload = res; s.onerror = () => rej(new Error('No se pudo cargar el generador de PDF (inscripciones/lib/jspdf.umd.min.js).')); document.head.appendChild(s); });
 }
 function fondoJPEG(ancho, calidad){
-  const c = document.createElement('canvas'); c.width = ancho; c.height = Math.round(ancho * CERT.H / CERT.W);
+  const c = document.createElement('canvas'); c.width = ancho; c.height = Math.round(ancho * certDe(P.ev).H / certDe(P.ev).W);
   c.getContext('2d').drawImage(P.fondo, 0, 0, c.width, c.height);
   return c.toDataURL('image/jpeg', calidad);
 }
 function pdfLinea(doc, t, L){
   if (!t) return;
-  const k = 279.4 / CERT.W, pt = px => px * 72 / 300;
+  const k = 279.4 / certDe(P.ev).W, pt = px => px * 72 / 300;
   let size = L.size;
   doc.setFont('helvetica', 'bold'); doc.setFontSize(pt(size));
   while (doc.getTextWidth(t) > L.maxW * k && size > L.min){ size -= 2; doc.setFontSize(pt(size)); }
@@ -1285,7 +1319,8 @@ function pdfConCerts(filas, jpg){
     if (i) doc.addPage('letter', 'landscape');
     doc.addImage(jpg, 'JPEG', 0, 0, 279.4, 215.9, 'fondo', 'FAST');
     const d = datosCert(f);
-    pdfLinea(doc, d.nombre, CERT.nombre); pdfLinea(doc, d.inst, CERT.inst); pdfLinea(doc, d.cat, CERT.cat);
+    const C = certDe(P.ev);
+    pdfLinea(doc, d.nombre, C.nombre); pdfLinea(doc, d.inst, C.inst); pdfLinea(doc, d.cat, C.cat);
   });
   doc.setProperties({ title: 'Certificados · ' + P.ev.titulo, author: 'Club de Ajedrez Polgar' });
   return doc;
@@ -1301,7 +1336,7 @@ $('#pImprimir').onclick = async () => {
     if (!lote.length) throw new Error('No hay certificados en el lote con los filtros elegidos.');
     box.textContent = `Generando ${lote.length} certificado(s)…`;
     await cargarJsPDF();
-    const doc = pdfConCerts(lote, fondoJPEG(CERT.W, 0.92));
+    const doc = pdfConCerts(lote, fondoJPEG(certDe(P.ev).W, 0.92));
     doc.save(`Certificados_${nombreArchivo(P.ev.id)}_imprenta_${nombreArchivo(ahoraTxt())}.pdf`);
     P.lote = lote.map(f => f.folio);
     box.innerHTML = `Se descargó el PDF con <b>${lote.length}</b> certificado(s), ordenados por categoría, rama y apellidos. Ábrelo y revísalo. Cuando lo mandes a imprimir, márcalos para que los siguientes inscritos queden como <b>pendientes de certificado digital</b>.
