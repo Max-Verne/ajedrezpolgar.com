@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Inscripciones · Club de Ajedrez Polgar</title>
-<meta name="description" content="Inscripción al torneo activo del Club de Ajedrez Polgar (León, Gto.) y registro de eventos anteriores.">
+<title>Inscripciones · Club Ajedrez Polgar</title>
+<meta name="description" content="Inscripción al torneo activo y a las clases sabatinas del Club Ajedrez Polgar (León, Gto.), y registro de eventos anteriores.">
 <!--
 =====================================================================
  CONTEXTO Y CONTROL DE CAMBIOS: Inscripciones (ajedrezpolgar.com/inscripciones/)
@@ -13,7 +13,7 @@
 =====================================================================
 
 ## Qué es este proyecto
-Sección única de inscripciones del Club de Ajedrez Polgar. Una sola dirección
+Sección única de inscripciones del Club Ajedrez Polgar. Una sola dirección
 permanente (https://www.ajedrezpolgar.com/inscripciones/) y un solo código QR
 que siempre llevan al torneo ACTIVO, sin importar cuándo se imprimió el
 material. Muestra el torneo activo, los próximos, y los pasados en gris.
@@ -23,9 +23,11 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
 /aviso-de-privacidad/ (proyecto propio, numeración propia, texto del proyecto legal).
 
 ## Estado actual
-* Versión vigente: v10
-* Archivo entregado: Inscripciones_v10.html → se sube como /inscripciones/index.html (carpetas convocatorias/,
-  certificados/ y lib/ sin cambios). Requiere Code.gs v4 (Code_v4.gs) para la sección 5 del panel.
+* Versión vigente: v12
+* Archivo entregado: Inscripciones_v12.html → se sube como /inscripciones/index.html (carpetas convocatorias/,
+  certificados/ y lib/ sin cambios). Requiere Code.gs v6 (Code_v6.gs) para el registro de clases; v6 incluye
+  todo lo de v4 (panel, externos). Instalar Code_v6.gs ANTES de subir esta página. (v11 y Code v5 se
+  entregaron el mismo día y NUNCA se instalaron: quedan sustituidos por v12 y Code v6.)
 * Dónde vive este documento: [x] Fusionado en el artefacto (este comentario HTML,
   invisible para el visitante). No en pestaña visible porque es una página pública.
 * Traspaso a nuevo chat: la IA descarga el archivo con
@@ -75,6 +77,18 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
 * NO DEBE (v9): registrar a quien ya está en la hoja del evento (mismo nombre completo en cualquier orden
   + fecha de nacimiento); ni la página ni Code.gs lo permiten.
 
+* DEBE (v12): bloque fijo «Clases sabatinas · Casa de los Talleres» (#clases) en esta misma URL, a la DERECHA
+  del torneo activo (se apilan debajo en pantallas de 900 px o menos), independiente del torneo activo; el QR del
+  volante de clases apunta aquí. Enlace directo al formulario: #registro-clases.
+* DEBE (v12): la tarjeta conserva «Informes y costos por WhatsApp»; los montos (inscripción anual $650 y
+  mensualidad $650 por 4 sábados) se muestran al pulsar «Inscríbete», dentro del formulario (decisión del titular).
+* DEBE (v12): dos modalidades. «Pagar la inscripción»: mismos datos de pago que torneos (AJUSTES.pago) y
+  comprobante obligatorio. «Solo reservar lugar»: NO se pide ni se acepta comprobante.
+* DEBE (v12): recabar solo lo mínimo para armar grupos (alumno, nacimiento, nivel, horarios posibles, tutor,
+  WhatsApp, correo opcional) y el consentimiento.
+* NO DEBE (v12): abrir el formulario de clases sin backend real; sin scriptUrl (fuera de ?demo=1) el botón
+  «Inscríbete» abre WhatsApp en lugar del formulario.
+
 ## Glosario
 * Evento activo: el primero del catálogo cuya fecha es hoy o posterior
   (o el que indique FORZAR_ACTIVO). Solo hay uno a la vez.
@@ -117,6 +131,14 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
 * Folio y hoja de cálculo los genera Code.gs a partir de "etapa".
 
 ## Tareas Pendientes
+- [ ] (v12) Instalar Code_v6.gs (conservar la CLAVE_PANEL propia) y hacer un registro de prueba de clases; marcar la fila como PRUEBA en Notas.
+- [ ] (v12) Confirmar que el QR del volante de clases apunta a www.ajedrezpolgar.com/inscripciones (o cambiarlo a …/inscripciones/#clases en la próxima impresión).
+- [ ] (v12) Pendientes de negocio del traspaso de clases que NO se publican hasta confirmar: fechas de sábados de liga, quién elige entre
+      devolución/cambio/fecha límite y cuál es la fecha límite, créditos de quinto sábado ante una baja, IVA.
+- [ ] (v12) Definir prioridad si un horario junta más de 8: ¿primero quien pagó la inscripción, o por orden de registro? La página no promete ninguna.
+- [ ] (v12) Categoría sugerida de clases usa los rangos 2027 de la Liga MTL (ciclo nov-2026 a oct-2027); confirmar con el titular.
+- [ ] (v12) Proyecto legal: el Anexo del aviso solo trae la casilla de torneos (con publicación de resultados); el formulario de clases usa
+      una casilla adaptada a «inscripción y control de clases» (finalidad primaria ya prevista en el aviso 2.0). Validar redacción.
 - [ ] Probar un envío real de punta a punta (folio, fila con consentimientos, comprobante en Drive, correo de aviso).
 - [ ] Corregir Transitorios de la convocatoria: hoy dice que al inscribirse se acepta la autorización de uso de imagen; el aviso la hace opcional y separada.
 - [ ] Confirmar fecha de cierre por evento (por defecto: jueves previo 23:59) y si cada evento tendrá cierreTardio.
@@ -135,6 +157,25 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
 - [ ] Portada v3 enlaza a los sitios hermanos vía max-verne.github.io en la barra superior y vía www en el banner — inconsistencia heredada, no se toca aquí.
 
 ## Historial de cambios
+
+**v12 — Clases sabatinas en Casa de los Talleres (junto al torneo activo, pago o reserva) + identidad oficial**
+* Nuevo bloque fijo #clases a la derecha del torneo activo (dos columnas; apiladas en móvil). Ancho de main 960 → 1180 px: sede, sábados, 3 horarios (9–10, 10–11, 11–12 h), grupos
+  Sub-08/Sub-10/Sub-12/Por nivel, reglas confirmadas (cupo 8, abre al completar 8, opciones si no se completa,
+  disolución/fusión al bajar a 4, sesión de 2 h antes de liga MTL, canje del quinto sábado), calendario de canje
+  2026-2027 plegable, «Informes y costos por WhatsApp» (sin montos) y botón amarillo «Inscríbete» como el volante.
+* Formulario de registro para formar grupo: muestra inscripción anual $650 y mensualidad $650 (4 sábados) y deja
+  elegir entre pagar la inscripción (CLABE de torneos + comprobante obligatorio) o solo reservar (sin comprobante).
+  Consentimiento obligatorio + imagen y boletines opcionales
+  (ninguna premarcada), alumno, nacimiento con grupo sugerido, experiencia, todos los horarios posibles, tutor,
+  WhatsApp, correo opcional, trampa anti-robots. Envía accion «clase_registro» al mismo Apps Script (Code.gs v6),
+  que guarda en la pestaña «Clases Casa de los Talleres» con folio CLS-###, modalidad, comprobante en Drive y casilla
+  «Pago validado», evita duplicados y avisa por correo con el conteo por horario (y cuántos ya pagaron). Con Code.gs anterior el envío no guarda nada y la página remite a WhatsApp.
+* El texto del Aviso simplificado pasa a una sola constante (AVISO_SIMPLIFICADO) usada por torneos y clases.
+* Identidad: logo oficial en lugar de la corona-emoji, «Club Ajedrez Polgar» (sin «de») en título, encabezado y pie.
+* Sustituye a v11 (entregada el mismo día, nunca publicada): el titular pidió el bloque al lado del torneo
+  activo, mostrar los costos al inscribirse y la opción de pagar o solo reservar.
+* Verificación: PENDIENTE DE PRUEBA — revisada en navegador automatizado (escritorio y móvil) en modo demo;
+  el envío real a Code.gs v6 lo prueba el titular.
 
 **v10 — Sede del 2do evento: Instituto Oviedo, campus Metropolitano**
 * 2do evento (sáb 7-nov-2026): sede Instituto Oviedo campus Metropolitano, Cofradía 202, El Palote, 37130 León,
@@ -253,7 +294,7 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
 <style>
   :root{
     --azul-oscuro:#0d2b4e; --azul-medio:#1a4a7a; --azul-vivo:#1e6fbf; --azul-claro:#4a90d9; --azul-palido:#ddeeff;
-    --rojo:#c0392b; --rojo-claro:#e05c4b; --oro:#b8892d;
+    --rojo:#c0392b; --rojo-claro:#e05c4b; --oro:#b8892d; --amarillo:#f5c518;
     --blanco:#ffffff; --fondo:#f4f7fb; --tarjeta:#ffffff; --texto:#0d2b4e; --gris-texto:#5a6e85; --gris-borde:#c8d8ea;
     --ok:#1e7a46; --err:#b3261e; --suave:#f7f9fc;
     --pasado-bg:#eef0f3; --pasado-tx:#8a94a3;
@@ -282,7 +323,7 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
   .nav-top a.active{background:rgba(30,111,191,.3);color:var(--azul-claro);font-weight:700}
   .nav-main{display:flex;justify-content:space-between;align-items:center;padding:.6rem 2.5rem}
   .nav-logo{display:flex;align-items:center;gap:.7rem;color:#fff;text-decoration:none}
-  .nav-logo .icon{font-size:1.7rem}
+  .nav-logo img{height:46px;width:auto;display:block}
   .nav-logo b{font-size:1.05rem;font-weight:800;letter-spacing:1px;display:block;line-height:1.1}
   .nav-logo small{display:block;font-size:.62rem;color:var(--azul-claro);letter-spacing:2px;text-transform:uppercase}
   .nav-cta{background:var(--rojo);color:#fff!important;padding:.45rem 1rem;border-radius:4px;font-weight:700;font-size:.8rem;text-decoration:none}
@@ -296,7 +337,7 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
   .hero p{max-width:560px;margin:.8rem auto 0;color:rgba(255,255,255,.78)}
   .divider{height:4px;background:linear-gradient(90deg,var(--azul-vivo),var(--azul-claro),var(--rojo))}
 
-  main{max-width:960px;margin:0 auto;padding:2.2rem 16px 3rem}
+  main{max-width:1180px;margin:0 auto;padding:2.2rem 16px 3rem}
   h2.sec{font-size:.78rem;letter-spacing:3px;text-transform:uppercase;color:var(--rojo);font-weight:800;margin:2.4rem 0 1rem}
   h2.sec:first-child{margin-top:0}
 
@@ -425,6 +466,60 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
   .qr-svg{width:128px;height:128px;flex-shrink:0;border-radius:8px}
   .compartir code{font-weight:700;word-break:break-all}
 
+  /* CLASES SABATINAS (v12) — azul marino con tablero sutil, como el volante; amarillo solo en el botón */
+  /* Torneo activo (izq.) y Clases sabatinas (der.) lado a lado; en pantallas angostas se apilan */
+  .duo{display:grid;grid-template-columns:1fr 1fr;gap:1.6rem;align-items:stretch}
+  .duo-col{display:flex;flex-direction:column;min-width:0}
+  .duo-col > .activo, .duo-col > .clases, .duo-col > #boxActivo{flex:1}
+  #boxActivo{display:flex;flex-direction:column}
+  #boxActivo > .activo{flex:1}
+  @media (max-width:900px){ .duo{grid-template-columns:1fr;gap:0} }
+  #clases{scroll-margin-top:110px}
+  .clases{position:relative;overflow:hidden;border-radius:var(--radio);color:#fff;padding:1.8rem;
+    background:repeating-conic-gradient(rgba(255,255,255,.035) 0 25%,transparent 0 50%) 0 0/56px 56px,
+      linear-gradient(150deg,#0a2240 0%,var(--azul-oscuro) 55%,var(--azul-medio) 100%);
+    box-shadow:0 10px 30px rgba(13,43,78,.18)}
+  .clases .kicker{font-size:.72rem;letter-spacing:3px;text-transform:uppercase;color:var(--azul-claro);font-weight:800}
+  .clases h3{font-size:1.8rem;line-height:1.15;font-weight:850;margin:.25rem 0 .35rem}
+  .clases .sub{color:rgba(255,255,255,.8);max-width:580px}
+  .cl-sede{display:flex;flex-wrap:wrap;gap:.45rem;margin:1rem 0 1.4rem}
+  .cl-sede span{font-size:.8rem;font-weight:700;padding:.3rem .8rem;border-radius:20px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2)}
+  .cl-h{font-size:.7rem;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.62);font-weight:800;margin-bottom:.55rem}
+  .cl-horas{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.6rem;margin-bottom:1.3rem}
+  .cl-hora{background:#fff;color:var(--azul-oscuro);border-radius:12px;padding:.75rem .7rem;display:flex;align-items:center;gap:.45rem;font-weight:800;font-size:.95rem;white-space:nowrap}
+  .cl-hora svg{width:22px;height:22px;flex-shrink:0;color:var(--azul-vivo)}
+  .cl-grupos{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.4rem}
+  .cl-grupos span{border:1.5px solid rgba(255,255,255,.55);border-radius:999px;padding:.35rem 1.05rem;font-weight:700;font-size:.92rem}
+  .cl-reglas{list-style:none;display:grid;gap:.5rem;margin:0 0 1.3rem;font-size:.94rem;color:rgba(255,255,255,.86)}
+  .cl-reglas li{padding-left:1.45rem;position:relative}
+  .cl-reglas li::before{content:'♟';position:absolute;left:0;color:var(--azul-claro)}
+  .cl-reglas b{color:#fff}
+  .clases details{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);border-radius:10px;padding:.75rem .95rem;margin-bottom:1.3rem;font-size:.92rem}
+  .clases summary{cursor:pointer;font-weight:700}
+  .cl-canje{width:100%;border-collapse:collapse;margin-top:.6rem;font-size:.9rem}
+  .cl-canje th,.cl-canje td{text-align:left;padding:.4rem .4rem;border-bottom:1px solid rgba(255,255,255,.15)}
+  .cl-canje th{font-size:.7rem;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.62)}
+  .cl-nota{font-size:.82rem;color:rgba(255,255,255,.62);margin-top:.5rem}
+  .cl-cupo{font-weight:800;color:var(--amarillo);margin-bottom:.8rem}
+  .btn-amarillo{background:var(--amarillo);color:#0d2b4e!important;text-transform:uppercase;letter-spacing:1px}
+  .btn-amarillo:hover{filter:brightness(1.07)}
+  .btn-blanco{border-color:rgba(255,255,255,.55);color:#fff!important;background:transparent}
+  .btn-blanco:hover{background:rgba(255,255,255,.1)}
+  #clRegistro{margin-top:1rem;scroll-margin-top:110px}
+  .cl-costos{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin:.4rem 0 .4rem}
+  .cl-costos > div{background:var(--suave);border:1px solid var(--gris-borde);border-radius:12px;padding:.8rem 1rem}
+  .cl-costos small{display:block;font-size:.7rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--gris-texto);font-weight:700}
+  .cl-costos b{display:block;font-size:1.45rem;color:var(--azul-vivo)}
+  .cl-costos span{font-size:.85rem;color:var(--gris-texto)}
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .cl-costos b{color:var(--azul-claro)} }
+  #clPagoBox{margin-top:.6rem}
+  .cl-cat{margin-top:8px;font-size:.92rem}
+  .cl-cat b{color:var(--azul-vivo)}
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .cl-cat b{color:var(--azul-claro)} }
+  .hero .hero-clases{margin-top:1.1rem}
+  .hero .hero-clases a{color:#fff;font-weight:700;text-underline-offset:3px}
+  @media (max-width:640px){ .clases{padding:1.2rem} .clases h3{font-size:1.45rem} .cl-horas{grid-template-columns:1fr} #clHorarios{flex-direction:column} .cl-costos{grid-template-columns:1fr} }
+
   footer{background:var(--azul-oscuro);color:rgba(255,255,255,.65);text-align:center;font-size:.82rem;padding:1.6rem 16px}
   footer a{color:rgba(255,255,255,.85)}
   footer .links{display:flex;gap:1.2rem;justify-content:center;flex-wrap:wrap;margin-bottom:.6rem}
@@ -432,6 +527,7 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
   @media (max-width:640px){
     .nav-top,.nav-main{padding-left:16px;padding-right:16px}
     .nav-logo b{font-size:.92rem}
+    .nav-logo img{height:38px}
     .nav-cta{white-space:nowrap;padding:.4rem .7rem}
     .hero h1{font-size:2rem}
     .activo{padding:1.2rem}
@@ -454,7 +550,7 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
     <a href="https://www.ajedrezpolgar.com/nacional/">🌐 Rating Nacional</a>
   </div>
   <div class="nav-main">
-    <a class="nav-logo" href="https://www.ajedrezpolgar.com/"><span class="icon">♛</span><div><b>Club de Ajedrez Polgar</b><small>León, Guanajuato</small></div></a>
+    <a class="nav-logo" href="https://www.ajedrezpolgar.com/"><img src="data:image/png;base64,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" alt="Ajedrez Polgar"><div><b>Club Ajedrez Polgar</b><small>Haciendo Campeones</small></div></a>
     <a class="nav-cta" href="#activo">Torneo activo</a>
   </div>
 </nav>
@@ -464,12 +560,124 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
   <div class="tag">♟ Inscripciones</div>
   <h1>Inscríbete al torneo activo</h1>
   <p>Esta dirección siempre muestra el torneo con inscripción vigente. Abajo encontrarás también los próximos eventos y el registro de los ya realizados.</p>
+  <p class="hero-clases"><a href="#clases">¿Buscas clases de ajedrez? Ver clases sabatinas ↓</a></p>
 </header>
 <div class="divider"></div>
 
 <main>
-  <h2 class="sec" id="activo">Torneo activo</h2>
-  <div id="boxActivo"></div>
+  <!-- ============ TORNEO ACTIVO (izq.) + CLASES SABATINAS · CASA DE LOS TALLERES (der.) — v12 ============ -->
+  <div class="duo">
+    <div class="duo-col">
+      <h2 class="sec" id="activo">Torneo activo</h2>
+      <div id="boxActivo"></div>
+    </div>
+    <div class="duo-col">
+    <h2 class="sec" id="clases">Clases sabatinas</h2>
+    <div class="clases">
+      <div class="kicker">Club Ajedrez Polgar · Haciendo Campeones</div>
+      <h3>Clases de ajedrez los sábados</h3>
+      <p class="sub">Grupos pequeños por categoría o nivel. Regístrate y te avisamos por WhatsApp en cuanto se complete el grupo de tu hija o hijo.</p>
+      <div class="cl-sede"><span>📍 Casa de los Talleres · León, Gto.</span><span>📅 Todos los sábados</span><span>👥 Máximo 8 alumnos por grupo</span></div>
+      <p class="cl-h">Horarios</p>
+      <div class="cl-horas" id="clHoras"></div>
+      <p class="cl-h">Grupos por categoría o nivel</p>
+      <div class="cl-grupos" id="clGrupos"></div>
+      <ul class="cl-reglas">
+        <li>Cada grupo tiene un <b>máximo de 8 alumnos</b> y <b>abre al completar 8</b>.</li>
+        <li>Si el grupo no se completa, a quien ya pagó la inscripción se le ofrece <b>devolución, cambio de horario o una fecha límite</b> para abrir el grupo.</li>
+        <li>Un grupo puede <b>disolverse o fusionarse</b> con otro si baja a 4 participantes.</li>
+        <li>El sábado previo a cada torneo de la <b>Liga Escolar MTL</b>, la sesión dura <b>2 horas</b>: una teórica y una práctica.</li>
+        <li>En los meses con <b>5 sábados</b>, el quinto se canjea por un sábado sin clase (vacaciones o días festivos).</li>
+      </ul>
+      <details>
+        <summary>Sábados sin clase y su reposición (ciclo 2026-2027)</summary>
+        <table class="cl-canje"><thead><tr><th>Sin clase</th><th>Se repone el</th></tr></thead><tbody id="clCanje"></tbody></table>
+        <p class="cl-nota">Calendario sujeto a ajustes; cualquier cambio se avisa por WhatsApp.</p>
+      </details>
+      <p class="cl-cupo">¡Cupo limitado por grupo!</p>
+      <div class="acciones">
+        <button type="button" class="btn btn-amarillo" id="btnClases">Inscríbete</button>
+        <a class="btn btn-blanco" id="lnkWaClases" target="_blank" rel="noopener">Informes y costos por WhatsApp</a>
+      </div>
+    </div>
+    </div>
+  </div>
+
+  <section id="clRegistro" class="hidden">
+    <form id="clForm" class="card" novalidate>
+      <h3>Registro para formar grupo</h3>
+      <p class="hint">Con este registro acomodamos a cada alumno en un grupo. Puedes pagar ya la inscripción o solo reservar tu lugar; cuando el grupo se complete te escribimos por WhatsApp.</p>
+      <p class="notice hidden" id="clDemo"><b>MODO DEMOSTRACIÓN</b> — nada de lo que captures se envía ni se guarda.</p>
+      <div class="avisoSimpl">
+        <b>Aviso de privacidad</b>
+        <p id="clAvisoTxt"></p>
+      </div>
+      <label class="opt"><input type="checkbox" id="clPriv"> <span>Soy padre, madre o tutor del alumno (o el alumno es mayor de edad). He leído el <a href="https://www.ajedrezpolgar.com/aviso-de-privacidad/" target="_blank" rel="noopener">aviso de privacidad</a> y acepto el tratamiento de los datos necesarios para la inscripción y el control de clases. <span class="req">*</span></span></label>
+      <div class="err" data-for="clPriv"></div>
+      <p class="opcionales">Autorizaciones opcionales — negarlas no afecta el registro</p>
+      <label class="opt"><input type="checkbox" id="clImagen"> <span>Autorizo el uso de la imagen y voz del alumno en materiales de difusión del Club. <span class="small">(Opcional · <a href="https://www.ajedrezpolgar.com/aviso-de-privacidad/#imagen" target="_blank" rel="noopener">sección V</a>)</span></span></label>
+      <label class="opt"><input type="checkbox" id="clBoletines"> <span>Autorizo el envío de boletines e invitaciones a eventos. <span class="small">(Opcional)</span></span></label>
+
+      <p class="opcionales">Datos del alumno</p>
+      <div class="row">
+        <div><label class="f" for="clNombres">Nombre(s) <span class="req">*</span></label><input type="text" id="clNombres" maxlength="60" autocomplete="off"><div class="err" data-for="clNombres"></div></div>
+        <div><label class="f" for="clApellidos">Apellidos <span class="req">*</span></label><input type="text" id="clApellidos" maxlength="60" autocomplete="off"><div class="err" data-for="clApellidos"></div></div>
+      </div>
+      <label class="f" for="clNac">Fecha de nacimiento <span class="req">*</span></label>
+      <input type="date" id="clNac">
+      <div class="cl-cat" id="clCat"></div>
+      <div class="err" data-for="clNac"></div>
+
+      <label class="f">Experiencia en ajedrez <span class="req">*</span></label>
+      <div class="opts" id="clNivel"></div>
+      <div class="err" data-for="clNivel"></div>
+
+      <label class="f">¿En qué horarios puede asistir? <span class="req">*</span></label>
+      <p class="small">Marca todos los que le sean posibles: así es más fácil completar un grupo.</p>
+      <div class="inline" id="clHorarios" style="margin-top:8px"></div>
+      <div class="err" data-for="clHorarios"></div>
+
+      <p class="opcionales">Contacto del padre, madre o tutor</p>
+      <label class="f" for="clTutor">Nombre completo <span class="req">*</span></label>
+      <input type="text" id="clTutor" maxlength="90" autocomplete="name">
+      <div class="err" data-for="clTutor"></div>
+      <div class="row">
+        <div><label class="f" for="clTel">WhatsApp (10 dígitos) <span class="req">*</span></label><input type="tel" id="clTel" maxlength="14" inputmode="numeric" autocomplete="tel-national"><div class="err" data-for="clTel"></div></div>
+        <div><label class="f" for="clCorreo">Correo electrónico <span class="small">(opcional)</span></label><input type="email" id="clCorreo" maxlength="90" autocomplete="email"><div class="err" data-for="clCorreo"></div></div>
+      </div>
+
+      <p class="opcionales">Costos y forma de registro</p>
+      <div class="cl-costos" id="clCostos"></div>
+      <label class="f">¿Cómo quieres registrarte? <span class="req">*</span></label>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="clModo" value="pago"> <span><b>Pagar la inscripción</b> y subir el comprobante<br><span class="small">Transferencia SPEI a la cuenta del Club.</span></span></label>
+        <label class="opt"><input type="radio" name="clModo" value="reserva"> <span><b>Solo reservar lugar</b>, sin pago por ahora<br><span class="small">No se sube ningún comprobante; te contactamos por WhatsApp para confirmar.</span></span></label>
+      </div>
+      <div class="err" data-for="clModo"></div>
+      <div id="clPagoBox" class="hidden">
+        <div class="pay" id="clPay"></div>
+        <label class="f" for="clComprobante">Comprobante de pago (imagen o PDF, máx. <span id="clMaxMb"></span> MB) <span class="req">*</span></label>
+        <input type="file" id="clComprobante" accept="image/*,application/pdf">
+        <div class="err" data-for="clComprobante"></div>
+        <p class="small" style="margin-top:8px">Si el grupo no llega a completarse, se te ofrecerá devolución, cambio de horario o una fecha límite para abrirlo.</p>
+      </div>
+      <input type="text" class="hp" id="clWeb" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+      <div class="err" id="clErrGral" style="margin-top:12px"></div>
+      <div class="fnav">
+        <button type="button" id="clCancelar">Cancelar</button>
+        <button type="submit" class="primary" id="clEnviar">Enviar registro</button>
+      </div>
+    </form>
+    <div id="clOk" class="card success hidden">
+      <h3>¡Registro recibido!</h3>
+      <p>Tu folio es</p>
+      <p class="folio" id="clFolio"></p>
+      <p class="hint" id="clOkTxt"></p>
+      <button type="button" id="clOtro">Registrar a otro alumno</button>
+    </div>
+  </section>
+
 
   <!-- ============ VISOR DE CONVOCATORIA ============ -->
   <section id="convocatoria" class="hidden">
@@ -702,7 +910,7 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
     <a href="mailto:pedro.zambrano@ajedrezpolgar.com">pedro.zambrano@ajedrezpolgar.com</a>
     <a href="#panel" id="lnkPanel">Panel</a>
   </div>
-  © <span id="anio"></span> Club de Ajedrez Polgar · León, Guanajuato
+  © <span id="anio"></span> Club Ajedrez Polgar · León, Guanajuato
 </footer>
 
 <script>
@@ -784,6 +992,8 @@ const EVENTOS = [
 ];
 /* ===================================================================== */
 
+// Anexo del Aviso de Privacidad 2.0 (texto oficial, igual para torneos y clases).
+const AVISO_SIMPLIFICADO = 'Pedro José Zambrano Zambrano, que opera como «Ajedrez Polgar», con domicilio en León, Guanajuato, es responsable del tratamiento de los datos personales que usted proporciona. Los usamos para inscribir y dar seguimiento al jugador, organizar torneos, tramitar su afiliación deportiva, procesar pagos y comunicarnos con usted. Los resultados deportivos se publican en las plataformas oficiales de ajedrez. Esa publicación es pública, permanente y no puede ser retirada por el Club. El Club no solicita ni conserva información sobre la salud de los participantes. El uso de la imagen del jugador es opcional y se autoriza por separado en esta misma cédula; negarlo no afecta su inscripción. Puede conocer el aviso integral, las transferencias de datos y la forma de ejercer sus derechos en https://www.ajedrezpolgar.com/aviso-de-privacidad o solicitándolo al correo pedro.zambrano@ajedrezpolgar.com.';
 const TZ = 'America/Mexico_City', OFFSET = '-06:00';
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -951,7 +1161,7 @@ function prepararFormulario(){
     setTimeout(() => { b.textContent = 'Copiar CLABE'; }, 2500);
   };
   // Texto del Anexo "Aviso simplificado" del Aviso de Privacidad 2.0 (proyecto legal).
-  $('#avisoTxt').textContent = 'Pedro José Zambrano Zambrano, que opera como «Ajedrez Polgar», con domicilio en León, Guanajuato, es responsable del tratamiento de los datos personales que usted proporciona. Los usamos para inscribir y dar seguimiento al jugador, organizar torneos, tramitar su afiliación deportiva, procesar pagos y comunicarnos con usted. Los resultados deportivos se publican en las plataformas oficiales de ajedrez. Esa publicación es pública, permanente y no puede ser retirada por el Club. El Club no solicita ni conserva información sobre la salud de los participantes. El uso de la imagen del jugador es opcional y se autoriza por separado en esta misma cédula; negarlo no afecta su inscripción. Puede conocer el aviso integral, las transferencias de datos y la forma de ejercer sus derechos en https://www.ajedrezpolgar.com/aviso-de-privacidad o solicitándolo al correo pedro.zambrano@ajedrezpolgar.com.';
+  $('#avisoTxt').textContent = AVISO_SIMPLIFICADO;
 }
 
 function abrirFormulario(){
@@ -1322,7 +1532,7 @@ function pdfConCerts(filas, jpg){
     const C = certDe(P.ev);
     pdfLinea(doc, d.nombre, C.nombre); pdfLinea(doc, d.inst, C.inst); pdfLinea(doc, d.cat, C.cat);
   });
-  doc.setProperties({ title: 'Certificados · ' + P.ev.titulo, author: 'Club de Ajedrez Polgar' });
+  doc.setProperties({ title: 'Certificados · ' + P.ev.titulo, author: 'Club Ajedrez Polgar' });
   return doc;
 }
 const nombreArchivo = s => s.normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^\w\- ]+/g,'').trim().replace(/\s+/g,'_');
@@ -1767,6 +1977,160 @@ $('#xRegistrar').onclick = async () => {
   b.disabled = false; b.textContent = 'Registrar en la hoja';
 };
 
+/* ================= CLASES SABATINAS · CASA DE LOS TALLERES (v12) =================
+   Registro para armar grupos, con dos modalidades: pagar la inscripción (misma cuenta que torneos,
+   comprobante obligatorio) o solo reservar lugar (sin comprobante). El titular asigna maestro, salón
+   y horario después, en la pestaña «Clases Casa de los Talleres» de la hoja (Code.gs v6). */
+const CLASES = {
+  sede: 'Casa de los Talleres',
+  horarios: [ { id:'9-10', txt:'9:00 – 10:00 h' }, { id:'10-11', txt:'10:00 – 11:00 h' }, { id:'11-12', txt:'11:00 – 12:00 h' } ],
+  grupos: ['Sub-08', 'Sub-10', 'Sub-12', 'Por nivel'],
+  niveles: ['Nunca ha jugado', 'Conoce los movimientos de las piezas', 'Ya juega o ha participado en torneos'],
+  // Confirmado por el titular «por ahora» (11-oct-2026): sábado sin clase → quinto sábado que lo repone.
+  canje: [ ['2026-12-19','2027-01-30','Vacaciones de invierno'], ['2026-12-26','2027-05-29','Vacaciones de invierno'],
+           ['2027-01-02','2027-07-31','Vacaciones de invierno'], ['2027-03-27','2027-10-30','Sábado de Gloria'] ],
+  inscripcion: 650,      // anual
+  mensualidad: 650,      // incluye 4 sábados de clase
+  clasesPorMes: 4,
+  whatsapp: '524775252697',
+  waTexto: 'Hola, quiero informes y costos de las clases sabatinas de ajedrez en Casa de los Talleres.'
+};
+const RELOJ = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M12 7v5l3.2 2"/></svg>';
+const waClases = (txt) => `https://wa.me/${CLASES.whatsapp}?text=${encodeURIComponent(txt || CLASES.waTexto)}`;
+const CLASES_LISTO = AJUSTES.AVISO_PUBLICADO && (!!AJUSTES.scriptUrl || DEMO);
+
+// Categoría sugerida para el ciclo nov-2026 a oct-2027 (rangos 2027 de la Liga MTL). Mayores → «Por nivel».
+function catClase(iso){
+  const y = +String(iso).slice(0,4);
+  const c = CATS_MTL_2027.find(k => k.id !== 'SEC-PREPA' && y >= k.minYear && y <= k.maxYear);
+  return c ? c.nombre : 'Por nivel';
+}
+
+function renderClases(){
+  $('#clHoras').innerHTML = CLASES.horarios.map(h => `<div class="cl-hora">${RELOJ}<span>${esc(h.txt)}</span></div>`).join('');
+  $('#clGrupos').innerHTML = CLASES.grupos.map(g => `<span>${esc(g)}</span>`).join('');
+  $('#clCanje').innerHTML = CLASES.canje.map(([sin, rep, motivo]) =>
+    `<tr><td>${esc(fechaCorta(sin))} <span class="cl-nota">· ${esc(motivo)}</span></td><td>${esc(fechaCorta(rep))}</td></tr>`).join('');
+  $('#lnkWaClases').href = waClases();
+  $('#clNivel').innerHTML = CLASES.niveles.map(n =>
+    `<label class="opt"><input type="radio" name="clNivel" value="${esc(n)}"> <span>${esc(n)}</span></label>`).join('');
+  $('#clHorarios').innerHTML = CLASES.horarios.map(h =>
+    `<label class="opt"><input type="checkbox" name="clHorario" value="${esc(h.id)}"> <span>${esc(h.txt)}</span></label>`).join('');
+  $('#clAvisoTxt').textContent = AVISO_SIMPLIFICADO;
+  $('#clCostos').innerHTML =
+    `<div><small>Inscripción anual</small><b>${esc(money(CLASES.inscripcion))}</b></div>` +
+    `<div><small>Mensualidad</small><b>${esc(money(CLASES.mensualidad))}</b><span>${CLASES.clasesPorMes} clases en sábado</span></div>`;
+  $('#clMaxMb').textContent = AJUSTES.maxArchivoMb;
+  $('#clPay').innerHTML = `<div class="small">Inscripción: <b>${esc(money(CLASES.inscripcion))}</b> · CLABE interbancaria (${esc(AJUSTES.pago.banco)})</div><code>${esc(AJUSTES.pago.clabe)}</code> <button type="button" id="clCopiar" class="copiar">Copiar CLABE</button>
+    <div class="small" style="margin-top:6px">Titular: <b>${esc(AJUSTES.pago.titular)}</b> · Concepto sugerido: «Clases» y nombre del alumno</div>`;
+  $('#clCopiar').onclick = async () => {
+    const b = $('#clCopiar'), d = AJUSTES.pago.clabe.replace(/\D/g,'');
+    try { await navigator.clipboard.writeText(d); b.textContent = '¡Copiada!'; } catch (_) { b.textContent = d; }
+  };
+  document.querySelectorAll('input[name=clModo]').forEach(r => r.addEventListener('change', () =>
+    $('#clPagoBox').classList.toggle('hidden', document.querySelector('input[name=clModo]:checked')?.value !== 'pago')));
+  if (!AJUSTES.scriptUrl && DEMO) $('#clDemo').classList.remove('hidden');
+  $('#btnClases').onclick = abrirClases;
+  $('#clCancelar').onclick = () => { $('#clRegistro').classList.add('hidden'); $('#clases').scrollIntoView({ behavior:'smooth' }); };
+  $('#clOtro').onclick = () => { $('#clForm').reset(); $('#clCat').textContent = ''; $('#clPagoBox').classList.add('hidden'); $('#clOk').classList.add('hidden'); $('#clForm').classList.remove('hidden'); $('#clRegistro').scrollIntoView({ behavior:'smooth' }); };
+  $('#clNac').addEventListener('input', () => {
+    const v = $('#clNac').value;
+    $('#clCat').innerHTML = /^\d{4}-\d{2}-\d{2}$/.test(v) ? `Grupo sugerido: <b>${esc(catClase(v))}</b> <span class="small">(la asignación final la hace el Club)</span>` : '';
+  });
+  // Al corregir un campo se borra su mensaje de error.
+  $('#clForm').addEventListener('input', e => {
+    const k = e.target.name === 'clNivel' ? 'clNivel' : e.target.name === 'clHorario' ? 'clHorarios' : e.target.name === 'clModo' ? 'clModo' : e.target.id;
+    const er = document.querySelector(`#clForm .err[data-for="${k}"]`); if (er) er.textContent = '';
+  });
+  $('#clForm').addEventListener('change', e => { if (e.target.id === 'clPriv') document.querySelector('.err[data-for="clPriv"]').textContent = ''; });
+  $('#clForm').addEventListener('submit', enviarClase);
+}
+
+function abrirClases(){
+  // Sin backend real (y fuera de ?demo=1) no se recaban datos: se manda a WhatsApp.
+  if (!CLASES_LISTO) { window.open(waClases('Hola, quiero registrar a mi hija/hijo en las clases sabatinas de ajedrez en Casa de los Talleres.'), '_blank', 'noopener'); return; }
+  $('#clRegistro').classList.remove('hidden');
+  $('#clRegistro').scrollIntoView({ behavior:'smooth' });
+}
+
+function validarClase(){
+  const errC = (k, m) => { const e = document.querySelector(`.err[data-for="${k}"]`); if (e) e.textContent = m || ''; return !m; };
+  const v = id => ($('#' + id).value || '').trim();
+  let ok = true;
+  ok = errC('clPriv', $('#clPriv').checked ? '' : 'Es necesario aceptar el aviso de privacidad para registrarse.') && ok;
+  ok = errC('clNombres', v('clNombres').length >= 2 ? '' : 'Escribe el nombre del alumno.') && ok;
+  ok = errC('clApellidos', v('clApellidos').length >= 2 ? '' : 'Escribe los apellidos del alumno.') && ok;
+  const nac = v('clNac'), y = +nac.slice(0,4), anio = +HOY.slice(0,4);
+  ok = errC('clNac', !/^\d{4}-\d{2}-\d{2}$/.test(nac) ? 'Indica la fecha de nacimiento.'
+    : (y > anio - 3 || y < anio - 90) ? 'Revisa la fecha de nacimiento (las clases son a partir de 4 años).' : '') && ok;
+  ok = errC('clNivel', document.querySelector('input[name=clNivel]:checked') ? '' : 'Elige una opción.') && ok;
+  ok = errC('clHorarios', document.querySelector('input[name=clHorario]:checked') ? '' : 'Marca al menos un horario.') && ok;
+  ok = errC('clTutor', v('clTutor').length >= 5 ? '' : 'Escribe el nombre completo del padre, madre o tutor.') && ok;
+  ok = errC('clTel', v('clTel').replace(/\D/g,'').length === 10 ? '' : 'El WhatsApp debe tener 10 dígitos.') && ok;
+  const modo = (document.querySelector('input[name=clModo]:checked') || {}).value;
+  ok = errC('clModo', modo ? '' : 'Elige si pagas la inscripción o solo reservas lugar.') && ok;
+  if (modo === 'pago') {
+    const f = $('#clComprobante').files[0];
+    ok = errC('clComprobante', !f ? 'Adjunta el comprobante de pago.' : !/^image\/|application\/pdf/.test(f.type) ? 'Solo imagen o PDF.'
+      : f.size > AJUSTES.maxArchivoMb * 1024 * 1024 ? `El archivo supera ${AJUSTES.maxArchivoMb} MB.` : '') && ok;
+  } else errC('clComprobante', '');
+  const c = v('clCorreo');
+  ok = errC('clCorreo', !c || /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(c) ? '' : 'Revisa el correo (o déjalo vacío).') && ok;
+  if (!ok) { const p = document.querySelector('#clForm .err:not(:empty)'); if (p) p.scrollIntoView({ behavior:'smooth', block:'center' }); }
+  return ok;
+}
+
+async function enviarClase(e){
+  e.preventDefault();
+  $('#clErrGral').textContent = '';
+  if ($('#clWeb').value) return;                       // trampa para robots
+  if (!validarClase()) return;
+  const nac = $('#clNac').value;
+  const data = {
+    accion: 'clase_registro', sede: CLASES.sede,
+    nombres: titleCase($('#clNombres').value), apellidos: titleCase($('#clApellidos').value),
+    nacimiento: nac, categoria: catClase(nac),
+    nivel: document.querySelector('input[name=clNivel]:checked').value,
+    horarios: [...document.querySelectorAll('input[name=clHorario]:checked')].map(i => i.value),
+    tutor: titleCase($('#clTutor').value), telefono: $('#clTel').value.replace(/\D/g,''),
+    correo: $('#clCorreo').value.trim(),
+    aceptaPrivacidad: true, autorizaImagen: $('#clImagen').checked, autorizaBoletines: $('#clBoletines').checked,
+    versionAviso: AJUSTES.AVISO_VERSION,
+    modalidad: document.querySelector('input[name=clModo]:checked').value
+  };
+  if (data.modalidad === 'pago') {
+    const f = $('#clComprobante').files[0];
+    data.archivo = { nombre: f.name, tipo: f.type, base64: await toB64(f) };
+  }
+  const b = $('#clEnviar'); b.disabled = true; b.textContent = 'Enviando…';
+  try {
+    let j;
+    if (!AJUSTES.scriptUrl) { console.log('[MODO DEMO] Registro de clase que se enviaría:', { ...data, archivo: data.archivo ? '(comprobante)' : undefined }); j = { ok:true, folio:'DEMO-CLS' }; }
+    else {
+      const r = await fetch(AJUSTES.scriptUrl, { method:'POST', headers:{ 'Content-Type':'text/plain;charset=utf-8' }, body: JSON.stringify(data) });
+      j = await r.json();
+    }
+    if (!j.ok) {
+      // Code.gs anterior a v6 no conoce «clase_registro» y responde pidiendo campos de torneo.
+      if (/Falta el (campo|comprobante)/.test(j.error || ''))
+        throw new Error('El registro en línea todavía no está activo. Por favor escríbenos por WhatsApp al 477 525 2697.');
+      throw new Error(j.error || 'No se pudo guardar el registro.');
+    }
+    $('#clFolio').textContent = j.folio;
+    $('#clOkTxt').innerHTML = data.modalidad === 'pago'
+      ? `Recibimos el registro y el comprobante de inscripción de <b>${esc(data.nombres)}</b>. El pago se valida manualmente; te escribiremos por WhatsApp para confirmarlo y avisarte cuando su grupo esté por abrir.`
+      : `Recibimos la reserva de lugar de <b>${esc(data.nombres)}</b>. Te escribiremos por WhatsApp cuando su grupo esté por completarse para confirmar el lugar con el pago de la inscripción.`;
+    $('#clOkTxt').innerHTML += ' Si tienes dudas, escríbenos al 477 525 2697.';
+    $('#clForm').classList.add('hidden');
+    $('#clOk').classList.remove('hidden');
+    $('#clRegistro').scrollIntoView({ behavior:'smooth' });
+  } catch (err) {
+    $('#clErrGral').innerHTML = esc(err.message || 'No se pudo enviar. Revisa tu conexión e intenta de nuevo.') +
+      ` <a href="${waClases()}" target="_blank" rel="noopener">Abrir WhatsApp</a>`;
+  }
+  b.disabled = false; b.textContent = 'Enviar registro';
+}
+
 /* ================= ARRANQUE ================= */
 // El enlace directo www.ajedrezpolgar.com/inscripciones/#convocatoria abre la convocatoria del torneo activo.
 const ajustarNav = () => { document.body.style.paddingTop = document.querySelector('nav').offsetHeight + 'px'; };
@@ -1774,6 +2138,9 @@ ajustarNav(); addEventListener('resize', ajustarNav);
 $('#anio').textContent = HOY.slice(0,4);
 renderActivo();
 renderListas();
+renderClases();
+// Enlace directo al formulario de clases: www.ajedrezpolgar.com/inscripciones/#registro-clases
+if (location.hash === '#registro-clases') abrirClases();
 if (location.hash === '#convocatoria' && ACTIVO && ACTIVO.convocatoria) abrirConvocatoria(ACTIVO, true);
 // Panel del organizador: www.ajedrezpolgar.com/inscripciones/#panel (o el enlace «Panel» del pie de página).
 $('#lnkPanel').addEventListener('click', e => { e.preventDefault(); abrirPanel(); });
