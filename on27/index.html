@@ -15,9 +15,10 @@
 =====================================================================
 
 ## Estado actual
-* Versión vigente: v5 (ON27_Formulario_Inscripcion_Municipal_v5.html → /on27/index.html)
+* Versión vigente: v6 (ON27_Formulario_Inscripcion_Municipal_v6.html → /on27/index.html). INSCRIPCIONES ABIERTAS.
 * Archivos junto a la página: /on27/carta-responsiva.pdf y .docx (formato oficial de COMUDE).
-* Backend: Code_ON27_v1.gs (Google Apps Script, proyecto propio, NO el de Liga MTL).
+* Backend: Code_ON27_v2.gs (Google Apps Script, proyecto propio, NO el de Liga MTL), instalado por el titular;
+  URL /exec en AJUSTES.scriptUrl.
 * Traspaso a nuevo chat: la IA descarga
   https://raw.githubusercontent.com/Max-Verne/ajedrezpolgar.com/main/on27/index.html
   y lee este bloque.
@@ -56,14 +57,20 @@
 * Campo trampa "web" (oculto): si llega con texto, el backend descarta el envío (bots).
 
 ## Pendientes
-* [ ] Instalar Code_ON27_v1.gs y pegar su URL /exec en AJUSTES.scriptUrl (abre inscripciones).
+* [x] Backend instalado y conectado (v6). [ ] Actualizar a Code_ON27_v2.gs (cupo 250 y cierre 17-nov) como
+  NUEVA VERSIÓN de la misma implementación, para no cambiar la URL.
 * [ ] Subir la convocatoria oficial como /on27/convocatoria.pdf y poner AJUSTES.convocatoriaPdf.
-* [ ] Confirmar fechas de cierre de inscripción (AJUSTES.cierre y CIERRE en Code.gs).
 * [ ] Confirmar con COMUDE quién recibe acceso a la carpeta privada y cuándo es el cotejo.
-* [ ] Decidir si ON27 entra al catálogo EVENTOS de /inscripciones/ (desplazaría al torneo activo MTL
-  entre el 8 y el 21 de noviembre).
+* [x] ON27 en el catálogo de /inscripciones/ como evento paralelo (Inscripciones v13), activo junto a MTL.
 
 ## Historial de cambios
+**v6 (21-oct-2026) — Apertura de inscripciones**
+* Conectado el backend (AJUSTES.scriptUrl): el formulario queda abierto al público.
+* Datos confirmados por el titular: fases 21 nov y 28-29 nov; cierre 17-nov-2026 23:59 o al completar
+  250 inscritos; categoría 21-23 años confirmada.
+* Cupo: al cargar, la página consulta al backend cuántos inscritos hay; si se llenó muestra "Se completó
+  el cupo" y oculta el formulario; con 50 lugares o menos avisa cuántos quedan. El backend v2 rechaza
+  inscripciones al llegar a 250 aunque la página esté abierta en otro celular.
 **v5 (21-oct-2026) — Carta Responsiva descargable**
 * Se publica el formato oficial de COMUDE en /on27/carta-responsiva.pdf y .docx (texto sin cambios;
   se quitó de los metadatos del archivo el nombre de quien lo editó en COMUDE).
@@ -378,12 +385,13 @@
 const AJUSTES = {
   // URL /exec del Apps Script (Code_ON27_v1.gs). Vacía = la página NO recibe inscripciones
   // (muestra "abren próximamente"). Para probar sin backend: agregar ?demo=1 a la dirección.
-  scriptUrl: '',
+  scriptUrl: 'https://script.google.com/macros/s/AKfycbz6EiX3LGe0VahmipdvykzR3V4PD1p2bC68zBO0WZlEPkv8cHG7rRZXnchAdp-SZd0g/exec',
   // Convocatoria oficial en PDF (p. ej. '/on27/convocatoria.pdf'). Vacía = el enlace no se muestra.
   convocatoriaPdf: '',
   // Ventana de inscripción, hora de León (-06:00). null = sin límite por ese lado.
   apertura: null,
-  cierre: '2026-11-18T23:59:00-06:00', // TODO confirmar con la convocatoria oficial
+  cierre: '2026-11-17T23:59:00-06:00', // o antes, si se completa el cupo (lo controla el backend)
+  cupo: 250,
   maxArchivoMb: 5,
   maxEnvioMb: 20
 };
@@ -415,7 +423,20 @@ const fmtFecha = iso => new Date(iso).toLocaleString('es-MX', { timeZone:'Americ
     box.innerHTML = '<div class="estado cerr">La inscripción en línea está cerrada.</div>';
     $('#formWrap').style.display = 'none';
   } else if (AJUSTES.cierre){
-    box.innerHTML = '<div class="estado prox">Inscripción abierta hasta el ' + fmtFecha(AJUSTES.cierre) + '.</div>';
+    box.innerHTML = '<div class="estado prox">Inscripción abierta hasta el ' + fmtFecha(AJUSTES.cierre) + ', o antes si se completa el cupo de ' + AJUSTES.cupo + ' inscritos.</div>';
+  }
+  // Cupo: el backend informa cuántos van. Si se llenó, se cierra; si quedan pocos, se avisa.
+  if (st === 'abierta' && AJUSTES.scriptUrl){
+    fetch(AJUSTES.scriptUrl).then(r => r.json()).then(d => {
+      if (!d || typeof d.inscritos !== 'number') return;
+      const quedan = (d.cupo || AJUSTES.cupo) - d.inscritos;
+      if (d.lleno || quedan <= 0 || d.abierto === false){
+        box.innerHTML = '<div class="estado cerr">' + (d.lleno || quedan <= 0 ? 'Se completó el cupo de ' + (d.cupo || AJUSTES.cupo) + ' inscritos. ' : '') + 'La inscripción en línea está cerrada.</div>';
+        $('#formWrap').style.display = 'none';
+      } else if (quedan <= 50){
+        box.innerHTML += '<div class="estado prox">Quedan ' + quedan + ' lugares disponibles.</div>';
+      }
+    }).catch(() => {});
   }
   if (AJUSTES.convocatoriaPdf){ $('#pdfOficial').href = AJUSTES.convocatoriaPdf; $('#pdfWrap').style.display = ''; }
 })();

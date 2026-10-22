@@ -23,8 +23,10 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
 /aviso-de-privacidad/ (proyecto propio, numeración propia, texto del proyecto legal).
 
 ## Estado actual
-* Versión vigente: v12
-* Archivo entregado: Inscripciones_v12.html → se sube como /inscripciones/index.html (carpetas convocatorias/,
+* Versión vigente: v13
+* Archivo entregado: Inscripciones_v13.html → /inscripciones/index.html. Solo cambia esta página; Code.gs v6 sin
+  cambios. (Notas de v12, vigentes:)
+* v12: Inscripciones_v12.html → se sube como /inscripciones/index.html (carpetas convocatorias/,
   certificados/ y lib/ sin cambios). Requiere Code.gs v6 (Code_v6.gs) para el registro de clases; v6 incluye
   todo lo de v4 (panel, externos). Instalar Code_v6.gs ANTES de subir esta página. (v11 y Code v5 se
   entregaron el mismo día y NUNCA se instalaron: quedan sustituidos por v12 y Code v6.)
@@ -157,6 +159,16 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
 - [ ] Portada v3 enlaza a los sitios hermanos vía max-verne.github.io en la barra superior y vía www en el banner — inconsistencia heredada, no se toca aquí.
 
 ## Historial de cambios
+
+**v13 (21-oct-2026) — Dos torneos activos a la vez (MTL + Etapa Municipal ON27)**
+* CAMBIO DE CONTRATO: además del torneo activo (uno solo, por fecha), el catálogo admite eventos con
+  paralelo:true que se muestran también como activos en la misma columna, sin desplazarlo, hasta su
+  último día (campo fin). Los paralelos no cuentan para elegir el activo ni aparecen en «Próximos».
+* Nuevo evento on27-municipal (organiza COMUDE León): gratuito, cupo 250, cierre 17-nov-2026 23:59,
+  fases 21 y 28-29 nov, 4 categorías (incluye 21-23 años, confirmada por el titular). Su botón
+  «Inscribirme» abre /on27/ en otra pestaña (formulario institucional con backend propio).
+* Campos nuevos por evento: paralelo, fin, fechaTexto, gratuito, organiza. El título de la sección
+  cambia a «Torneos activos» cuando hay más de uno.
 
 **v12 — Clases sabatinas en Casa de los Talleres (junto al torneo activo, pago o reserva) + identidad oficial**
 * Nuevo bloque fijo #clases a la derecha del torneo activo (dos columnas; apiladas en móvil). Ancho de main 960 → 1180 px: sede, sábados, 3 horarios (9–10, 10–11, 11–12 h), grupos
@@ -473,6 +485,8 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
   .duo-col > .activo, .duo-col > .clases, .duo-col > #boxActivo{flex:1}
   #boxActivo{display:flex;flex-direction:column}
   #boxActivo > .activo{flex:1}
+  #boxActivo{gap:1.4rem}
+  .activo.paralelo{border-top-color:var(--azul-claro, #4A90D9)}
   @media (max-width:900px){ .duo{grid-template-columns:1fr;gap:0} }
   #clases{scroll-margin-top:110px}
   .clases{position:relative;overflow:hidden;border-radius:var(--radio);color:#fff;padding:1.8rem;
@@ -987,6 +1001,21 @@ const EVENTOS = [
   { ...MTL3, id:'mtl3-e4', etapa:'4to evento', titulo:'4to evento', fecha:'2027-01-23', sede:null, categorias:CATS_MTL_2027 },
   { ...MTL3, id:'mtl3-e5', etapa:'5to evento', titulo:'5to evento', fecha:'2027-02-20', sede:null, categorias:CATS_MTL_2027 },
   { ...MTL3, id:'mtl3-e6', etapa:'6to evento', titulo:'6to evento', fecha:'2027-03-13', sede:null, categorias:CATS_MTL_2027 },
+  // Evento PARALELO (v13): se muestra como activo junto al torneo MTL, no lo desplaza. Formulario externo
+  // institucional de COMUDE León en /on27/ (proyecto propio). fin = último día del evento.
+  { id:'on27-municipal', paralelo:true, organiza:'COMUDE León', serie:'Rumbo a ON27',
+    titulo:'Etapa Municipal de Ajedrez 2026', etapa:'ON27', fecha:'2026-11-21', fin:'2026-11-29',
+    fechaTexto:'Fase Eliminatoria: sábado 21 de noviembre · Fase Clasificatoria: 28 y 29 de noviembre de 2026',
+    sede:'Unidad Deportiva Luis I. Rodríguez (Coecillo)', direccion:'León, Gto.',
+    mapsUrl:'https://maps.google.com/?q=Unidad+Deportiva+Luis+I.+Rodr%C3%ADguez,+Coecillo,+Le%C3%B3n,+Gto.',
+    horario:null, costo:null, gratuito:true, cupo:250, cierre:'2026-11-17T23:59:00-06:00',
+    formulario:'/on27/', convocatoria:null, resultadosUrl:null, certificado:null,
+    categorias:[
+      { id:'SUB12', nombre:'Sub-12',     minYear:2015, maxYear:9999 },
+      { id:'SUB16', nombre:'Sub-16',     minYear:2011, maxYear:2014 },
+      { id:'SUB20', nombre:'Sub-20',     minYear:2007, maxYear:2010 },
+      { id:'2123',  nombre:'21-23 años', minYear:2004, maxYear:2006 }
+    ] },
   { ...MTL3, id:'mtl3-gala', etapa:'Gala', titulo:'Gala de Celebración y Premiación Final', fecha:'2027-04-24', sede:null,
     formulario:null, costo:null, cupo:null, categorias:[], horario:null }
 ];
@@ -1033,9 +1062,12 @@ function estadoDe(ev){
 }
 const ETIQUETA = { 'tardia':'Inscripción extemporánea abierta', 'abierta':'Inscripción abierta', 'cerrada':'Inscripción cerrada', 'proximamente':'Inscripción próximamente', 'sin-formulario':'Evento sin inscripción' };
 
-const futuros = EVENTOS.filter(e => e.fecha >= HOY);
+const finDe = e => e.fin || e.fecha;
+const futuros = EVENTOS.filter(e => e.fecha >= HOY && !e.paralelo);
 const ACTIVO = (AJUSTES.FORZAR_ACTIVO && EVENTOS.find(e => e.id === AJUSTES.FORZAR_ACTIVO)) || futuros[0] || null;
-const pasados = EVENTOS.filter(e => e.fecha < HOY && e !== ACTIVO);
+// v13: eventos paralelos (p. ej. ON27 de COMUDE) se muestran activos junto al torneo MTL hasta su último día.
+const PARALELOS = EVENTOS.filter(e => e.paralelo && finDe(e) >= HOY && e !== ACTIVO);
+const pasados = EVENTOS.filter(e => finDe(e) < HOY && e !== ACTIVO);
 const proximos = futuros.filter(e => e !== ACTIVO);
 
 function rangoCat(c){ return c.maxYear >= 9999 ? `${c.minYear} y posteriores` : `${c.minYear}–${c.maxYear}`; }
@@ -1046,28 +1078,41 @@ function renderActivo(){
     box.innerHTML = `<div class="activo"><h3>No hay torneos convocados por ahora</h3><p class="sub">Síguenos en <a href="${AJUSTES.facebookUrl}" target="_blank" rel="noopener">Facebook</a> para enterarte de la próxima convocatoria.</p></div>`;
     return;
   }
-  const ev = ACTIVO, st0 = estadoDe(ev);
-  const puedeInscribir = admite(st0) && FORM_LISTO;
-  const st = (admite(st0) && !FORM_LISTO) ? 'proximamente' : st0;
+  box.innerHTML = [ACTIVO, ...PARALELOS].map(tarjetaActivo).join('');
+  if (PARALELOS.length) $('#activo').textContent = 'Torneos activos';
+  const b = $('#btnAbrir');
+  if (b) b.addEventListener('click', e => { e.preventDefault(); abrirFormulario(); });
+  const c = $('#btnConv');
+  if (c) c.addEventListener('click', e => { e.preventDefault(); abrirConvocatoria(ACTIVO, true); });
+}
+
+function tarjetaActivo(ev){
+  const st0 = estadoDe(ev);
+  const externo = ev.formulario && ev.formulario !== 'mtl';
+  const listo = externo || FORM_LISTO; // los formularios externos tienen su propio backend
+  const puedeInscribir = admite(st0) && listo;
+  const st = (admite(st0) && !listo) ? 'proximamente' : st0;
+  const principal = ev === ACTIVO; // solo la tarjeta principal usa los id del formulario MTL
   const datos = [
-    ['Fecha', fechaLarga(ev.fecha)],
+    ['Fecha', ev.fechaTexto ? esc(ev.fechaTexto) : fechaLarga(ev.fecha)],
     ['Sede', ev.sede ? esc(ev.sede) + (ev.mapsUrl ? ` · <a href="${esc(ev.mapsUrl)}" target="_blank" rel="noopener">Ver mapa</a>` : '') : 'Por confirmar'],
     ev.horario ? ['Horario', esc(ev.horario)] : null,
-    ev.costo ? ['Inscripción', money(ev.costo) + ' por jugador'] : null,
+    ev.costo ? ['Inscripción', money(ev.costo) + ' por jugador'] : (ev.gratuito ? ['Inscripción', 'Gratuita'] : null),
     ev.cupo ? ['Cupo', ev.cupo + ' jugadores'] : null,
     ev.formulario && ev.sede ? [st0 === 'tardia' ? 'Cierre según convocatoria' : 'Cierre de inscripción', fechaHora(cierreDe(ev))] : null,
     st0 === 'tardia' ? ['Inscripción extemporánea hasta', fechaHora(cierreTardioDe(ev))] : null
   ].filter(Boolean);
 
   let aviso = '';
-  if (admite(st0) && !FORM_LISTO) aviso = 'La inscripción en línea abrirá en breve. Vuelve a esta misma dirección.';
+  if (admite(st0) && !listo) aviso = 'La inscripción en línea abrirá en breve. Vuelve a esta misma dirección.';
   else if (st0 === 'proximamente') aviso = !ev.sede ? 'La inscripción se abrirá en esta misma dirección en cuanto se confirme la sede.' : `La inscripción abre el ${fechaHora(aperturaDe(ev))}.`;
   else if (st === 'cerrada') aviso = 'El periodo de inscripción terminó. Esta dirección mostrará el siguiente torneo al día siguiente del evento.';
   else if (st === 'tardia') aviso = textoTardio(ev);
 
-  box.innerHTML = `<article class="activo">
+  return `<article class="activo${ev.paralelo ? ' paralelo' : ''}">
     <div class="chips">
       ${ev.mtl ? '<span class="chip mtl">♛ Liga MTL</span>' : ''}
+      ${ev.organiza ? `<span class="chip">Organiza ${esc(ev.organiza)}</span>` : ''}
       <span class="chip">${esc(ev.serie)}</span>
       <span class="chip st-${st}">${ETIQUETA[st]}</span>
     </div>
@@ -1077,15 +1122,11 @@ function renderActivo(){
     ${ev.categorias && ev.categorias.length ? `<div class="dato"><small>Categorías (por año de nacimiento)</small></div>
       <div class="cats">${ev.categorias.map(c => `<div class="cat"><b>${esc(c.nombre)}</b>${rangoCat(c)}</div>`).join('')}</div>` : ''}
     <div class="acciones">
-      ${puedeInscribir ? (ev.formulario === 'mtl' ? '<a class="btn btn-rojo" href="#inscribir" id="btnAbrir">Inscribirme</a>' : `<a class="btn btn-rojo" href="${esc(ev.formulario)}" target="_blank" rel="noopener">Inscribirme</a>`) : ''}
-      ${ev.convocatoria ? `<a class="btn btn-borde" href="#convocatoria" id="btnConv">Ver convocatoria</a>` : ''}
+      ${puedeInscribir ? (ev.formulario === 'mtl' ? (principal ? '<a class="btn btn-rojo" href="#inscribir" id="btnAbrir">Inscribirme</a>' : '') : `<a class="btn btn-rojo" href="${esc(ev.formulario)}" target="_blank" rel="noopener">Inscribirme</a>`) : ''}
+      ${ev.convocatoria && principal ? `<a class="btn btn-borde" href="#convocatoria" id="btnConv">Ver convocatoria</a>` : ''}
     </div>
     ${aviso ? `<div class="aviso${st === 'tardia' ? ' aviso-tardio' : ''}">${aviso}</div>` : ''}
   </article>`;
-  const b = $('#btnAbrir');
-  if (b) b.addEventListener('click', e => { e.preventDefault(); abrirFormulario(); });
-  const c = $('#btnConv');
-  if (c) c.addEventListener('click', e => { e.preventDefault(); abrirConvocatoria(ev, true); });
 }
 
 function textoTardio(ev){
