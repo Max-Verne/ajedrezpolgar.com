@@ -23,9 +23,9 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
 /aviso-de-privacidad/ (proyecto propio, numeración propia, texto del proyecto legal).
 
 ## Estado actual
-* Versión vigente: v13
-* Archivo entregado: Inscripciones_v13.html → /inscripciones/index.html. Solo cambia esta página; Code.gs v6 sin
-  cambios. (Notas de v12, vigentes:)
+* Versión vigente: v14
+* Archivo entregado: Inscripciones_v14.html → /inscripciones/index.html (+ convocatorias/on27-municipal-p1…p6.jpg).
+  Code.gs v6 sin cambios. (Notas de v12, vigentes:)
 * v12: Inscripciones_v12.html → se sube como /inscripciones/index.html (carpetas convocatorias/,
   certificados/ y lib/ sin cambios). Requiere Code.gs v6 (Code_v6.gs) para el registro de clases; v6 incluye
   todo lo de v4 (panel, externos). Instalar Code_v6.gs ANTES de subir esta página. (v11 y Code v5 se
@@ -159,6 +159,11 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
 - [ ] Portada v3 enlaza a los sitios hermanos vía max-verne.github.io en la barra superior y vía www en el banner — inconsistencia heredada, no se toca aquí.
 
 ## Historial de cambios
+
+**v14 (21-oct-2026) — Convocatoria de la Etapa Municipal ON27 en el visor**
+* on27-municipal.convocatoria: PDF en /on27/convocatoria.pdf (dirección fija ya difundida) y páginas en
+  /inscripciones/convocatorias/on27-municipal-p1…p6.jpg. Las tarjetas activas que no son la principal
+  también tienen «Ver convocatoria» (abre el mismo visor de la página con su propio evento).
 
 **v13 (21-oct-2026) — Dos torneos activos a la vez (MTL + Etapa Municipal ON27)**
 * CAMBIO DE CONTRATO: además del torneo activo (uno solo, por fecha), el catálogo admite eventos con
@@ -1009,7 +1014,9 @@ const EVENTOS = [
     sede:'Unidad Deportiva Luis I. Rodríguez (Coecillo)', direccion:'León, Gto.',
     mapsUrl:'https://maps.google.com/?q=Unidad+Deportiva+Luis+I.+Rodr%C3%ADguez,+Coecillo,+Le%C3%B3n,+Gto.',
     horario:null, costo:null, gratuito:true, cupo:250, cierre:'2026-11-17T23:59:00-06:00',
-    formulario:'/on27/', convocatoria:null, resultadosUrl:null, certificado:null,
+    formulario:'/on27/', resultadosUrl:null, certificado:null,
+    convocatoria:{ pdf:'/on27/convocatoria.pdf',
+      paginas:[1,2,3,4,5,6].map(n => '/inscripciones/convocatorias/on27-municipal-p' + n + '.jpg') },
     categorias:[
       { id:'SUB12', nombre:'Sub-12',     minYear:2015, maxYear:9999 },
       { id:'SUB16', nombre:'Sub-16',     minYear:2011, maxYear:2014 },
@@ -1084,6 +1091,8 @@ function renderActivo(){
   if (b) b.addEventListener('click', e => { e.preventDefault(); abrirFormulario(); });
   const c = $('#btnConv');
   if (c) c.addEventListener('click', e => { e.preventDefault(); abrirConvocatoria(ACTIVO, true); });
+  document.querySelectorAll('.btnConvX').forEach(x => x.addEventListener('click', e => {
+    e.preventDefault(); abrirConvocatoria(EVENTOS.find(v => v.id === x.dataset.ev), true); }));
 }
 
 function tarjetaActivo(ev){
@@ -1123,7 +1132,7 @@ function tarjetaActivo(ev){
       <div class="cats">${ev.categorias.map(c => `<div class="cat"><b>${esc(c.nombre)}</b>${rangoCat(c)}</div>`).join('')}</div>` : ''}
     <div class="acciones">
       ${puedeInscribir ? (ev.formulario === 'mtl' ? (principal ? '<a class="btn btn-rojo" href="#inscribir" id="btnAbrir">Inscribirme</a>' : '') : `<a class="btn btn-rojo" href="${esc(ev.formulario)}" target="_blank" rel="noopener">Inscribirme</a>`) : ''}
-      ${ev.convocatoria && principal ? `<a class="btn btn-borde" href="#convocatoria" id="btnConv">Ver convocatoria</a>` : ''}
+      ${ev.convocatoria ? (principal ? `<a class="btn btn-borde" href="#convocatoria" id="btnConv">Ver convocatoria</a>` : `<a class="btn btn-borde btnConvX" href="#convocatoria" data-ev="${esc(ev.id)}">Ver convocatoria</a>`) : ''}
     </div>
     ${aviso ? `<div class="aviso${st === 'tardia' ? ' aviso-tardio' : ''}">${aviso}</div>` : ''}
   </article>`;

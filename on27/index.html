@@ -15,8 +15,9 @@
 =====================================================================
 
 ## Estado actual
-* Versión vigente: v6 (ON27_Formulario_Inscripcion_Municipal_v6.html → /on27/index.html). INSCRIPCIONES ABIERTAS.
-* Archivos junto a la página: /on27/carta-responsiva.pdf y .docx (formato oficial de COMUDE).
+* Versión vigente: v7 (ON27_Formulario_Inscripcion_Municipal_v7.html → /on27/index.html). INSCRIPCIONES ABIERTAS.
+* Archivos junto a la página: /on27/carta-responsiva.pdf y .docx, y /on27/convocatoria.pdf (formatos oficiales de COMUDE).
+* Página de la convocatoria: /on27/convocatoria/ (6 páginas en imagen + botón de descarga del PDF + botón a inscripción).
 * Backend: Code_ON27_v2.gs (Google Apps Script, proyecto propio, NO el de Liga MTL), instalado por el titular;
   URL /exec en AJUSTES.scriptUrl.
 * Traspaso a nuevo chat: la IA descarga
@@ -59,11 +60,16 @@
 ## Pendientes
 * [x] Backend instalado y conectado (v6). [ ] Actualizar a Code_ON27_v2.gs (cupo 250 y cierre 17-nov) como
   NUEVA VERSIÓN de la misma implementación, para no cambiar la URL.
-* [ ] Subir la convocatoria oficial como /on27/convocatoria.pdf y poner AJUSTES.convocatoriaPdf.
+* [x] Convocatoria oficial publicada en /on27/convocatoria.pdf (v7).
 * [ ] Confirmar con COMUDE quién recibe acceso a la carpeta privada y cuándo es el cotejo.
 * [x] ON27 en el catálogo de /inscripciones/ como evento paralelo (Inscripciones v13), activo junto a MTL.
 
 ## Historial de cambios
+**v7 (21-oct-2026) — Convocatoria en línea**
+* Convocatoria oficial (ficha técnica de COMUDE, 6 páginas) publicada en /on27/convocatoria.pdf; texto sin
+  cambios, solo se corrigieron título y autor en las propiedades del archivo. Su QR interno apunta a /on27/.
+* Nueva página /on27/convocatoria/ que muestra la convocatoria completa con botón «Descargar convocatoria (PDF)»
+  y botón al formulario. El formulario la enlaza arriba (recuadro azul) y en el pie de página.
 **v6 (21-oct-2026) — Apertura de inscripciones**
 * Conectado el backend (AJUSTES.scriptUrl): el formulario queda abierto al público.
 * Datos confirmados por el titular: fases 21 nov y 28-29 nov; cierre 17-nov-2026 23:59 o al completar
@@ -200,6 +206,7 @@
   <div class="hero">
     <span class="badge">Inscripción gratuita</span>
     <h2>Etapa Municipal de Ajedrez 2026 · Clasificatoria a la Etapa Estatal</h2>
+    <p id="heroConv" style="display:none;margin:0 0 .5rem"><a href="#" style="color:#fff;font-weight:800">📄 Consultar la convocatoria completa</a></p>
     <p>Fase Eliminatoria: sábado 21 de noviembre de 2026 (Unidad Deportiva Luis I. Rodríguez, Coecillo) · Fase Clasificatoria: 28 y 29 de noviembre de 2026</p>
   </div>
 
@@ -373,7 +380,7 @@
 <footer>
   <div class="org">Organiza y convoca: COMUDE León</div>
   <div class="tech">Coordinación técnica y plataforma de registro: Ajedrez Polgar</div>
-  <div class="pdfLink" id="pdfWrap" style="display:none"><a href="#" id="pdfOficial" target="_blank" rel="noopener">Consultar la convocatoria oficial (PDF)</a></div>
+  <div class="pdfLink" id="pdfWrap" style="display:none"><a href="#" id="pdfOficial">Consultar la convocatoria completa</a></div>
 </footer>
 
 <div class="toast" id="toast"></div>
@@ -387,7 +394,7 @@ const AJUSTES = {
   // (muestra "abren próximamente"). Para probar sin backend: agregar ?demo=1 a la dirección.
   scriptUrl: 'https://script.google.com/macros/s/AKfycbz6EiX3LGe0VahmipdvykzR3V4PD1p2bC68zBO0WZlEPkv8cHG7rRZXnchAdp-SZd0g/exec',
   // Convocatoria oficial en PDF (p. ej. '/on27/convocatoria.pdf'). Vacía = el enlace no se muestra.
-  convocatoriaPdf: '',
+  convocatoriaPdf: '/on27/convocatoria/', // página con la convocatoria completa y botón de descarga
   // Ventana de inscripción, hora de León (-06:00). null = sin límite por ese lado.
   apertura: null,
   cierre: '2026-11-17T23:59:00-06:00', // o antes, si se completa el cupo (lo controla el backend)
@@ -438,7 +445,8 @@ const fmtFecha = iso => new Date(iso).toLocaleString('es-MX', { timeZone:'Americ
       }
     }).catch(() => {});
   }
-  if (AJUSTES.convocatoriaPdf){ $('#pdfOficial').href = AJUSTES.convocatoriaPdf; $('#pdfWrap').style.display = ''; }
+  if (AJUSTES.convocatoriaPdf){ $('#pdfOficial').href = AJUSTES.convocatoriaPdf; $('#pdfWrap').style.display = '';
+    $('#heroConv a').href = AJUSTES.convocatoriaPdf; $('#heroConv').style.display = ''; }
 })();
 
 const CATS = [
