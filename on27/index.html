@@ -15,7 +15,8 @@
 =====================================================================
 
 ## Estado actual
-* Versión vigente: v4 (ON27_Formulario_Inscripcion_Municipal_v4.html → /on27/index.html)
+* Versión vigente: v5 (ON27_Formulario_Inscripcion_Municipal_v5.html → /on27/index.html)
+* Archivos junto a la página: /on27/carta-responsiva.pdf y .docx (formato oficial de COMUDE).
 * Backend: Code_ON27_v1.gs (Google Apps Script, proyecto propio, NO el de Liga MTL).
 * Traspaso a nuevo chat: la IA descarga
   https://raw.githubusercontent.com/Max-Verne/ajedrezpolgar.com/main/on27/index.html
@@ -34,7 +35,9 @@
   también lo hace cumplir con su propia fecha de cierre).
 * DEBE: aceptar solo PDF/JPG/PNG (la fotografía solo JPG/PNG), máx. 5 MB c/u. Las imágenes
   grandes se reducen en el navegador antes de enviar (datos móviles); los PDF no se tocan.
-* DEBE: la Carta Responsiva NO se sube: se entrega impresa el día del evento (vía entrenador).
+* DEBE: la Carta Responsiva NO se sube: se entrega impresa, con copia del INE de quien firma, el día
+  del evento (vía entrenador). DEBE poder descargarse desde la página (PDF + Word), sin cambiar su texto:
+  es formato oficial de COMUDE.
 * DEBE: tres confirmaciones obligatorias, nunca premarcadas.
 * NO DEBE: guardar documentos en el repositorio ni en el navegador: viajan directo al backend,
   que los guarda en una carpeta PRIVADA de Drive (ver Code_ON27_v1.gs).
@@ -61,6 +64,12 @@
   entre el 8 y el 21 de noviembre).
 
 ## Historial de cambios
+**v5 (21-oct-2026) — Carta Responsiva descargable**
+* Se publica el formato oficial de COMUDE en /on27/carta-responsiva.pdf y .docx (texto sin cambios;
+  se quitó de los metadatos del archivo el nombre de quien lo editó en COMUDE).
+* Tarjeta "Carta Responsiva · se entrega impresa" con descarga y 4 pasos (llenar, firmar como el INE,
+  anexar copia del INE, entregar al entrenador). Enlaces también en el aviso superior y en la
+  pantalla de éxito. Se añade la copia del INE a la confirmación correspondiente.
 **v4 (21-oct-2026) — Publicación**
 * Publicado en /on27/. Se elimina el folio falso para el público: sin backend la página dice
   "Inscripciones abren próximamente" y no deja enviar (demo solo con ?demo=1).
@@ -157,10 +166,16 @@
   .estado.prox{background:var(--azul-palido);color:var(--azul-oscuro);border:1.5px solid var(--azul-claro)}
   .estado.cerr{background:#fdecea;color:#7a1f16;border:1.5px solid var(--err)}
   @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .estado.prox{color:#dcebfa}:root:not([data-theme="light"]) .estado.cerr{background:#381613;color:#ffb4ac}}
+  .cartabtns{display:grid;gap:.6rem;margin-bottom:.9rem}
+  .btn-azul{background:var(--azul-medio);color:#fff;text-align:center;text-decoration:none}
+  .btn-azul:hover{background:var(--azul-vivo)}
+  .btn-borde{background:transparent;color:var(--azul-vivo);border:1.5px solid var(--gris-borde);text-align:center;text-decoration:none;font-size:.88rem}
+  .pasos{margin:0 0 0 1.2rem;font-size:.86rem}
+  .pasos li{margin-bottom:.3rem}
   .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
   .success ul{list-style:none;text-align:left;display:inline-block;margin:.6rem 0 0;font-size:.86rem}
   .progreso{font-size:.8rem;color:var(--gris-texto);text-align:center;margin-top:.6rem;min-height:1em}
-  fieldset.off{opacity:.55;pointer-events:none}
+  fieldset.off .card:not(#responsiva){opacity:.55;pointer-events:none}
 </style>
 </head>
 <body>
@@ -181,7 +196,7 @@
     <p>Fase Eliminatoria: sábado 21 de noviembre de 2026 (Unidad Deportiva Luis I. Rodríguez, Coecillo) · Fase Clasificatoria: 28 y 29 de noviembre de 2026</p>
   </div>
 
-  <div class="notafisico">⚠ No se aceptan inscripciones en físico. Todo el registro, incluida la entrega de documentos, se realiza únicamente a través de este formulario. La única excepción es la Carta Responsiva (ver abajo), que se entrega impresa el día del evento por medio del entrenador.</div>
+  <div class="notafisico">⚠ No se aceptan inscripciones en físico. Todo el registro, incluida la entrega de documentos, se realiza únicamente a través de este formulario. La única excepción es la Carta Responsiva, que se entrega impresa el día del evento por medio del entrenador: <a href="/on27/carta-responsiva.pdf" target="_blank" rel="noopener">descárgala aquí</a>.</div>
 
   <div id="estadoBox"></div>
 
@@ -300,6 +315,21 @@
       </div>
     </div>
 
+    <div class="card" id="responsiva">
+      <h2 class="sec">Carta Responsiva · se entrega impresa</h2>
+      <p class="small" style="margin-bottom:.8rem">Este documento <b>no se sube</b> al formulario. Descárgalo, imprímelo y llénalo:</p>
+      <div class="cartabtns">
+        <a class="btn btn-azul" href="/on27/carta-responsiva.pdf" target="_blank" rel="noopener">Descargar Carta Responsiva (PDF)</a>
+        <a class="btn btn-borde" href="/on27/carta-responsiva.docx" download>Versión Word (para llenar en computadora)</a>
+      </div>
+      <ol class="pasos">
+        <li>Llénala con los datos del jugador y del padre, madre o tutor.</li>
+        <li>Fírmala con la <b>misma firma de la credencial del INE</b>.</li>
+        <li>Anexa <b>fotocopia de la credencial del INE</b> de quien firma.</li>
+        <li>Entrégala al entrenador para que la presente el día del evento.</li>
+      </ol>
+    </div>
+
     <div class="card">
       <h2 class="sec">Aviso de privacidad</h2>
       <div class="avisobox">
@@ -311,7 +341,7 @@
 
     <div class="card">
       <h2 class="sec">Confirmaciones</h2>
-      <label class="consent"><input type="checkbox" id="chkResponsiva"><span>Entiendo que la <b>Carta Responsiva</b> firmada por el padre, madre o tutor <b>no se sube aquí</b>: se entrega impresa el día del evento, por medio del entrenador. <span class="req">*</span></span></label>
+      <label class="consent"><input type="checkbox" id="chkResponsiva"><span>Entiendo que la <b>Carta Responsiva</b> firmada por el padre, madre o tutor <b>no se sube aquí</b>: se entrega impresa, con copia del INE de quien firma, el día del evento por medio del entrenador. <span class="req">*</span></span></label>
       <label class="consent"><input type="checkbox" id="chkDocs"><span>Manifiesto bajo protesta de decir verdad que soy padre, madre o tutor legal del participante registrado, y autorizo el tratamiento y transferencia de la documentación adjunta exclusivamente a la COMUDE León para validar la inscripción en la Etapa Municipal rumbo a ON27. Entiendo que los archivos serán eliminados de los servidores técnicos de Ajedrez Polgar una vez concluido el proceso de cotejo oficial. <span class="req">*</span></span></label>
       <label class="consent"><input type="checkbox" id="chkAviso"><span>He leído el <b>Aviso de Privacidad de COMUDE León</b> (arriba) y autorizo el tratamiento de los datos de este formulario, incluida la CURP, únicamente para fines de organización de este torneo. <span class="req">*</span></span></label>
       <div class="err" data-for="chkTop" style="text-align:center;margin-bottom:.6rem"></div>
@@ -328,7 +358,7 @@
     <p class="small">Guarda este folio (tómale captura de pantalla). El comité organizador validará los documentos recibidos.</p>
     <div id="recibidos"></div>
     <p class="small" id="acuseTxt" style="margin-top:.6rem"></p>
-    <p class="small" style="margin-top:.6rem">Recuerda: la <b>Carta Responsiva</b> firmada se entrega impresa el día del evento, por medio del entrenador.</p>
+    <p class="small" style="margin-top:.6rem">Recuerda: la <b>Carta Responsiva</b> firmada, con copia del INE de quien firma, se entrega impresa el día del evento por medio del entrenador. <a href="/on27/carta-responsiva.pdf" target="_blank" rel="noopener">Descargar Carta Responsiva (PDF)</a></p>
     <div id="demoFlag"></div>
   </div>
 </main>
