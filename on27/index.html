@@ -15,10 +15,10 @@
 =====================================================================
 
 ## Estado actual
-* Versión vigente: v7 (ON27_Formulario_Inscripcion_Municipal_v7.html → /on27/index.html). INSCRIPCIONES ABIERTAS.
+* Versión vigente: v8 (ON27_Formulario_Inscripcion_Municipal_v8.html → /on27/index.html). INSCRIPCIONES ABIERTAS.
 * Archivos junto a la página: /on27/carta-responsiva.pdf y .docx, y /on27/convocatoria.pdf (formatos oficiales de COMUDE).
 * Página de la convocatoria: /on27/convocatoria/ (6 páginas en imagen + botón de descarga del PDF + botón a inscripción).
-* Backend: Code_ON27_v2.gs (Google Apps Script, proyecto propio, NO el de Liga MTL), instalado por el titular;
+* Backend: Code_ON27_v3.gs (v3 guarda la columna «Autoriza imagen») (Google Apps Script, proyecto propio, NO el de Liga MTL), instalado por el titular;
   URL /exec en AJUSTES.scriptUrl.
 * Traspaso a nuevo chat: la IA descarga
   https://raw.githubusercontent.com/Max-Verne/ajedrezpolgar.com/main/on27/index.html
@@ -40,7 +40,8 @@
 * DEBE: la Carta Responsiva NO se sube: se entrega impresa, con copia del INE de quien firma, el día
   del evento (vía entrenador). DEBE poder descargarse desde la página (PDF + Word), sin cambiar su texto:
   es formato oficial de COMUDE.
-* DEBE: tres confirmaciones obligatorias, nunca premarcadas.
+* DEBE: tres confirmaciones obligatorias, nunca premarcadas, y una cuarta OPCIONAL (uso de imagen, v8),
+  nunca premarcada; no autorizarla no impide inscribirse. Se envía como autorizaImagen (true/false).
 * NO DEBE: guardar documentos en el repositorio ni en el navegador: viajan directo al backend,
   que los guarda en una carpeta PRIVADA de Drive (ver Code_ON27_v1.gs).
 
@@ -65,6 +66,13 @@
 * [x] ON27 en el catálogo de /inscripciones/ como evento paralelo (Inscripciones v13), activo junto a MTL.
 
 ## Historial de cambios
+**v8 (21-oct-2026) — Autorización opcional de uso de imagen**
+* Cuarta casilla, opcional y sin premarcar: autoriza a COMUDE León y a Ajedrez Polgar (coordinación técnica)
+  a tomar y publicar fotos/video del participante durante la competencia con fines de difusión deportiva.
+  Decisión del titular para poder publicar fotos (regla del club: sin autorización no se publica).
+* Se envía como autorizaImagen; Code_ON27_v3 la guarda en la columna «Autoriza imagen» (Sí/No), mismo
+  nombre que en la Liga MTL, y Control de Invitaciones la lee por la API v3. La pantalla de éxito y el acuse
+  por correo indican si se autorizó. Inscripciones anteriores a v8 quedan sin dato = no autorizado.
 **v7 (21-oct-2026) — Convocatoria en línea**
 * Convocatoria oficial (ficha técnica de COMUDE, 6 páginas) publicada en /on27/convocatoria.pdf; texto sin
   cambios, solo se corrigieron título y autor en las propiedades del archivo. Su QR interno apunta a /on27/.
@@ -161,6 +169,7 @@
   .consent{display:flex;gap:.6rem;align-items:flex-start;background:var(--suave);border:1px solid var(--gris-borde);border-radius:9px;padding:.75rem .85rem;margin-bottom:.7rem}
   .consent input{margin-top:.2rem;flex-shrink:0}
   .consent span{font-size:.84rem;color:var(--texto)}
+  .consent.opcional{border-style:dashed}
   .btn{display:inline-block;border:none;border-radius:10px;padding:.85rem 1.4rem;font-weight:800;font-size:.95rem;cursor:pointer;width:100%}
   .btn-naranja{background:var(--naranja);color:#fff}
   .btn-naranja:hover{background:var(--naranja-claro)}
@@ -358,6 +367,7 @@
       <label class="consent"><input type="checkbox" id="chkResponsiva"><span>Entiendo que la <b>Carta Responsiva</b> firmada por el padre, madre o tutor <b>no se sube aquí</b>: se entrega impresa, con copia del INE de quien firma, el día del evento por medio del entrenador. <span class="req">*</span></span></label>
       <label class="consent"><input type="checkbox" id="chkDocs"><span>Manifiesto bajo protesta de decir verdad que soy padre, madre o tutor legal del participante registrado, y autorizo el tratamiento y transferencia de la documentación adjunta exclusivamente a la COMUDE León para validar la inscripción en la Etapa Municipal rumbo a ON27. Entiendo que los archivos serán eliminados de los servidores técnicos de Ajedrez Polgar una vez concluido el proceso de cotejo oficial. <span class="req">*</span></span></label>
       <label class="consent"><input type="checkbox" id="chkAviso"><span>He leído el <b>Aviso de Privacidad de COMUDE León</b> (arriba) y autorizo el tratamiento de los datos de este formulario, incluida la CURP, únicamente para fines de organización de este torneo. <span class="req">*</span></span></label>
+      <label class="consent opcional"><input type="checkbox" id="chkImagen"><span><b>(Opcional) Uso de imagen.</b> Autorizo que la COMUDE León y Ajedrez Polgar, como coordinación técnica del evento, tomen y publiquen fotografías y video del participante durante la competencia, en sus redes sociales y sitios web, con fines de difusión deportiva. No autorizarlo no afecta la inscripción.</span></label>
       <div class="err" data-for="chkTop" style="text-align:center;margin-bottom:.6rem"></div>
       <button type="submit" class="btn btn-naranja" id="btnEnviar">Enviar inscripción</button>
       <div class="progreso" id="progreso"></div>
@@ -578,6 +588,7 @@ $('#formIns').addEventListener('submit', async (ev) => {
     cartaResponsivaFisica: true,
     avisoAceptado: true,
     autorizacionDocumentosAceptada: true,
+    autorizaImagen: $('#chkImagen').checked,
     enviadoEl: new Date().toISOString(),
     documentos
   };
@@ -612,6 +623,7 @@ $('#formIns').addEventListener('submit', async (ev) => {
   $('#folioTxt').textContent = 'Folio: ' + data.folio;
   $('#recibidos').innerHTML = (data.recibidos && data.recibidos.length)
     ? '<ul>' + data.recibidos.map(x=>'<li>✓ '+esc(x)+'</li>').join('') + '</ul>' : '';
+  $('#recibidos').innerHTML += '<p class="small" style="margin-top:.5rem">Uso de imagen: ' + ($('#chkImagen').checked ? 'autorizado' : 'no autorizado') + '.</p>';
   $('#acuseTxt').textContent = correo ? `Enviamos un acuse a ${correo} (revisa también la carpeta de spam).` : '';
   if(data.demo){ $('#demoFlag').innerHTML = '<div class="demo-flag">Modo demostración: este envío NO se guardó en ningún servidor.</div>'; }
   $('#exito').style.display = 'block';
