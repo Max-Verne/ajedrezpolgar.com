@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Afiliación FENAMAC 2026 · Club Ajedrez Polgar</title>
+<meta name="description" content="Afiliación anual a la Federación Nacional de Ajedrez de México (FENAMAC) 2026 a través del Club Ajedrez Polgar, León, Guanajuato.">
+<!--
+=====================================================================
+ CONTEXTO Y CONTROL DE CAMBIOS: Afiliación FENAMAC (ajedrezpolgar.com/afiliacion/)
+ (Documento de contexto fusionado en el artefacto — método "Control de
+ Contexto y Versionado". Contrato/Arquitectura MANDAN sobre el Historial.)
+=====================================================================
+
+## Qué es este proyecto
+Página pública donde los interesados en afiliarse a la FENAMAC 2026 A TRAVÉS
+del Club Ajedrez Polgar dejan sus datos, documentos y comprobante de pago.
+El titular (Pedro Zambrano) verifica el pago, replica cada registro en el
+formulario oficial de la Comisión de Trabajo de la FENAMAC para Guanajuato
+(Google Forms del Prof. Juárez) y deposita $600 por afiliado a la cuenta de
+la comisión. Proyecto independiente: numeración vN propia.
+
+## Estado actual
+* Versión vigente: v1 · Archivo entregado: Afiliacion_FENAMAC_v1.html
+  (se publica como /afiliacion/index.html)
+* Dónde vive este documento: [x] fusionado en el artefacto (este comentario).
+* Backend: Code_Afiliacion_v1.gs (Apps Script PROPIO; no reutilizar el de
+  Liga MTL ni el de ON27). Sin AJUSTES.scriptUrl la página no recibe registros.
+* Modelo de IA utilizado: Claude Opus 5.5
+* Traspaso a nuevo chat: el archivo vive en GitHub
+  (raw.githubusercontent.com/Max-Verne/ajedrezpolgar.com/main/afiliacion/index.html);
+  pedir "Continúa con Afiliación FENAMAC siguiendo estas convenciones".
+
+## Contrato del Artefacto
+* DEBE: pedir exactamente los datos del formulario oficial de la comisión, en
+  el mismo orden, para que el titular solo copie y pegue.
+* DEBE: entregar CURP y comprobante de domicilio como PDF de máximo 1 MB
+  (mismo límite del formulario oficial). Si la familia sube foto (JPG/PNG),
+  la página la convierte a PDF en el navegador (jsPDF, /inscripciones/lib/).
+* DEBE: cobrar $600 por afiliado a la cuenta del titular (decisión del
+  titular: sin sobreprecio) con comprobante obligatorio.
+* DEBE: pedir consentimiento expreso para transferir datos y documentos a la
+  Comisión de Trabajo de la FENAMAC para Guanajuato y a la FENAMAC.
+* DEBE: si el afiliado es menor de 18, exigir nombre del padre/madre/tutor y
+  su declaración.
+* NO DEBE: mostrar la cuenta ni el formulario de la comisión (decisión del
+  titular, 2-nov-2026: solo vía Polgar).
+* NO DEBE: entregar folios falsos al público (sin scriptUrl = "próximamente";
+  ?demo=1 solo para pruebas, con aviso visible).
+
+## Arquitectura / Convenciones
+* AJUSTES (inicio del <script>): scriptUrl, costo, pago, apertura, cierre.
+* Orden de campos = orden del formulario oficial (2-nov-2026): Email, Nombres,
+  Ap. paterno, Ap. materno, Fecha de nacimiento, CURP (PDF), Calle, No. ext.,
+  No. int., Colonia, Municipio, Comprobante de domicilio (PDF), C.P., Teléfono,
+  Estado, Escolaridad, ¿Estudiando?, Título de jugador, de árbitro, de
+  entrenador, Fotografía, Comprobante de pago, Club, Entrenador, Comentarios.
+  Extras propios del Club (no van al formulario oficial salvo en Comentarios):
+  CURP en texto (validación), ID FENAMAC anterior, tutor.
+* El primer campo "Correo" del formulario oficial es el de la cuenta Google de
+  quien lo llena (el titular); el "Email" es el del afiliado.
+* Club: Club Ajedrez Polgar / otro (texto) / ninguno ("aparecerá con bandera
+  de Guanajuato", texto del formulario oficial).
+
+## Tareas Pendientes
+- [ ] Instalar Code_Afiliacion_v1.gs y pegar la URL /exec en AJUSTES.scriptUrl.
+- [ ] Confirmar con la comisión si acepta un comprobante por afiliado
+      ($600 c/u) o uno por lote (el formulario oficial pide uno por afiliado).
+- [ ] Definir fecha de cierre, si la comisión la fija.
+- [ ] Agregar "Domicilio, escolaridad y comprobante de domicilio" a la tabla
+      de transferencias a FENAMAC del Aviso de Privacidad (sección VII).
+- [ ] Enlazar esta página desde la barra de sitios / Inscripciones.
+
+## Historial de cambios
+**v1 — Página inicial de afiliación FENAMAC 2026 vía Polgar (2-nov-2026)**
+* Formulario en 7 bloques con los 25 campos del formulario oficial, CURP
+  validada contra la fecha de nacimiento, municipios de Guanajuato sugeridos,
+  conversión automática foto→PDF ≤1 MB, foto reducida, datos de pago con
+  botón "Copiar CLABE", consentimientos y pantalla de folio AFIL26-####.
+* Verificación: Pendiente de prueba con backend real.
+=====================================================================
+-->
+<style>
+  :root{
+    --azul-oscuro:#0d2b4e; --azul-medio:#1a4a7a; --azul-vivo:#1e6fbf; --azul-claro:#4a90d9; --azul-palido:#ddeeff;
+    --rojo:#c0392b; --rojo-claro:#e05c4b; --oro:#b8892d;
+    --fondo:#f4f7fb; --tarjeta:#ffffff; --texto:#0d2b4e; --gris-texto:#5a6e85; --gris-borde:#c8d8ea;
+    --ok:#1e7a46; --err:#b3261e; --suave:#f7f9fc; --radio:14px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --fondo:#0b1522; --tarjeta:#12233a; --texto:#e6eef8; --gris-texto:#9fb2c8; --gris-borde:#284463;
+      --suave:#0f1e33; --ok:#4cc27f; --err:#ff8a80; --azul-palido:#1a3556;
+    }
+    :root:not([data-theme="light"]) a{color:var(--azul-claro)}
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth;scroll-padding-top:100px}
+  body{background:var(--fondo);color:var(--texto);font:16px/1.55 'Segoe UI',system-ui,-apple-system,Roboto,sans-serif;padding-top:88px}
+  a{color:var(--azul-vivo)}
+
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,43,78,.97);border-bottom:2px solid var(--azul-vivo);backdrop-filter:blur(10px)}
+  .nav-top{display:flex;align-items:center;background:var(--azul-oscuro);border-bottom:1px solid rgba(255,255,255,.08);padding:0 2.5rem;font-size:.72rem;overflow-x:auto;white-space:nowrap;scrollbar-width:none}
+  .nav-top::-webkit-scrollbar{display:none}
+  .nav-top span{color:rgba(255,255,255,.35);margin-right:.8rem;letter-spacing:1px;text-transform:uppercase;font-size:.65rem}
+  .nav-top a{color:rgba(255,255,255,.6);text-decoration:none;padding:.4rem .9rem;border-right:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:.4rem;flex-shrink:0}
+  .nav-top a:first-of-type{border-left:1px solid rgba(255,255,255,.08)}
+  .nav-top a:hover{background:rgba(255,255,255,.07);color:#fff}
+  .nav-top a.active{background:rgba(30,111,191,.3);color:var(--azul-claro);font-weight:700}
+  .nav-main{display:flex;justify-content:space-between;align-items:center;padding:.6rem 2.5rem}
+  .nav-logo{display:flex;align-items:center;gap:.7rem;color:#fff;text-decoration:none}
+  .nav-logo img{height:46px;width:auto;display:block}
+  .nav-logo b{font-size:1.05rem;font-weight:800;letter-spacing:1px;display:block;line-height:1.1}
+  .nav-logo small{display:block;font-size:.62rem;color:var(--azul-claro);letter-spacing:2px;text-transform:uppercase}
+  .nav-cta{background:var(--rojo);color:#fff!important;padding:.45rem 1rem;border-radius:4px;font-weight:700;font-size:.8rem;text-decoration:none}
+  .nav-cta:hover{background:var(--rojo-claro)}
+  @media (max-width:640px){ .nav-top,.nav-main{padding-left:1rem;padding-right:1rem} .nav-logo b{font-size:.92rem} .nav-logo img{height:38px} }
+
+  .hero{background:linear-gradient(135deg,var(--azul-oscuro) 0%,var(--azul-medio) 60%,#1a5a9a 100%);color:#fff;text-align:center;padding:3rem 1rem 3.4rem;position:relative;overflow:hidden}
+  .hero .pieza{position:absolute;right:4%;top:50%;transform:translateY(-50%);font-size:11rem;opacity:.06;pointer-events:none;user-select:none}
+  .hero .tag{display:inline-block;color:var(--azul-palido);font-size:.72rem;letter-spacing:3px;text-transform:uppercase;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.08);border-radius:20px;padding:.35rem 1rem;margin-bottom:1rem}
+  .hero h1{font-size:2.4rem;font-weight:900;line-height:1.1}
+  .hero p{max-width:600px;margin:.8rem auto 0;color:rgba(255,255,255,.8)}
+  .hero .precio{display:inline-block;margin-top:1.2rem;background:#fff;color:var(--azul-oscuro);font-weight:900;font-size:1.2rem;border-radius:10px;padding:.5rem 1.2rem}
+  .hero .precio small{font-weight:600;font-size:.78rem;color:var(--gris-texto)}
+  @media (max-width:560px){ .hero h1{font-size:1.8rem} }
+  .divider{height:4px;background:linear-gradient(90deg,var(--azul-vivo),var(--azul-claro),var(--rojo))}
+
+  main{max-width:820px;margin:0 auto;padding:2.2rem 16px 3rem}
+  h2.sec{font-size:.78rem;letter-spacing:3px;text-transform:uppercase;color:var(--rojo);font-weight:800;margin:2.2rem 0 1rem}
+  h2.sec:first-child{margin-top:0}
+  .card{background:var(--tarjeta);border:1px solid var(--gris-borde);border-radius:var(--radio);padding:1.3rem 1.3rem 1.5rem;margin-bottom:1.1rem}
+  .card h3{font-size:1.02rem;margin-bottom:.9rem;color:var(--texto);display:flex;align-items:center;gap:.55rem}
+  .card h3 .n{display:inline-grid;place-items:center;width:1.7rem;height:1.7rem;border-radius:50%;background:var(--azul-vivo);color:#fff;font-size:.82rem;flex-shrink:0}
+  .pasos{display:grid;grid-template-columns:repeat(4,1fr);gap:.8rem;margin-bottom:.4rem}
+  @media (max-width:700px){ .pasos{grid-template-columns:1fr 1fr} }
+  @media (max-width:420px){ .pasos{grid-template-columns:1fr} }
+  .paso{background:var(--tarjeta);border:1px solid var(--gris-borde);border-top:4px solid var(--azul-vivo);border-radius:12px;padding:.9rem}
+  .paso b{display:block;font-size:.72rem;letter-spacing:2px;text-transform:uppercase;color:var(--rojo);margin-bottom:.25rem}
+  .paso p{font-size:.86rem}
+  ul.req{margin:0 0 0 1.15rem;font-size:.9rem}
+  ul.req li{margin-bottom:.35rem}
+  .pago{display:grid;grid-template-columns:auto 1fr;gap:.35rem 1rem;font-size:.92rem;align-items:center}
+  .pago dt{color:var(--gris-texto);font-size:.8rem}
+  .pago dd{font-weight:700}
+  .pago code{font:700 1.05rem/1.2 ui-monospace,Consolas,monospace;letter-spacing:.04em}
+  .copiar{margin-left:.5rem;border:1.5px solid var(--azul-vivo);background:transparent;color:var(--azul-vivo);border-radius:7px;padding:.2rem .6rem;font-weight:700;font-size:.78rem;cursor:pointer}
+  .nota{background:#fff4e9;border:1.5px solid var(--oro);color:#5a3d12;border-radius:10px;padding:.75rem 1rem;font-size:.86rem;margin-top:.9rem}
+  @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .nota{background:#2b2210;color:#f0d9a6;border-color:#8a6a2a}}
+
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:.9rem 1rem}
+  .grid3{grid-template-columns:2fr 1fr 1fr}
+  .grid .full{grid-column:1/-1}
+  @media (max-width:560px){ .grid,.grid3{grid-template-columns:1fr} }
+  label.f{display:block;font-size:.82rem;font-weight:700;color:var(--texto);margin-bottom:.3rem}
+  .rq{color:var(--rojo)}
+  .small{font-weight:400;color:var(--gris-texto);font-size:.76rem}
+  input[type=text],input[type=date],input[type=tel],input[type=email],select,textarea{
+    width:100%;padding:.62rem .7rem;border:1.5px solid var(--gris-borde);border-radius:9px;background:var(--suave);color:var(--texto);font:inherit
+  }
+  textarea{min-height:80px;resize:vertical}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--azul-vivo)}
+  input[type=file]{width:100%;font-size:.84rem;color:var(--gris-texto)}
+  .filebox{border:1.5px dashed var(--gris-borde);border-radius:9px;padding:.7rem .8rem;background:var(--suave)}
+  .filebox .hint{font-size:.74rem;color:var(--gris-texto);margin-top:.3rem}
+  .filebox .ok{font-size:.76rem;color:var(--ok);margin-top:.25rem;font-weight:700;min-height:1em}
+  .err{color:var(--err);font-size:.74rem;margin-top:.25rem;min-height:1em}
+  .radios{display:flex;gap:1.2rem;padding:.45rem 0}
+  .radios label{display:flex;gap:.4rem;align-items:center;font-size:.92rem;cursor:pointer}
+  .info{background:var(--azul-palido);border-radius:9px;padding:.55rem .75rem;font-size:.84rem;font-weight:600;color:var(--azul-oscuro);margin-top:.4rem}
+  @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .info{color:#dcebfa}}
+  .consent{display:flex;gap:.6rem;align-items:flex-start;background:var(--suave);border:1px solid var(--gris-borde);border-radius:9px;padding:.75rem .85rem;margin-bottom:.7rem}
+  .consent input{margin-top:.25rem;flex-shrink:0;width:18px;height:18px}
+  .consent span{font-size:.86rem}
+  .hidden{display:none!important}
+  .btn{display:inline-block;border:none;border-radius:10px;padding:.9rem 1.4rem;font-weight:800;font-size:1rem;cursor:pointer;width:100%;background:var(--rojo);color:#fff}
+  .btn:hover{background:var(--rojo-claro)}
+  .btn:disabled{opacity:.55;cursor:not-allowed}
+  .progreso{font-size:.8rem;color:var(--gris-texto);text-align:center;margin-top:.6rem;min-height:1em}
+  .estado{border-radius:10px;padding:.85rem 1rem;font-size:.92rem;font-weight:700;margin-bottom:1.2rem;text-align:center}
+  .estado.prox{background:var(--azul-palido);color:var(--azul-oscuro);border:1.5px solid var(--azul-claro)}
+  .estado.cerr{background:#fdecea;color:#7a1f16;border:1.5px solid var(--err)}
+  @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .estado.prox{color:#dcebfa}:root:not([data-theme="light"]) .estado.cerr{background:#381613;color:#ffb4ac}}
+  fieldset{border:none}
+  fieldset.off{opacity:.55;pointer-events:none}
+  .success{background:var(--tarjeta);border:2px solid var(--ok);border-radius:var(--radio);padding:1.6rem;text-align:center}
+  .success h2{color:var(--ok);margin-bottom:.3rem}
+  .success .folio{font-size:1.5rem;font-weight:800;color:var(--ok);letter-spacing:.04em;margin:.4rem 0 .8rem}
+  .success ol{text-align:left;display:inline-block;margin:.6rem 0 0 1.2rem;font-size:.9rem}
+  .success li{margin-bottom:.3rem}
+  .demo-flag{background:#fdecea;border:1px solid var(--err);color:#7a1f16;font-size:.78rem;border-radius:8px;padding:.55rem .7rem;margin-bottom:1rem;text-align:center}
+  .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+  details.spec{margin-top:.45rem;font-size:.78rem;color:var(--gris-texto)}
+  details.spec summary{cursor:pointer;font-weight:700;color:var(--azul-vivo)}
+  details.spec ul{margin:.4rem 0 0 1.1rem}
+  .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--azul-oscuro);color:#fff;padding:.7rem 1.1rem;border-radius:999px;font-size:.84rem;box-shadow:0 6px 20px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s;z-index:200}
+  .toast.show{opacity:1}
+  footer{max-width:820px;margin:0 auto;padding:1.4rem 1.1rem 2.4rem;font-size:.78rem;color:var(--gris-texto);text-align:center;border-top:1px solid var(--gris-borde)}
+  footer b{color:var(--texto)}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-top">
+    <span>Sitios</span>
+    <a href="https://www.ajedrezpolgar.com/">🏠 Club Polgar</a>
+    <a href="https://www.ajedrezpolgar.com/inscripciones/">📝 Inscripciones</a>
+    <a href="https://www.ajedrezpolgar.com/afiliacion/" class="active">🪪 Afiliación FENAMAC</a>
+    <a href="https://www.ajedrezpolgar.com/liga/">🏆 Liga MTL</a>
+    <a href="https://www.ajedrezpolgar.com/rating/">📊 Rating GTO</a>
+    <a href="https://www.ajedrezpolgar.com/nacional/">🌐 Rating Nacional</a>
+  </div>
+  <div class="nav-main">
+    <a class="nav-logo" href="https://www.ajedrezpolgar.com/"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAG0AAABgCAYAAAAXZvyIAAActElEQVR42u2deZwdZZnvv8/7Vp3uPt2dhZAQhIQlQCBAWMIiICAyLOqIO+DGOA6MojOgAndmlHsdh2H0qngd53rdrqKgqMzIxaCyy6KXLSKEgZC96SxkIen1nD5L1fs+80fVOX1O9+mkE9JJN6Q+n86nO+fUW1Xvs/+epeQHjzyjX/vp3ahYwDP8EPYe4+BQsMDn/uptBD+85wle3JyDbBbKEagOoZkkdNO9+7ZbDxkkFiIQNkNugB/e80cCJwGSMQQB7DOpnRZj8U5APF4cKpUVpLqOAKLU/V9lfZWh39l77JRgCYDHGmUgtmzJR/hsQMlDAAb1ARlX4rufuYzTD9iPcuwBRWvEy1QIpumCCiJST7AaDhH2SueuOJpCw0MvbeDSG36E+hAwBKkQEQPTW5uZ3prZu1Pj7JjWkkF8DAhWHYGKBxtjECLnUVU2DRS54Ue/orMAEgTD7Fyt6lM0MXlaK9aDUrnHbMEENmVOoT3wfOmjb+egSW1EXhO7poqKJuoRH2JMjElVXsk57njsBTb2OQgNeB2+8nhVfeY14O16aLIxX/jQBYkJUsVrYpe8CEEj9hSEtvZJWPFIIKjuNU67U9JUod3EGJGGaiQYkdje4ZxHZC/Rdj/RFKeuqsy0Qi4RRKTqFO49xqXLP0i0Oguwd3vGNQjSkGjBa021iDGDSA6Aerx/ban31wzRjAheFe3vT8hnAOchzGCyLXjnapzeiY3LBSN4nInzoZ4EphzP0uXBWHyxSBOOt59+FOfOO5hsawurtnSx8KnlPLdiHaZ1CuIdzpA8k3oQPzE0iKQspv41Imli0Shi/zbLdz71QS5aMLfu42vf/Wfc+PP7+drCx6ClBeIYJEojf6m3+BNFq0x4monS4sp859Mf4qIFc4mdI3Ye7zxxFDFZHF/50Pn85SmH4l9ZT5BJdInxZkISbMITzVjBF/o579RjuWj+HMpxhLGGwBiMBRtaXKLr+e8XX8iU7k3o1k1YsdVHNyqYCRaHTnBJEyh7zjj6IFBNU3+CCigGwWBsgKpw8KwZHHvEQbhlSzFb12FthCCIegQzJMm0l2hjG4GaDPs0h2hCInzqSKUClpguVVSVtkktEBfwL6/Bv7SSTLkIgeAmGMo8sR0RUdAyHZu6Ug9L63xdkUEMKIqVlzrWQ6YFAeKezfhCHvOG2QRTphJ7ATV7JW3MBc0rNLVw5xPL6I2VwBh87CspQhQlcjFihHsX/YllK1ZjMiFOPWItWh7ArVmObHqJEEXUJMndvUQbQ6KpYjLtLOns4r/d/GtUDDYw+DTrLghhGNCxqYtrbvw3vAhi0hy7JmA43hOtX4d2rCTjCoglzRDuJdrYwVaujM2GfO/ux/nA129j0fIOSi4JQrvzRW5/8DEuuOwzrFjVgWlpqkJaWgnRRMAG+L7NRKtfIOjrIgj2Em3sJA1wxuNNhJ08hV88+gKXfvHbbOntRxA+/c83cclHP8OKdS9j2rJ49YPEqlI9VaWBosUcUccK2LSOQLTGKA5jlb1Ee7XypmoRr5imZg456iimT54EwJGHzYEwQ1NLiPcGxAwheeJnqnjUg1oBiYjXr0TXLcPGJcRUIC9NYC/ZS7Rd5/qL4It5Tp47m2abPNaFZ59BdlKWKHaDhJIhwlL9WwY90kBwWzbgV79AkOvB2rCmvCymcVHvXqLtsKL0zmNCw5vmHQKAj5WjD34DxxxxCL5YxqCjBvZFwVoDxS6izhegay0WB8YOgb709UW0JH3uEeNTJhfAJsVFO7SQQ8TgSxGz95vGgoP3B8CpJxNYzj71JCiW0zybjpIFwKUOCpRx61egnasIozKBCRFVDB553RFNIRSLekHFYwOP4HbMXkgCeRgRiGPmH/wGZra2oN5jbLLOuWecjG1uQl3KGJWq2qE/DW2lAW8SDKLvFdyqxWhuK0FoUyaQPVJKvWeIJoLHEOUKZFSRqITL9aJG8UZQGSXhVBBvE9zQx5x17KGJalQwYlCFBccczuzZB+BL5QbVTaPcJGPwxQK+v4u2zauJOpfhikUkDEHj1z6MJSJo7Jlk4LqPvIXzjj+SgSjiR797klsffA6yWdT5UUucUYNznmy2iTOOnFWFr0TAOc++bVnetGA+HatfwrRkkvrBHblfY/D5Xt7yppP53Kc+xkHTp/Hs8tV84dZ7WNLXT9CaJd7N5QzBbtWHKCIGU8xz01Xv4/JzTqx+fM4Rs7C5Ajc/uhi7z3R8XEI0wBOAuJHtkQEtFzhk1jSOPXBmdaNr7dP5Zy7g1tsX4odK2rZ8CiEBoPNFTjzqMO781r/Q3tQEwGEHzmT+UUdy5seupctNJWyfQaRxElKojLl3aXazVsSXyhw8eyaXnHk8zsU4HycuuSp/9dY3YdavQPu3YEwGNMCgmG0xsgXKJU464kBaA4P6QRBKJEm4nHbCMUyZPhUfReyIhjQiUCpz8UVvp72piVK5jPOeciniiP334a2nHEu85GmC3o2EsvtMm9ndqhERmjNh1VEQEaxJinIyLRmknMOvWgabNmBtgiH6bXGuE4SANx89JxWYmk6fdN1D95/BKccdBQMDGBn9I1dgrjAMB4kI+JTwmUwzRI7o5eX49R00+TJW3PAev4lMNO8VEwSsXruJPyxdh7UBIoJTxRjD3b97BDcQY43iNiyHtcto8iWssQ03Qkjs1tTJ7Zx02EEpE9Q/kvMJ6n/BGSeD92Bk9A6fKgSGO+++l7Lz2MBijKE5E7KlUOb+Rx+D9nbUK27zWsovLcUUBzDGVGKaMQFPdh/RNM1XiaGgwie/czt3P7ecnkIZaw0/uP23fO3ffoxpa8OnvapR1zrKqxYT5rsJrakBC5PNEGsgKnHkrGkcsd/URCalJgkKVck679TjaZrcjvM6uM62XH5NCG7bW/n9489w3Y03oQibe3M8sXQll1x9PS91rscEBucFwgCf7yFevQTTvTFJx0p9MC4TUdISd1yRpiZWbynwti/+kPdc+zWKkfKnxcvp7+lDmgyqKexkLb6Qo9SxBNu1gcBUUtF+cBvKJc44chYZwPnhSRVJu2jmHn4o8+bMgvwAInaUgbakzoVy5NwjWdK5llPe8WHO/MBV/O7RRZhsFpxH8EnZggH1BeL1y2FdJ9YVk6RsTWZhwsZp6n3iaGSnsKS7xCv9/fzzP3ySg+ccjC8U67uVwgD1ZYprVsC6lRhXTjg4tV8mDHjzvIPSv80wZAPAOUfGGM4+7QQoFhAj6Cj0o7UGl8tzyukncuUl72DF2ldYs2YLqiFhNgsuxhuLShJbVlhGFHzXenznEky5hLVBCgTsGnHbY4iIxyEenMCWQompbRn+8drL0YEcRgyCIqqI94m0WEP8ysv4ziXYfDehMWg5ZvrkLMfNOTjlZF+PAVf3KPn3raedijRl05xaA/B4aDTgPBmBL1/zSUDZ3NWLacog1uNdnGLIaT9zVdWahD4GNNdNtGopQV8PgUn6zMRXMgZup7HLPQgYCyqGfFnoLiaFNx9821t42wXnEPf0YFOsUFG0EvuEBvJ9+I6lBF2bII448fDZzJzUgmqM1FQM19LDpKJ76vyjOWj2LLRYSpyFbUqZxXX38NFL38k5Jx4NCP19ffg4aaP1EuBT5qrAaYgiaNqTnsSkEvVRemkJrO2kOS4nmXPxCZqzk2K3S4lmjEmCZ2Pqmugb0yxGjFISoTdfQEQIVfjytVcyZVI7xC6RMFMrCQrGoj6m9HIHdK7mLXMPxKaeqR0BKxAE7zyTWps586R5UCphtoEriAi+VGb/A2bw+Ssvw7vExvb19YJPWpyTnj0ZEe0XkcQJMh4TxMRb1lBes4KgXE6dI7vTZQ27jGgi4AcKaKmIz+dR57aDjiTovjqlNz8AQCmOOfbQWVx9xWXEPf2ItfW6SwFiMC6xZ/lXOO2wA6uuvtnGJqgmW/RnZyxIWnxHiKVEU6wxn+PvrrqC2TOmEsdlAPKFUnITup00jwg+inCFATT2+P48Ego+10206kVM9xaMTfNyuuO+5asjmiTOtRiDFnNcfOY87vn8ZXzlsvOZbOPEq8IjapDa4rbU/U+k0dDTN1ANXr3zfPaj7+WY447C9ZcxhMNBYgEtDDBn1gyOqSFa5YGkoROYfH7WKScwZVo7sYsGGaFmloaxFtfbx6mnzOeK916I8w4xyT10dfWAtWANGKmeWqMdMYRI7JmxzyR+etP/4Olffp+PXXoRmi8iGYPGfcRrVsGGTjIKVoIaaKcmM6sjg2GvimjGWazJoMUCJx56IN+76mIuOO5QrnvnmVx3/gJ0YydBJkSNQ4mH76QC3tGX6x9EHBQmZZv46j/8LdY4xAxVIkogQCHPG+cfyeSWZrz321XHCTrimTVjGifPnwcDeWxNIG40xqhHvRKGATd+9pNkA4tTj6aZ8K7u7pG04eBT2RhfzHHD1R/ng28/hxPnHsT/+afPcsIxh6H9eYxtAhPjN67Br12C9TmMtTWR5ZhLWuqBRTEz95/BZBEKpQFc7Dh8v30waztg8wawftjUAVPhblX6+vsHTZYxuNhz4WnHc+m7zsP19GKCoN6RVwFrOfvU46qqbzSH8w5bQUecUAtEiirWhviebi591/mce8r85PvWEohBgVw+B9bUQWUNroKRgKltrXjv8VFEEzB56iSIIqym3wk8rmcD0fLnMT1bCazWMISOHdG88XhfRrJZfv/cCu5c3IFtymIDy8KHH8bnumFjB9LRQVCOSDSUYqpRZlIo091XTAPhiipLmvNv+PRfM2PmvmipXJUkEUMcKS2T2nnjgvkNoauRTU3yvXNOO4mmtlZ8HA9KsQlxUcx+M6fzxU9fXnU0jApGoBjF9OYGEtVYA6VUojOtqGA1+L5uXlyxDG8MeQ34vwsf4LGnnsW0Z4m1lIyYQNCwCS0PEHcswWxcS0Y0CUFVq/Kw61MzmnCgGKG/EPOBr9/G3Eye9yw4in+6+uOs6tzIE08+Q+AL+GI/5oA5SOtkvJc0VR+DtXT1l2sAZU28N+85ZMY0rr/qL7nq818mmLIPcRwhEuCLEUfNP5Q5B+yfPOAoZ4dUMMx5h87iqLmH8OzzSzHZLOo9WIPv7uK6z17HITP2xXuPNaYqxbkoomegANYm8WO1pzT5zQQBPlJ8Xzd//7m/4ZqPX8YHrvlHFj3fQefLG5L6Elszk6XCuIEAjvLG1djCAJkDZlMOWrB+sMNgaJZjl3iPqooEAWUHi18x/Ou9T5NpznDPD77O+995IXFvN6bci3auwG7dhM0kuKGqgjHkSgVKftAj86kH5rznive+gzedfkKyhslgsBBHnHnSsTSHQWLPdkCbe+dpDixnn3I8lCKMkUQl9/dywoLj+fgHLkpA5iE2shTF5PIDIPWVIR7BZLL4wgAtPs+3v3w9X7rqCha9sIL/uOs+OteuQ6xNSvE8I0fzgcH1baC86kWktxuTGQTJh8Jfuy5O00TtNU2ZQpdp40ePPMPk5pCf3XQ9V3/iY8Tdvdg4T/zySnTtakSTmAsRevI5ii5OJCy9KStJQN1slf953d/QFGYQR3qectbJx6cmYLQkUwaHQsF5Z70RmpvwLnUAxPAv13yCtqYQxQ3Lu+VyRUqlctKB4/2gUxQEuL5+Zu7Txp03f4NPXPznKMot//4rQAkntVaDbeO3kV1QDxZ8uRf30lL85g0pwFB5Rtn1REsqmMC5EgQZbn9kMVtLZUQ937juSv7XF68hLg6g6tAta4lXPY8t5CAI6BsoUIxikER7SI06885x+jFHceVfXILr7yb2nn1mTOO4Y48YVKk7gMKY1BM85di5HDhrOt6X8f05PnjReVx4+vF45xM1mt5FRT329PWRL5VT9SgYFGst8ZZuFhwzhwdv+y7nLziO2Dk6NnVx1/2PYlraiaO4LskxrAKv9sdLAmZLmeKmTjSKGgbvuxQRUSBWQZoyPN+xkfsWr8RgKEUxn/6Li7ntmzfQahUfRdhCnnj5i0j3ZgrOkU+DcVN3gwImwHnP5z7xYQ6fOwt6ejlh7hwOnjENr37U9qyS20p6LjzTs82cc+LRSH+OffebzA1Xpc6HERrNxOnL54krme8AsCHxK92876Lzue+WbzDvwJmUy2UCa/n5XQ+w5ZWthEFzMp2M7UYKw9SmWB2yF2OMPSb+VcgtDzxBJBBYS1R2XHLB2dx3803MmjEVVygShB5d10HvqtX05UtDgt0aSEk90ye1ceM1V6K5bs469XhsmorZWRuswIXnnI325bj28g9z6IEzkyStSMNMQV9fH8QOG1q8gOvr5bOf+ii3f/N69smGxM6RyYTkSxE/ueteaMvi1O0iYRgj9VifofZItpmHFq/i/3dswBrBisGVHacddzQP3PINjp13MFF3D2FGyG14iZ7NW9Iop95OC57AQtk73n/uWbzjvW9l/uGzd9CeNcBIgePmHsaZF57FFZe8OyFYI6lN1WNvTx8GS1yOaSqX+NaNf8dNf/fXOF8mVpCkNoG7//AkLy5ZiWluJ8aNSS/+mBBNAWsMpWLIz+5/Ko0OFMkYyi7miNkH8OAPb+L8M99I1L2FQCDX258SyQ3T4EIS4ILyvRv+nrPT+Cy0ZqfIVrGDc/bfl5999Qvs05xJioBqpKyS/a7ISnGgjO/p5Q2T21j43a/wyYvfTuQcIgFWqDpRN99xT1qP6REvr2oTx9Tlb+wMOUxzyF2Pv8DKrjzGCE5TVek906e0s/D7X+Lyy95HvKmLvp5ceqJjOOomqdoSZs7Yl6lTJg2BWGs7rUd/NGcyHDBzvySbvp397VyznsPmHcbdt3yT809bQOwStEREcD6ZtLB4+RoeeHQR0tqybcD8VR5jVveoCkHGsGFLH7c/spjPvfv0JDVvDdYITj1N4vn+F66m2Rq29m5OGSzcJuJd8eZEZBfdp26z8tiaxB1448nHcPnll3LEjGnEscMEtgZWSwKVn97xa8r9OYJpU3ETkWjeQCxAcxM/ffhPXP7npzI9HISARAyKR1T51+v/lk29vaBKYO2oVFuDPPNOppRkRF+u+rkq7znv7OS50qqsOua0hs29A/z7PY8grUnz4lgeY5q59qqYlmaWrN3Mb59eVk1GSlrNIRIkgydV2X/y5OT3nSLBNuoGdjqvXtu6Jjjn8d5jUjtabcb3ChjuvO9B1nSux7Rkk8FqYzjBaeyIlmbVjQBGuO2BJyim6ZehcdBEmN5qrRlWoqCpJ1qIHTf/8teQCWtclwkoaZU+M+8Uybbw8POd/GnV+qShwY1eTY3nQ1OM8vfPPMdTzy7FtGVxfgITrVKg5FGMNUTFMrfc/2T6loyJPTRTUVwNBvnjX96HjxxiZSwVV3VonhnLi2hlcoDzSFszv1y0lJVbc1gzsYdZKwlKY6xl+cub+M2Df8C0tibg827QGGbsHzB1q8MMW7r7uf0PzwJSg5RPRKJRHR7zs4X30btlM0GYQZ3slh763Vb3qLGFsJmfPLSI3lKcVDwpE3MqrSqBCegtlPj5wnuR5hbiavHqa4loCJJtZlnnJu5+ellSZubTOR47UNQyLo70fQULH3mSpUtXIdk2vKQVzrvBXo850arlnKaMIUZtwPcffDKBtEw6l1ENE+UlMZrAJDjgx3f8FgK726cc7AZJS1skveCdYNra+MOSTp5YuR7EoMMA4vHv5hsRnnhxBb9/6o9ItjXVGK8homla8iYkaVsrQrkYc/Pvnk7Nw8QzagLc+h+/pdw3QBCEu53pzG5WLDjnkJZW7nr8OVZ2943Y5Tk+/Y+kY/Xlrd3cefdDmGz7HnlRg9n9Dy4EYcDmrb3c9ugzQIL4T4SjogZ/ce9DbNq4kaApfH0QDcDjkdZJ/OLBP7G1WNxu29F4cD4qOGM5jrl14T3Q0rLLygnGJdEqrUGVH+c8tqmJpWs28Zunl2PSGsfxTDbvHCLCPX/8T55ZvBTJZPDe7RFIbo+wuABGHd5m+MnvnqakCfo/Xi1b7WTBm29fCOU41Q7y2pW0RurGezCtLTz8/CoeX7W+Wgo+Pm2ZwxjL850befDRJ6B9Es6Dinn9EC0p37EYK0SR5ycPPJWi2Lv3bUujGkbHoHP7s//3G/q39hKElZKIPTNldQ/N5U8axZ0DmrPcteh5ll5yLkdMbiNyvlrEs+3gobarN/2ftDRgZKRd687VbawptUuLsDWX5/a774fWbNK7UPuOb9XXA9EGd8qGIZu3dnPHQ0/z+fecU61fH2/Hrx9exMrlazD7TsW7bfdbv7aJlrKyZFu59ZFnmdmaIYwKqJik0WIkT666WfW905r2Qjfm/AosPfjaO0nP1+qaDfBeTYpY//dPFiKZlrRaSfYoVLrHieZV0TBg2ZYcl994M7y8Gvq2kjSR61CfcwQzojVElCFCUHl5QuXz2iV9DQGGLlyzpvcwdTJm0r5pq7B/fUuaiKBRxL5tIe/6yDtoiQrEPa+Ai1OaDTbvJdVa0sCNqLhU6duZ0q+Y9Pxqpa4Nhmy21t1H3VyPVOS89zQHIfcuep5nXliBac6kFVivY0kTAcqewya38a0r3klmnMZq+a9+n2cWPYtpCXF7+F7Gh9WvaSYcr4dXX6md2OP52j0uaeoVMpZVvf185Ou30Nzfi3iPN4qjMutqOPqgaa2CbwCZDUUzklFNQzZcBt/UXjmn0gJVv54nCFt48pkXINuSTrozdYTT1x3RSBrtt+YcP3/wP2H9SuheC7Uj1H0DyGikIZhDPUepdTS0QZBH3fCXYcFahdgtzdDUVJ3887qWtKrXZg3h9OnIvvtCzwHoxnUQldBAETdyU8aOcHmlTLv6LjytH59b8468etqKJjNB/Ph4udo4INqgSx7FDsRips4iyLQTrVuBFnpTdMukL1sA1A4jxEjsUKfGTI1065CYTBo1WNX7mFKnU4ddaVT8WXtNHbJOtT9AxynRhgfAUjFW+EiIWtoJDp2H37Aet+UVsD5Jg+gOcPsIiJY02GsdGsIpIzKG6k5KnDZolJcGWmPYeFitqIXxImmNfFpFPUSSJThwLmHTJOJNneDKEID6eFTcPZSTtZEYbUPN6ggoyU53w8i2maEyEDth6JHFLZAGnwvJkEprSd6duQOA6I7gBDLSRokkHTcoXjx25hsI27KU163El3OYIKhOTN3edQbhsEZOyxDVWftVD429ltEQrfF5g+s2uGYN0YwqQWhGErRBSUvHWFTd3N7uHlw+GT9Ur2R9Y8W/q/xfGeIJCsQesALTDkhgrq2bqJv4XR9RjYKNGpzbiHuHnSsjsJt/FaxLPRUFiB3d2YCoUjuj27BpqorzSja0XPW+s+guRtjADjGM9RSqZkWGqBGRob8Md8sbCnDVQ69t0hAEj4rQpG8m7u0mjmOMKrahoWjMBUNLA2RnzxvGLLotztsBAprqO3IygWFaSxIXqtF0zocgUjMTVoC2lgzWCDOyWa5//4XsPcbH0dzcVJPB8ASS6jeH4bEX15DvzlOMYlQVLyZtDpQRuUZ33PHdruof6l0N5jUltVG+Kl3DXvpTp6qkPrCQ+glwhpFmHtUj/l7qXb/hI6P9NnZhR1Tk4NQ7lWSSfUvQxB9f7sJIgPMOAwSxdxgLUdDC1d/+VZKGQBoHOg1FX0eAMrWxHRnxQWUbNsKM8prbWbfOC5AdexZpEPDt8LPs5DXFEmZa0MIAGivB5CaHz/VDi1YwpfootHJR2dEN3B7RZJSf7SjRtrGuys5voO7kNdkV11SigRjyBaa0hMjjq9bqTXc8SKEcE6QvKq0HaJOXGmjDi9ZykmzHqzKNkZDtfra7rjnadWUEFTh2z5IMYVNasxk+895z+S8aoaTohcybbAAAAABJRU5ErkJggg==" alt="Ajedrez Polgar"><div><b>Club Ajedrez Polgar</b><small>Haciendo Campeones</small></div></a>
+    <a class="nav-cta" href="#registro">Registrarme</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="pieza">♚</div>
+  <div class="tag">🪪 Afiliación FENAMAC 2026</div>
+  <h1>Afíliate a la FENAMAC<br>con el Club Ajedrez Polgar</h1>
+  <p>Regístrate aquí y nosotros hacemos el trámite de tu afiliación anual a la Federación Nacional de Ajedrez de México ante la Comisión de Trabajo de la FENAMAC para Guanajuato.</p>
+  <div class="precio">$600.00 <small>MXN · afiliación anual</small></div>
+</header>
+<div class="divider"></div>
+
+<main>
+  <h2 class="sec">¿Cómo funciona?</h2>
+  <div class="pasos">
+    <div class="paso"><b>Paso 1</b><p>Prepara tus documentos: CURP, comprobante de domicilio y una fotografía tipo credencial.</p></div>
+    <div class="paso"><b>Paso 2</b><p>Transfiere <b style="display:inline;letter-spacing:0;text-transform:none;color:inherit;font-size:inherit">$600</b> a la cuenta del Club y guarda tu comprobante.</p></div>
+    <div class="paso"><b>Paso 3</b><p>Llena el registro de esta página y adjunta tus documentos y el comprobante.</p></div>
+    <div class="paso"><b>Paso 4</b><p>El Club verifica tu pago, realiza el trámite ante la comisión y te avisa.</p></div>
+  </div>
+
+  <h2 class="sec">Lo que necesitas</h2>
+  <div class="card">
+    <ul class="req">
+      <li><b>CURP</b> del afiliado (PDF o foto clara del documento).</li>
+      <li><b>Comprobante de domicilio</b> reciente (PDF o foto clara).</li>
+      <li><b>Fotografía reciente</b>, tipo credencial escolar, con fondo claro.</li>
+      <li><b>Comprobante de la transferencia</b> de $600 a la cuenta del Club.</li>
+      <li>Si el afiliado es <b>menor de edad</b>, el registro lo hace su padre, madre o tutor.</li>
+    </ul>
+    <p class="small" style="margin-top:.7rem">Si subes una foto del CURP o del comprobante de domicilio, la página la convierte a PDF automáticamente.</p>
+  </div>
+
+  <h2 class="sec">Datos para el pago</h2>
+  <div class="card">
+    <dl class="pago" id="payBox"></dl>
+    <div class="nota">Haz una transferencia por cada afiliado. Como concepto escribe <b>AFIL26</b> y el apellido del afiliado (por ejemplo: <i>AFIL26 Hernández</i>).</div>
+  </div>
+
+  <h2 class="sec" id="registro">Registro</h2>
+  <div id="estadoBox"></div>
+  <div id="demoBox"></div>
+
+  <form id="frm" novalidate>
+  <fieldset id="fs">
+    <div class="hp" aria-hidden="true"><label>No llenar <input type="text" id="web" tabindex="-1" autocomplete="off"></label></div>
+
+    <section class="card">
+      <h3><span class="n">1</span>Datos del afiliado</h3>
+      <div class="grid">
+        <div class="full"><label class="f" for="email">Correo electrónico del afiliado <span class="rq">*</span> <span class="small">(si es menor, el de su padre, madre o tutor)</span></label><input type="email" id="email" autocomplete="email"><div class="err" data-for="email"></div></div>
+        <div class="full"><label class="f" for="nombres">Nombre(s) <span class="rq">*</span></label><input type="text" id="nombres" autocomplete="given-name"><div class="err" data-for="nombres"></div></div>
+        <div><label class="f" for="apPaterno">Apellido paterno <span class="rq">*</span></label><input type="text" id="apPaterno"><div class="err" data-for="apPaterno"></div></div>
+        <div><label class="f" for="apMaterno">Apellido materno <span class="rq">*</span></label><input type="text" id="apMaterno"><div class="err" data-for="apMaterno"></div></div>
+        <div><label class="f" for="fnac">Fecha de nacimiento <span class="rq">*</span></label><input type="date" id="fnac" min="1920-01-01"><div class="err" data-for="fnac"></div></div>
+        <div><label class="f" for="curp">CURP <span class="rq">*</span> <span class="small">(18 caracteres)</span></label><input type="text" id="curp" autocapitalize="characters" spellcheck="false"><div class="err" data-for="curp"></div></div>
+        <div class="full"><label class="f" for="telefono">Teléfono / WhatsApp (10 dígitos) <span class="rq">*</span></label><input type="tel" id="telefono" inputmode="numeric" autocomplete="tel"><div class="err" data-for="telefono"></div></div>
+        <div class="full"><label class="f" for="idFenamac">ID FENAMAC <span class="small">(solo si ya estuviste afiliado antes; si no lo sabes, déjalo vacío)</span></label><input type="text" id="idFenamac" inputmode="numeric"><div class="err" data-for="idFenamac"></div></div>
+      </div>
+      <div id="tutorBox" class="hidden" style="margin-top:.9rem">
+        <div class="info">El afiliado es menor de edad: el registro debe hacerlo su padre, madre o tutor.</div>
+        <div style="margin-top:.8rem"><label class="f" for="tutor">Nombre completo del padre, madre o tutor <span class="rq">*</span></label><input type="text" id="tutor" autocomplete="name"><div class="err" data-for="tutor"></div></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h3><span class="n">2</span>Domicilio</h3>
+      <div class="grid grid3">
+        <div><label class="f" for="calle">Calle <span class="rq">*</span></label><input type="text" id="calle" autocomplete="address-line1"><div class="err" data-for="calle"></div></div>
+        <div><label class="f" for="numExt">No. exterior <span class="rq">*</span></label><input type="text" id="numExt"><div class="err" data-for="numExt"></div></div>
+        <div><label class="f" for="numInt">No. interior</label><input type="text" id="numInt"><div class="err" data-for="numInt"></div></div>
+      </div>
+      <div class="grid" style="margin-top:.9rem">
+        <div><label class="f" for="colonia">Colonia <span class="rq">*</span></label><input type="text" id="colonia"><div class="err" data-for="colonia"></div></div>
+        <div><label class="f" for="cp">Código postal <span class="rq">*</span></label><input type="text" id="cp" inputmode="numeric" autocomplete="postal-code"><div class="err" data-for="cp"></div></div>
+        <div><label class="f" for="municipio">Municipio <span class="rq">*</span></label><input type="text" id="municipio" list="municipios" autocomplete="address-level2"><datalist id="municipios"></datalist><div class="err" data-for="municipio"></div></div>
+        <div><label class="f" for="entidad">Estado</label><input type="text" id="entidad" value="Guanajuato" autocomplete="address-level1"><div class="err" data-for="entidad"></div></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h3><span class="n">3</span>Escolaridad y títulos</h3>
+      <div class="grid">
+        <div><label class="f" for="escolaridad">Escolaridad <span class="rq">*</span> <span class="small">(último nivel cursado o en curso)</span></label>
+          <select id="escolaridad"><option value="">Selecciona…</option><option>Pre-escolar</option><option>Primaria</option><option>Secundaria</option><option>Preparatoria</option><option>Licenciatura</option><option>Maestría</option><option>Doctorado</option></select><div class="err" data-for="escolaridad"></div></div>
+        <div><label class="f">¿Actualmente se encuentra estudiando? <span class="rq">*</span></label>
+          <div class="radios"><label><input type="radio" name="estudiando" value="Sí"> Sí</label><label><input type="radio" name="estudiando" value="No"> No</label></div><div class="err" data-for="estudiando"></div></div>
+        <div class="full"><label class="f" for="tJugador">Título de jugador <span class="rq">*</span></label>
+          <select id="tJugador"><option value="Ninguno">Ninguno</option><option>GM</option><option>MI</option><option>MF</option><option>CM</option><option>WGM</option><option>WIM</option><option>WFM</option><option>WCM</option></select></div>
+        <div><label class="f" for="tArbitro">Título de árbitro <span class="rq">*</span></label>
+          <select id="tArbitro"><option value="Ninguno">Ninguno</option><option>AI</option><option>AF</option><option>AN</option><option>AO</option><option>AE</option></select></div>
+        <div><label class="f" for="tEntrenador">Título de entrenador <span class="rq">*</span></label>
+          <select id="tEntrenador"><option value="Ninguno">Ninguno</option><option>FT</option><option>FI</option><option>IN</option><option>ID</option><option>EN</option></select></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h3><span class="n">4</span>Club y entrenador</h3>
+      <div class="grid">
+        <div class="full"><label class="f" for="club">¿Club de ajedrez al que pertenece? <span class="rq">*</span></label>
+          <select id="club"><option value="Club Ajedrez Polgar">Club Ajedrez Polgar</option><option value="otro">Otro club…</option><option value="ninguno">Ninguno (aparecerá con la bandera de Guanajuato)</option></select>
+          <input type="text" id="clubOtro" class="hidden" style="margin-top:.5rem" placeholder="Nombre del club"><div class="err" data-for="club"></div></div>
+        <div class="full"><label class="f" for="entrenador">Nombre de tu entrenador(a) <span class="small">(si lo tienes)</span></label><input type="text" id="entrenador"></div>
+        <div class="full"><label class="f" for="comentarios">Comentarios</label><textarea id="comentarios" maxlength="500"></textarea></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h3><span class="n">5</span>Documentos</h3>
+      <div class="grid">
+        <div class="full"><label class="f" for="docCurp">CURP <span class="rq">*</span></label>
+          <div class="filebox"><input type="file" id="docCurp" accept="application/pdf,image/jpeg,image/png"><div class="hint">PDF de máximo 1 MB, o foto clara del documento (se convierte a PDF).</div><div class="ok" data-ok="docCurp"></div></div><div class="err" data-for="docCurp"></div></div>
+        <div class="full"><label class="f" for="docDomicilio">Comprobante de domicilio <span class="rq">*</span></label>
+          <div class="filebox"><input type="file" id="docDomicilio" accept="application/pdf,image/jpeg,image/png"><div class="hint">Recibo de luz, agua, teléfono, etc. PDF de máximo 1 MB, o foto clara (se convierte a PDF).</div><div class="ok" data-ok="docDomicilio"></div></div><div class="err" data-for="docDomicilio"></div></div>
+        <div class="full"><label class="f" for="docFoto">Fotografía reciente <span class="rq">*</span></label>
+          <div class="filebox"><input type="file" id="docFoto" accept="image/jpeg,image/png"><div class="hint">JPG o PNG, tipo credencial escolar, con fondo claro.</div><div class="ok" data-ok="docFoto"></div>
+            <details class="spec"><summary>¿Cómo debe ser la foto?</summary><ul><li>De frente, rostro y hombros, sin gorra ni lentes oscuros.</li><li>Fondo claro y liso (pared blanca o gris claro).</li><li>Buena luz, sin sombras fuertes ni filtros.</li><li>Reciente: debe parecerse a como luce hoy.</li></ul></details></div>
+          <div class="err" data-for="docFoto"></div></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h3><span class="n">6</span>Comprobante de pago</h3>
+      <p class="small" style="margin-bottom:.7rem">Transferencia de <b>$600.00</b> a la cuenta del Club (datos arriba).</p>
+      <div class="filebox"><input type="file" id="docPago" accept="application/pdf,image/jpeg,image/png"><div class="hint">PDF, JPG o PNG (captura de pantalla de tu banca en línea).</div><div class="ok" data-ok="docPago"></div></div>
+      <div class="err" data-for="docPago"></div>
+    </section>
+
+    <section class="card">
+      <h3><span class="n">7</span>Confirmaciones</h3>
+      <label class="consent"><input type="checkbox" id="chkVeraz"><span>Declaro que los datos y documentos son verídicos y corresponden al afiliado. <span class="rq">*</span></span></label>
+      <label class="consent"><input type="checkbox" id="chkTransfer"><span>Autorizo al Club Ajedrez Polgar a entregar estos datos y documentos a la <b>Comisión de Trabajo de la FENAMAC para Guanajuato</b> y a la <b>FENAMAC</b>, capturándolos en su formulario oficial, con el único fin de tramitar la afiliación. Los documentos se eliminan de los archivos del Club al concluir el trámite; el comprobante de pago se conserva como respaldo contable. <span class="rq">*</span></span></label>
+      <label class="consent"><input type="checkbox" id="chkAviso"><span>He leído el <a href="https://www.ajedrezpolgar.com/aviso-de-privacidad/" target="_blank" rel="noopener">Aviso de Privacidad</a> del Club. <span class="rq">*</span></span></label>
+      <label class="consent hidden" id="lblTutor"><input type="checkbox" id="chkTutor"><span>Soy padre, madre o tutor del afiliado menor de edad y realizo este registro en su nombre. <span class="rq">*</span></span></label>
+      <div class="err" data-for="chk"></div>
+      <button type="submit" class="btn" id="btnEnviar">Enviar registro</button>
+      <div class="progreso" id="progreso"></div>
+      <div class="err" data-for="envio" style="text-align:center"></div>
+    </section>
+  </fieldset>
+  </form>
+
+  <section id="exito" class="success hidden">
+    <h2>¡Registro recibido!</h2>
+    <p class="folio" id="folioTxt"></p>
+    <p>Guarda este folio. Lo que sigue:</p>
+    <ol>
+      <li>El Club verifica tu transferencia.</li>
+      <li>El Club realiza tu trámite ante la Comisión de Trabajo de la FENAMAC para Guanajuato.</li>
+      <li>Te avisamos por WhatsApp o correo cuando la afiliación quede registrada.</li>
+    </ol>
+    <p class="small" id="acuseTxt" style="margin-top:1rem"></p>
+  </section>
+</main>
+
+<footer>
+  <b>Club Ajedrez Polgar</b> · León, Guanajuato · <a href="mailto:pedro.zambrano@ajedrezpolgar.com">pedro.zambrano@ajedrezpolgar.com</a><br>
+  <a href="https://www.ajedrezpolgar.com/aviso-de-privacidad/">Aviso de Privacidad</a> · © <span id="anio"></span>
+</footer>
+<div class="toast" id="toast"></div>
+
+<script>
+/* =====================================================================
+   AJUSTES — lo único que se edita para operar la página
+===================================================================== */
+const AJUSTES = {
+  // URL /exec del Apps Script (Code_Afiliacion_v1.gs). Vacía = la página NO recibe registros
+  // (muestra "abre próximamente"). Para probar sin backend: agregar ?demo=1 a la dirección.
+  scriptUrl: '',
+  costo: 600,
+  pago: { banco: 'BBVA', titular: 'Pedro Zambrano', clabe: '012 225 00473177874 2' },
+  apertura: null,            // 'AAAA-MM-DDTHH:MM:00-06:00' o null
+  cierre: null,              // idem; null = sin fecha de cierre publicada
+  maxPdfMb: 1,               // límite del formulario oficial para CURP y domicilio
+  maxPagoMb: 5,
+  jspdf: '/inscripciones/lib/jspdf.umd.min.js'
+};
+/* ===================================================================== */
+
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const QS = new URLSearchParams(location.search);
+const DEMO = QS.get('demo') === '1';
+const MB = 1048576;
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('show'); clearTimeout(toast._t); toast._t=setTimeout(()=>t.classList.remove('show'),3200); }
+function setErr(id,m){ const e=document.querySelector(`.err[data-for="${id}"]`); if(e) e.textContent=m||''; }
+function setOk(id,m){ const e=document.querySelector(`.ok[data-ok="${id}"]`); if(e) e.textContent=m||''; }
+$('#anio').textContent = new Date().getFullYear();
+
+/* ---------- Pago ---------- */
+$('#payBox').innerHTML = `<dt>Banco</dt><dd>${esc(AJUSTES.pago.banco)}</dd>
+  <dt>CLABE</dt><dd><code>${esc(AJUSTES.pago.clabe)}</code><button type="button" class="copiar" id="btnClabe">Copiar CLABE</button></dd>
+  <dt>Titular</dt><dd>${esc(AJUSTES.pago.titular)}</dd>
+  <dt>Monto</dt><dd>$${AJUSTES.costo.toFixed(2)} por afiliado</dd>`;
+$('#btnClabe').onclick = async () => {
+  const b=$('#btnClabe'), d=AJUSTES.pago.clabe.replace(/\D/g,'');
+  try{ await navigator.clipboard.writeText(d); b.textContent='¡Copiada!'; }catch(_){ b.textContent=d; }
+  setTimeout(()=>b.textContent='Copiar CLABE',2500);
+};
+
+/* ---------- Estado de la ventana ---------- */
+function estado(){
+  if (!AJUSTES.scriptUrl && !DEMO) return 'proximamente';
+  const now = new Date();
+  if (AJUSTES.apertura && now < new Date(AJUSTES.apertura)) return 'proximamente';
+  if (AJUSTES.cierre && now > new Date(AJUSTES.cierre)) return 'cerrada';
+  return 'abierta';
+}
+const fmtFecha = iso => new Date(iso).toLocaleDateString('es-MX',{timeZone:'America/Mexico_City',day:'numeric',month:'long',year:'numeric'});
+(function(){
+  const st = estado(), box = $('#estadoBox');
+  if (st === 'proximamente'){
+    box.innerHTML = '<div class="estado prox">El registro abre próximamente' + (AJUSTES.apertura ? ' (' + fmtFecha(AJUSTES.apertura) + ')' : '') + '. Puedes ir preparando tus documentos.</div>';
+    $('#fs').disabled = true; $('#fs').classList.add('off');
+  } else if (st === 'cerrada'){
+    box.innerHTML = '<div class="estado cerr">El registro de afiliaciones por medio del Club está cerrado.</div>';
+    $('#frm').classList.add('hidden');
+  } else if (AJUSTES.cierre){
+    box.innerHTML = '<div class="estado prox">Registro abierto hasta el ' + fmtFecha(AJUSTES.cierre) + '.</div>';
+  }
+  if (DEMO) $('#demoBox').innerHTML = '<div class="demo-flag">Modo demostración: los registros enviados en este modo NO se guardan.</div>';
+})();
+
+/* ---------- Municipios de Guanajuato (sugerencias) ---------- */
+['Abasolo','Acámbaro','Apaseo el Alto','Apaseo el Grande','Atarjea','Celaya','Comonfort','Coroneo','Cortazar','Cuerámaro','Doctor Mora',
+ 'Dolores Hidalgo Cuna de la Independencia Nacional','Guanajuato','Huanímaro','Irapuato','Jaral del Progreso','Jerécuaro','León','Manuel Doblado',
+ 'Moroleón','Ocampo','Pénjamo','Pueblo Nuevo','Purísima del Rincón','Romita','Salamanca','Salvatierra','San Diego de la Unión','San Felipe',
+ 'San Francisco del Rincón','San José Iturbide','San Luis de la Paz','San Miguel de Allende','Santa Catarina','Santa Cruz de Juventino Rosas',
+ 'Santiago Maravatío','Silao de la Victoria','Tarandacuao','Tarimoro','Tierra Blanca','Uriangato','Valle de Santiago','Victoria','Villagrán','Xichú','Yuriria'
+].forEach(m => { const o=document.createElement('option'); o.value=m; $('#municipios').appendChild(o); });
+
+/* ---------- Comportamiento de campos ---------- */
+const soloDigitos = (id,n) => $('#'+id).addEventListener('input', e => { e.target.value = e.target.value.replace(/\D/g,'').slice(0,n); });
+soloDigitos('telefono',10); soloDigitos('cp',5); soloDigitos('idFenamac',10);
+$('#curp').addEventListener('input', e => { e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,18); });
+$('#club').addEventListener('change', () => $('#clubOtro').classList.toggle('hidden', $('#club').value !== 'otro'));
+
+function edad(iso){
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(iso||'')) return null;
+  const [y,m,d] = iso.split('-').map(Number), h = new Date();
+  let e = h.getFullYear() - y; if (h.getMonth()+1 < m || (h.getMonth()+1 === m && h.getDate() < d)) e--;
+  return e;
+}
+function esMenor(){ const e = edad($('#fnac').value); return e !== null && e < 18; }
+$('#fnac').addEventListener('input', () => { const m = esMenor(); $('#tutorBox').classList.toggle('hidden', !m); $('#lblTutor').classList.toggle('hidden', !m); });
+
+const CURP_RE = /^[A-Z][AEIOUX][A-Z]{2}\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])[HMX](AS|BC|BS|CC|CL|CM|CS|CH|DF|DG|GT|GR|HG|JC|MC|MN|MS|NT|NL|OC|PL|QT|QR|SP|SL|SR|TC|TS|TL|VZ|YN|ZS|NE)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d]\d$/;
+
+/* ---------- Archivos ---------- */
+const blobToB64 = b => new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result.split(',')[1]); r.onerror=rej; r.readAsDataURL(b); });
+const extDe = f => (f.name.split('.').pop()||'').toLowerCase();
+const esImg = f => /^image\/(jpeg|png)$/.test(f.type) || ['jpg','jpeg','png'].includes(extDe(f));
+const esPdf = f => f.type === 'application/pdf' || extDe(f) === 'pdf';
+
+function cargarImg(file){
+  return new Promise((res,rej)=>{ const u=URL.createObjectURL(file), i=new Image(); i.onload=()=>{URL.revokeObjectURL(u);res(i);}; i.onerror=()=>{URL.revokeObjectURL(u);rej(new Error('img'));}; i.src=u; });
+}
+function canvasDe(img, maxLado){
+  const k = Math.min(1, maxLado / Math.max(img.naturalWidth, img.naturalHeight));
+  const c = document.createElement('canvas'); c.width=Math.round(img.naturalWidth*k); c.height=Math.round(img.naturalHeight*k);
+  const x = c.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,c.width,c.height); x.drawImage(img,0,0,c.width,c.height); return c;
+}
+const toBlob = (c,q) => new Promise(r => c.toBlob(r,'image/jpeg',q));
+
+let jspdfPromesa = null;
+function cargarJsPDF(){
+  if (window.jspdf) return Promise.resolve();
+  if (!jspdfPromesa) jspdfPromesa = new Promise((res,rej)=>{ const s=document.createElement('script'); s.src=AJUSTES.jspdf; s.onload=res; s.onerror=()=>{jspdfPromesa=null;rej(new Error('jspdf'));}; document.head.appendChild(s); });
+  return jspdfPromesa;
+}
+// Foto de un documento -> PDF tamaño carta de máximo AJUSTES.maxPdfMb.
+async function imagenAPdf(file){
+  await cargarJsPDF();
+  const img = await cargarImg(file);
+  for (const [lado, q] of [[2000,.8],[1600,.7],[1300,.6],[1000,.5],[800,.45]]){
+    const c = canvasDe(img, lado), url = c.toDataURL('image/jpeg', q);
+    const horiz = c.width > c.height;
+    const pdf = new window.jspdf.jsPDF({ orientation: horiz ? 'landscape' : 'portrait', unit:'mm', format:'letter' });
+    const W = pdf.internal.pageSize.getWidth(), H = pdf.internal.pageSize.getHeight(), mg = 8;
+    const k = Math.min((W-2*mg)/c.width, (H-2*mg)/c.height), w = c.width*k, h = c.height*k;
+    pdf.addImage(url, 'JPEG', (W-w)/2, (H-h)/2, w, h);
+    const b = pdf.output('blob');
+    if (b.size <= AJUSTES.maxPdfMb*MB) return b;
+  }
+  return null;
+}
+async function reducirFoto(file, maxBytes){
+  const img = await cargarImg(file);
+  for (const [lado,q] of [[1600,.88],[1300,.8],[1000,.75]]){
+    const b = await toBlob(canvasDe(img,lado), q);
+    if (b && b.size <= maxBytes) return b;
+  }
+  return null;
+}
+
+// Prepara cada archivo según su tipo. Devuelve {blob, ext} o lanza Error con mensaje para la familia.
+const PREP = {
+  async docPdf(f){
+    if (esPdf(f)){
+      if (f.size > AJUSTES.maxPdfMb*MB) throw new Error(`El PDF pesa ${(f.size/MB).toFixed(1)} MB y el máximo es ${AJUSTES.maxPdfMb} MB. Sube mejor una foto clara del documento: la convertimos a PDF.`);
+      return { blob:f, ext:'pdf', nota:'PDF listo' };
+    }
+    if (esImg(f)){
+      let b; try{ b = await imagenAPdf(f); }catch(e){ throw new Error('No se pudo convertir la foto a PDF. Intenta con otra foto (JPG o PNG) o con un PDF.'); }
+      if (!b) throw new Error('La imagen es demasiado pesada aun reducida. Toma la foto de nuevo, más de cerca.');
+      return { blob:b, ext:'pdf', nota:`Convertido a PDF (${Math.round(b.size/1024)} KB)` };
+    }
+    throw new Error('Formato no admitido. Sube PDF, JPG o PNG (no HEIC, Word ni ZIP).');
+  },
+  async foto(f){
+    if (!esImg(f)) throw new Error('La fotografía debe ser JPG o PNG.');
+    if (f.size <= 2*MB) return { blob:f, ext: extDe(f)==='png' ? 'png' : 'jpg', nota:'Foto lista' };
+    const b = await reducirFoto(f, 2*MB).catch(()=>null);
+    if (!b) throw new Error('No se pudo procesar la foto. Intenta con otra (JPG o PNG).');
+    return { blob:b, ext:'jpg', nota:`Foto reducida (${Math.round(b.size/1024)} KB)` };
+  },
+  async pago(f){
+    if (esPdf(f)){
+      if (f.size > AJUSTES.maxPagoMb*MB) throw new Error(`El archivo pesa más de ${AJUSTES.maxPagoMb} MB.`);
+      return { blob:f, ext:'pdf', nota:'Comprobante listo' };
+    }
+    if (esImg(f)){
+      if (f.size <= 1.5*MB) return { blob:f, ext: extDe(f)==='png' ? 'png' : 'jpg', nota:'Comprobante listo' };
+      const b = await reducirFoto(f, 1.5*MB).catch(()=>null);
+      if (!b) throw new Error('No se pudo procesar la imagen. Intenta con una captura de pantalla.');
+      return { blob:b, ext:'jpg', nota:'Comprobante listo' };
+    }
+    throw new Error('Formato no admitido. Sube PDF, JPG o PNG.');
+  }
+};
+const DOCS = [
+  { id:'docCurp',      key:'curp',      tipo:'CURP',      label:'CURP',                     prep:'docPdf' },
+  { id:'docDomicilio', key:'domicilio', tipo:'DOMICILIO', label:'Comprobante de domicilio', prep:'docPdf' },
+  { id:'docFoto',      key:'foto',      tipo:'FOTO',      label:'Fotografía',               prep:'foto' },
+  { id:'docPago',      key:'pago',      tipo:'PAGO',      label:'Comprobante de pago',      prep:'pago' },
+];
+const listos = {}; // id -> {blob, ext}
+DOCS.forEach(d => $('#'+d.id).addEventListener('change', async () => {
+  delete listos[d.id]; setErr(d.id,''); setOk(d.id,'');
+  const f = $('#'+d.id).files[0]; if (!f) return;
+  setOk(d.id,'Procesando…');
+  try{ const r = await PREP[d.prep](f); listos[d.id] = r; setOk(d.id,'✓ ' + r.nota); }
+  catch(e){ setOk(d.id,''); setErr(d.id, e.message); }
+}));
+
+/* ---------- Envío ---------- */
+$('#frm').addEventListener('submit', async ev => {
+  ev.preventDefault();
+  if (estado() !== 'abierta'){ toast('El registro no está abierto.'); return; }
+  $$('.err').forEach(e => e.textContent = '');
+  let ok = true;
+  const req = id => { const v = $('#'+id).value.trim(); if(!v){ setErr(id,'Campo obligatorio.'); ok=false; } return v; };
+
+  const email = req('email');
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ setErr('email','Correo no válido.'); ok=false; }
+  const nombres = req('nombres'), apPaterno = req('apPaterno'), apMaterno = req('apMaterno');
+  const fnac = req('fnac');
+  const ed = edad(fnac);
+  if (fnac && (ed === null || ed < 3 || ed > 100)){ setErr('fnac','Revisa la fecha de nacimiento.'); ok=false; }
+  const curp = req('curp');
+  if (curp && !CURP_RE.test(curp)){ setErr('curp','CURP no válida: revisa que tenga 18 caracteres, igual que en el documento.'); ok=false; }
+  else if (curp && fnac && curp.slice(4,10) !== fnac.slice(2,4)+fnac.slice(5,7)+fnac.slice(8,10)){ setErr('curp','La fecha de nacimiento no coincide con la de la CURP. Revisa ambos datos.'); ok=false; }
+  const telefono = req('telefono');
+  if (telefono && telefono.length !== 10){ setErr('telefono','Debe tener 10 dígitos.'); ok=false; }
+  const menor = ed !== null && ed < 18;
+  const tutor = menor ? req('tutor') : '';
+  const calle = req('calle'), numExt = req('numExt'), numInt = $('#numInt').value.trim();
+  const colonia = req('colonia'), municipio = req('municipio');
+  const cp = req('cp'); if (cp && cp.length !== 5){ setErr('cp','El código postal tiene 5 dígitos.'); ok=false; }
+  const entidad = $('#entidad').value.trim() || 'Guanajuato';
+  const escolaridad = req('escolaridad');
+  const est = document.querySelector('input[name=estudiando]:checked');
+  if (!est){ setErr('estudiando','Selecciona una opción.'); ok=false; }
+  let club = $('#club').value;
+  if (club === 'otro'){ club = $('#clubOtro').value.trim(); if(!club){ setErr('club','Escribe el nombre del club.'); ok=false; } }
+  else if (club === 'ninguno') club = 'Ninguno';
+
+  for (const d of DOCS){
+    if (!listos[d.id]){
+      if (!document.querySelector(`.err[data-for="${d.id}"]`).textContent) setErr(d.id, $('#'+d.id).files[0] ? 'Espera a que termine de procesarse el archivo.' : `Falta adjuntar: ${d.label}.`);
+      ok = false;
+    }
+  }
+  if (!$('#chkVeraz').checked || !$('#chkTransfer').checked || !$('#chkAviso').checked || (menor && !$('#chkTutor').checked)){
+    setErr('chk','Debes marcar todas las confirmaciones obligatorias.'); ok=false;
+  }
+  if (!ok){ toast('Revisa los campos marcados en rojo.'); const e = $$('.err').find(x=>x.textContent); if(e) e.scrollIntoView({behavior:'smooth',block:'center'}); return; }
+
+  const btn = $('#btnEnviar'), prog = $('#progreso');
+  btn.disabled = true; btn.textContent = 'Enviando…';
+  const base = [apPaterno, apMaterno, nombres].map(s => s.normalize('NFKD').replace(/[̀-ͯ]/g,'').toUpperCase().replace(/[^A-Z0-9]+/g,'')).join('_');
+  const documentos = {}; let total = 0;
+  for (const d of DOCS){ const r = listos[d.id]; total += r.blob.size;
+    documentos[d.key] = { nombre: `${base}_${d.tipo}.${r.ext}`, tamano: r.blob.size, base64: await blobToB64(r.blob) }; }
+  prog.textContent = `Subiendo ${(total/MB).toFixed(1)} MB. No cierres esta página.`;
+
+  const payload = {
+    web: $('#web').value,
+    email, nombres, apPaterno, apMaterno, fechaNacimiento: fnac, curp,
+    calle, numExt, numInt, colonia, municipio, cp, telefono, entidad,
+    escolaridad, estudiando: est.value,
+    tituloJugador: $('#tJugador').value, tituloArbitro: $('#tArbitro').value, tituloEntrenador: $('#tEntrenador').value,
+    club, entrenador: $('#entrenador').value.trim(), comentarios: $('#comentarios').value.trim(),
+    idFenamac: $('#idFenamac').value.trim(), menor, tutor,
+    veraz: true, transferenciaAceptada: true, avisoAceptado: true, declaracionTutor: menor,
+    documentos
+  };
+  let data;
+  try{
+    if (DEMO && !AJUSTES.scriptUrl){ await new Promise(r=>setTimeout(r,600)); data = { ok:true, folio:'DEMO-'+Math.random().toString(36).slice(2,7).toUpperCase(), demo:true }; }
+    else { const r = await fetch(AJUSTES.scriptUrl, { method:'POST', body: JSON.stringify(payload) }); data = await r.json(); }
+  } catch(e){ data = null; setErr('envio','No se pudo completar el envío. Tus datos siguen en pantalla: inténtalo de nuevo, de preferencia con wifi.'); }
+  if (!data || !data.ok){
+    btn.disabled = false; btn.textContent = 'Enviar registro'; prog.textContent = '';
+    if (data) setErr('envio', data.error || 'No se pudo registrar. Inténtalo de nuevo.');
+    toast('El registro no se completó.'); return;
+  }
+  $('#frm').classList.add('hidden'); $('#estadoBox').classList.add('hidden');
+  $('#folioTxt').textContent = 'Folio: ' + data.folio;
+  $('#acuseTxt').textContent = `Enviamos un acuse a ${email} (revisa también la carpeta de spam).` + (data.demo ? ' [Modo demostración: no se guardó nada.]' : '');
+  $('#exito').classList.remove('hidden'); $('#exito').scrollIntoView({behavior:'smooth'});
+});
+</script>
+</body>
+</html>
