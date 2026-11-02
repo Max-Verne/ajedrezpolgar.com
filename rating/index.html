@@ -242,6 +242,12 @@ hr.line{border:none;border-top:1px solid var(--line);margin:24px 0;}
      onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.6)'">
     📝 Inscripciones
   </a>
+  <a href="https://www.ajedrezpolgar.com/afiliacion/"
+     style="color:rgba(255,255,255,0.6);text-decoration:none;padding:0.4rem 0.9rem;border-right:1px solid rgba(255,255,255,0.08);transition:all 0.2s;"
+     onmouseover="this.style.background='rgba(255,255,255,0.07)';this.style.color='#fff'"
+     onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.6)'">
+    🪪 Afiliación FENAMAC
+  </a>
   <a href="https://www.ajedrezpolgar.com/liga/"
      style="color:rgba(255,255,255,0.6);text-decoration:none;padding:0.4rem 0.9rem;border-right:1px solid rgba(255,255,255,0.08);transition:all 0.2s;"
      onmouseover="this.style.background='rgba(255,255,255,0.07)';this.style.color='#fff'"
@@ -1925,8 +1931,8 @@ Fronteras: es uno de los sitios hermanos del repositorio `ajedrezpolgar.com` (Gi
 
 ## Estado actual
 
-* **Versión vigente:** v19
-* **Archivo entregado:** `RatingGTO_v19.html` (Pedro lo renombra a `index.html` en la carpeta `/rating/` antes de subirlo).
+* **Versión vigente:** v20
+* **Archivo entregado:** `RatingGTO_v20.html` (Pedro lo renombra a `index.html` en la carpeta `/rating/` antes de subirlo).
 * **Dónde vive este documento:** `[x]` Fusionado en el artefacto — sección "Control de versiones y contexto del proyecto", al final del Panel de trabajo (detrás de la clave), con botón para descargarlo como `.md`. `[ ]` `.md` aparte.
 * **Modelo de IA utilizado:** Claude (Cowork), modelo configurado `claude-opus-5-5`.
 * **Traspaso a nuevo chat:** no hace falta subir nada si la versión ya está publicada — la IA la baja con su terminal: `curl -o index.html https://raw.githubusercontent.com/Max-Verne/ajedrezpolgar.com/main/rating/index.html` (usar raw.githubusercontent.com, no la URL de GitHub Pages). Si aún no está publicada, subir `RatingGTO_v#.html` y pedir: *"Continúa con Rating GTO siguiendo estas convenciones"*. (Ruta y rama confirmadas en v16: devolvía la v14 publicada.)
@@ -1984,6 +1990,10 @@ Fronteras: es uno de los sitios hermanos del repositorio `ajedrezpolgar.com` (Gi
 - [ ] Un registro del archivo FENAMAC 2026-10 trae la fecha de nacimiento como texto "01/01/1963" (formato no reconocido); se conserva la fecha ya registrada en la base.
 
 ## Historial de cambios (histórico)
+
+**v20 — Enlace «Afiliación FENAMAC» en la barra de sitios (2-nov-2026)**
+* Nuevo enlace a /afiliacion/ después de Inscripciones. Sin cambios en datos ni en funciones.
+* *Verificación: Pendiente de prueba.*
 
 **v19 — Logo del club en el encabezado**
 * Se reemplazó el ícono genérico del encabezado (un dibujo dorado que parecía una vela) por el recuadro con la corona del logo oficial de Ajedrez Polgar, a 52 px de alto (40 px en celular). También queda como ícono de la pestaña del navegador. Sin cambios en datos ni en funciones.
