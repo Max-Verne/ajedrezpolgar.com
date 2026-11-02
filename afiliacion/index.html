@@ -21,11 +21,14 @@ formulario oficial de la Comisión de Trabajo de la FENAMAC para Guanajuato
 la comisión. Proyecto independiente: numeración vN propia.
 
 ## Estado actual
-* Versión vigente: v1 · Archivo entregado: Afiliacion_FENAMAC_v1.html
+* Versión vigente: v2 · Archivo entregado: Afiliacion_FENAMAC_v2.html
   (se publica como /afiliacion/index.html)
 * Dónde vive este documento: [x] fusionado en el artefacto (este comentario).
-* Backend: Code_Afiliacion_v1.gs (Apps Script PROPIO; no reutilizar el de
-  Liga MTL ni el de ON27). Sin AJUSTES.scriptUrl la página no recibe registros.
+* Backend: Code_Afiliacion_v2.gs (Apps Script PROPIO; no reutilizar el del
+  portal MTL ni el de ON27), instalado por el titular el 2-nov-2026. Escribe en
+  la pestaña «Afiliación FENAMAC 2026» del archivo «Inscripciones Liga MTL 26-27»
+  (la lee la app Control de Invitaciones con su API de siempre); documentos en
+  carpeta privada aparte. Sin AJUSTES.scriptUrl la página no recibe registros.
 * Modelo de IA utilizado: Claude Opus 5.5
 * Traspaso a nuevo chat: el archivo vive en GitHub
   (raw.githubusercontent.com/Max-Verne/ajedrezpolgar.com/main/afiliacion/index.html);
@@ -63,7 +66,8 @@ la comisión. Proyecto independiente: numeración vN propia.
   de Guanajuato", texto del formulario oficial).
 
 ## Tareas Pendientes
-- [ ] Instalar Code_Afiliacion_v1.gs y pegar la URL /exec en AJUSTES.scriptUrl.
+- [ ] Registro de prueba real de punta a punta; marcarlo PRUEBA en «Estado».
+- [ ] Probar que el portal MTL sigue escribiendo bien con la pestaña nueva.
 - [ ] Confirmar con la comisión si acepta un comprobante por afiliado
       ($600 c/u) o uno por lote (el formulario oficial pide uno por afiliado).
 - [ ] Definir fecha de cierre, si la comisión la fija.
@@ -72,6 +76,12 @@ la comisión. Proyecto independiente: numeración vN propia.
 - [ ] Enlazar esta página desde la barra de sitios / Inscripciones.
 
 ## Historial de cambios
+**v2 — Conexión al backend real (2-nov-2026)**
+* AJUSTES.scriptUrl = implementación /exec de Code_Afiliacion_v2.gs (el titular
+  corrigió el acceso a «Cualquier usuario»; la primera URL /a/macros/… pedía
+  iniciar sesión). Desde esta versión la página recibe registros.
+* Verificación: Pendiente de prueba con un registro real.
+
 **v1 — Página inicial de afiliación FENAMAC 2026 vía Polgar (2-nov-2026)**
 * Formulario en 7 bloques con los 25 campos del formulario oficial, CURP
   validada contra la fecha de nacimiento, municipios de Guanajuato sugeridos,
@@ -380,9 +390,9 @@ la comisión. Proyecto independiente: numeración vN propia.
    AJUSTES — lo único que se edita para operar la página
 ===================================================================== */
 const AJUSTES = {
-  // URL /exec del Apps Script (Code_Afiliacion_v1.gs). Vacía = la página NO recibe registros
+  // URL /exec del Apps Script (Code_Afiliacion_v2.gs). Vacía = la página NO recibe registros
   // (muestra "abre próximamente"). Para probar sin backend: agregar ?demo=1 a la dirección.
-  scriptUrl: '',
+  scriptUrl: 'https://script.google.com/macros/s/AKfycbzB0elD4W7COBeY2WNQgClmJVYWqMM-vKiN1PWbysfTEagGCyODJP-I6YuycBRvhbQ2/exec',
   costo: 600,
   pago: { banco: 'BBVA', titular: 'Pedro Zambrano', clabe: '012 225 00473177874 2' },
   apertura: null,            // 'AAAA-MM-DDTHH:MM:00-06:00' o null
