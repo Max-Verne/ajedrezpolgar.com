@@ -15,7 +15,7 @@
 =====================================================================
 
 ## Estado actual
-* Versión vigente: v8 (ON27_Formulario_Inscripcion_Municipal_v8.html → /on27/index.html). INSCRIPCIONES ABIERTAS.
+* Versión vigente: v9 (ON27_Formulario_Inscripcion_Municipal_v9.html → /on27/index.html). INSCRIPCIONES ABIERTAS.
 * Archivos junto a la página: /on27/carta-responsiva.pdf y .docx, y /on27/convocatoria.pdf (formatos oficiales de COMUDE).
 * Página de la convocatoria: /on27/convocatoria/ (6 páginas en imagen + botón de descarga del PDF + botón a inscripción).
 * Backend: Code_ON27_v3.gs (v3 guarda la columna «Autoriza imagen») (Google Apps Script, proyecto propio, NO el de Liga MTL), instalado por el titular;
@@ -66,6 +66,13 @@
 * [x] ON27 en el catálogo de /inscripciones/ como evento paralelo (Inscripciones v13), activo junto a MTL.
 
 ## Historial de cambios
+**v9 (9-nov-2026) — Mensajes de error que se actualizan al corregir (reporte del titular con CURP válida rechazada)**
+* Causa: los mensajes de error solo se borraban al volver a pulsar «Enviar»; tras corregir la CURP (o cualquier campo)
+  el mensaje del intento anterior seguía visible y parecía un rechazo. La CURP reportada sí cumple el formato.
+* Ahora cada error se borra al editar su campo; la CURP se revisa en vivo (✓ cuando es correcta, «lleva N de 18» si está
+  incompleta al salir del campo) y se compara con la fecha de nacimiento antes de enviar (antes solo lo hacía el
+  servidor, después de subir los 5 documentos). Mismo formato de CURP que Code_ON27 (sin cambios en el backend).
+* Verificación: probado en navegador automatizado (escritorio y móvil). En producción: PENDIENTE DE PRUEBA.
 **v8 (21-oct-2026) — Autorización opcional de uso de imagen**
 * Cuarta casilla, opcional y sin premarcar: autoriza a COMUDE León y a Ajedrez Polgar (coordinación técnica)
   a tomar y publicar fotos/video del participante durante la competencia con fines de difusión deportiva.
@@ -486,7 +493,31 @@ $('#fnac').addEventListener('input', () => {
   $('#catbox').textContent = cat ? `Categoría: ${cat}` : 'Categoría: fecha fuera de las categorías convocadas (Sub-12, Sub-16, Sub-20, 21-23 años). Revisa la fecha.';
 });
 $('#telefono').addEventListener('input', e => { e.target.value = e.target.value.replace(/\D/g,'').slice(0,10); });
-$('#curp').addEventListener('input', e => { e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,18); });
+$('#curp').addEventListener('input', e => { e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,18); revisarCurp(false); });
+$('#curp').addEventListener('blur', () => revisarCurp(true));
+$('#fnac').addEventListener('change', () => { if ($('#curp').value) revisarCurp(true); });
+// v9: un error se borra en cuanto la persona corrige ese campo (antes quedaba el mensaje del intento anterior
+// aunque el dato ya estuviera bien, y parecía que una CURP válida era rechazada).
+document.addEventListener('input', e => { const id = e.target && e.target.id; if (id && id !== 'curp') setErr(id, ''); }, true);
+document.addEventListener('change', e => { const id = e.target && e.target.id; if (id && id !== 'curp') setErr(id, ''); }, true);
+// Mensaje de CURP en vivo. final=true (al salir del campo o al enviar) también avisa si está incompleta.
+function errorCurp(curp, fnac){
+  if (!curp) return 'Campo obligatorio.';
+  if (curp.length < 18) return `CURP incompleta: lleva ${curp.length} de 18 caracteres.`;
+  if (!CURP_RE.test(curp)) return 'CURP no válida: revisa que esté escrita igual que en el documento (letras y números en su lugar).';
+  if (fnac && curp.slice(4,10) !== fnac.slice(2,4) + fnac.slice(5,7) + fnac.slice(8,10))
+    return `La fecha de la CURP (${curp.slice(8,10)}/${curp.slice(6,8)}/${curp.slice(4,6)}) no coincide con la fecha de nacimiento capturada. Revisa ambos datos.`;
+  return '';
+}
+function revisarCurp(final){
+  const curp = $('#curp').value, msg = errorCurp(curp, $('#fnac').value);
+  const el = document.querySelector('.err[data-for="curp"]');
+  if (!el) return !msg;
+  if (!msg){ el.textContent = '✓ CURP con formato correcto'; el.style.color = 'var(--ok, #1e7a46)'; return true; }
+  el.style.color = '';
+  el.textContent = (final || curp.length === 18) ? msg : '';
+  return false;
+}
 
 const CURP_RE = /^[A-Z][AEIOUX][A-Z]{2}\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])[HMX](AS|BC|BS|CC|CL|CM|CS|CH|DF|DG|GT|GR|HG|JC|MC|MN|MS|NT|NL|OC|PL|QT|QR|SP|SL|SR|TC|TS|TL|VZ|YN|ZS|NE)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d]\d$/;
 
@@ -549,7 +580,7 @@ $('#formIns').addEventListener('submit', async (ev) => {
   const fnac = req('fnac');
   const rama = req('rama');
   const curp = req('curp');
-  if(curp && !CURP_RE.test(curp)){ setErr('curp','CURP no válida: revisa que tenga 18 caracteres y esté escrita igual que en el documento.'); ok=false; }
+  if(curp && !revisarCurp(true)) ok=false;   // v9: también compara la fecha de la CURP con la de nacimiento
   const escuela = req('escuela');
   const entrenador = req('entrenador');
   const tutor = req('tutor');

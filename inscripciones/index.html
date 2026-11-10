@@ -23,9 +23,12 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
 /aviso-de-privacidad/ (proyecto propio, numeración propia, texto del proyecto legal).
 
 ## Estado actual
-* Versión vigente: v15
-* Archivo entregado: Inscripciones_v15.html → /inscripciones/index.html (+ convocatorias/on27-municipal-p1…p6.jpg).
-  Code.gs v6 sin cambios. (Notas de v12, vigentes:)
+* Versión vigente: v16
+* Archivo entregado: Inscripciones_v16.html → /inscripciones/index.html (sin archivos nuevos).
+  + convocatorias/mtl3-e3.pdf, mtl3-e3-p1.jpg, mtl3-e3-p2.jpg. Funciona con Code.gs v6: el registro conjunto de
+  hermanos envía una inscripción por niño con el mismo comprobante (promoBackendV7:false). Con Code.gs v7 instalado,
+  poner promoBackendV7:true para un solo envío con columnas Grupo familiar / Promoción / Estado promoción.
+* (v15) Inscripciones_v15.html + convocatorias/on27-municipal-p1…p6.jpg; Code.gs v6. (Notas de v12, vigentes:)
 * v12: Inscripciones_v12.html → se sube como /inscripciones/index.html (carpetas convocatorias/,
   certificados/ y lib/ sin cambios). Requiere Code.gs v6 (Code_v6.gs) para el registro de clases; v6 incluye
   todo lo de v4 (panel, externos). Instalar Code_v6.gs ANTES de subir esta página. (v11 y Code v5 se
@@ -133,6 +136,18 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
 * Folio y hoja de cálculo los genera Code.gs a partir de "etapa".
 
 ## Tareas Pendientes
+- [ ] (v16) Code.gs v7 (sobre el v6 instalado, que el titular debe compartir): acepta promocion + hermanos[], valida
+      y evita duplicados de cada niño, guarda UN comprobante, una fila por niño con columnas nuevas «Grupo familiar»,
+      «Promoción» y «Estado promoción» (Pendiente/Aprobada/Rechazada), responde folios[] y avisa por correo.
+- [ ] (v16, fase 2) Aviso de inasistencia — reglas confirmadas por el titular (9-nov-2026): hora límite viernes 17:00
+      previo al torneo; con aviso confirmado por el club el pago se reconoce COMPLETO, SOLO para la fecha siguiente y SOLO
+      para el mismo niño; en promoción hermanos se reconocen $200 por niño. Ya en el pareo = sin reconocimiento.
+      Incluye registro de créditos con estado «usado».
+- [ ] (v16) Al instalar Code.gs v7, cambiar AJUSTES.promoBackendV7 a true. Mientras tanto, las familias con promoción
+      se reconocen en la hoja por folios consecutivos con el mismo tutor y teléfono.
+- [ ] (v16) Convocatoria de la 3ª fecha: debe decir $300, promoción hermanos 2/$500 y 3/$600 sujeta a revisión, todas las
+      categorías mixtas y premiación (premio sorpresa 1º-3º general; medalla 1º-3º general + 3 mejores femeniles).
+- [ ] (v16) Convocatoria e imagen de certificado del 3er evento (5-dic-2026). Sede ya confirmada: Club de Golf Los Naranjos.
 - [ ] (v12) Instalar Code_v6.gs (conservar la CLAVE_PANEL propia) y hacer un registro de prueba de clases; marcar la fila como PRUEBA en Notas.
 - [ ] (v12) Confirmar que el QR del volante de clases apunta a www.ajedrezpolgar.com/inscripciones (o cambiarlo a …/inscripciones/#clases en la próxima impresión).
 - [ ] (v12) Pendientes de negocio del traspaso de clases que NO se publican hasta confirmar: fechas de sábados de liga, quién elige entre
@@ -159,6 +174,28 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
 - [ ] Portada v3 enlaza a los sitios hermanos vía max-verne.github.io en la barra superior y vía www en el banner — inconsistencia heredada, no se toca aquí.
 
 ## Historial de cambios
+
+**v16 (9-nov-2026) — Reglas desde la 3ª fecha: $300, promoción hermanos y modalidad mixta**
+* Eventos 3º a 6º usan MTL3_DESDE_3A: cuota $300, mixta:true y promoHermanos {2:$500, 3:$600}. Los eventos 1º y 2º
+  no cambian ($250 y regla de ≥10 niñas).
+* Tarjeta y paso 1 muestran «Promoción hermanos: 2 por $500 · 3 por $600 (un solo pago; sujeta a revisión y aprobación)»
+  y «Modalidad: todas las categorías se juegan mixtas».
+* Paso 2: selector «¿Inscribes a hermanos con un solo pago?» (No / 2 / 3). Con 2 o 3 aparecen bloques Hermano(a) 2 y 3
+  (nombre, apellidos, nacimiento, rama, escuela, categoría y autorización de imagen por niño); apellidos y escuela del
+  jugador 1 se copian mientras no se editen. Aviso visible si los niños no comparten al menos un apellido (no bloquea).
+  Detecta al mismo niño repetido. Tutor, contacto, consentimientos y comprobante son únicos.
+* Paso 4: total de la promoción, una sola transferencia, resumen de todos los jugadores; pantalla final con todos los folios.
+* 3er evento (sáb 5-dic-2026): sede Club de Golf Los Naranjos, P.º de Los Azahares 219, Fracc. Country Club; cierre jue
+  3-dic 23:59 y extemporánea hasta sáb 5-dic 07:00. El formulario abre al publicar (aún sin convocatoria ni muestra de certificado).
+* Registro conjunto de hermanos (2 o 3) siempre visible en eventos con promoción, como dicen la convocatoria y el anuncio.
+  AJUSTES.promoBackendV7=false (Code.gs v6): la página envía una inscripción por niño con el mismo comprobante y tolera
+  reintentos (los ya inscritos cuentan como hechos). true (Code.gs v7): un solo envío con promocion + hermanos[].
+* 3er evento: convocatoria de la 3ª etapa (firmada 9-nov-2026) en el visor; horario sin registro presencial («No hay
+  registro el día del torneo»).
+* Payload: promocion {tipo, jugadores, monto, grupo FAM-…, apellidosCoinciden} + hermanos[] (Code.gs v7).
+* Certificado y panel: en eventos mixtos la rama siempre es «Rama Mixta»; la tarjeta de ramas del panel lo explica.
+* Verificación: flujo de 3 hermanos y de un jugador probado en navegador automatizado (escritorio y móvil) con servidor
+  simulado. Conexión real con Code.gs v7: PENDIENTE DE PRUEBA.
 
 **v15 (2-nov-2026) — Enlace «Afiliación FENAMAC» en la barra de sitios**
 * Solo navegación (después de Inscripciones). Sin cambios en torneos, clases ni formularios.
@@ -444,6 +481,10 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
   input:focus{outline:2px solid var(--azul-claro);outline-offset:1px}
   .row{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
   .opts{display:grid;gap:8px}
+  .promo{margin-bottom:16px;padding:12px 14px;border:1px dashed var(--gris-borde);border-radius:12px;background:var(--suave)}
+  .herm{margin-top:20px;padding:14px;border:1px solid var(--gris-borde);border-radius:12px}
+  .herm h4{margin:0 0 4px;font-size:1rem}
+  .herm select{width:100%;padding:11px 12px;border:1px solid var(--gris-borde);border-radius:10px;background:var(--suave);color:var(--texto);font:inherit}
   .opt{display:flex;gap:10px;align-items:flex-start;padding:11px 12px;border:1px solid var(--gris-borde);border-radius:10px;background:var(--suave);cursor:pointer;margin-top:8px}
   .opt input{margin-top:4px}
   .opt.disabled{opacity:.45;cursor:not-allowed}
@@ -741,7 +782,12 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
       </section>
 
       <section class="card step hidden" data-step="2">
-        <h3>Datos del jugador</h3>
+        <div id="promoBox" class="promo hidden">
+          <label class="f">¿Inscribes a hermanos con un solo pago?</label>
+          <div class="inline" id="promoOpts"></div>
+          <p class="small" id="promoNota"></p>
+        </div>
+        <h3 id="tituloJ1">Datos del jugador</h3>
         <p class="hint">Escribe ambos nombres y ambos apellidos, si los tiene. El certificado de participación se emite con estos datos y <b>no habrá reimpresiones</b> por errores de llenado.</p>
         <div class="row">
           <div><label class="f" for="nombres">Nombre(s) <span class="req">*</span></label><input type="text" id="nombres" autocomplete="given-name"><div class="err" data-for="nombres"></div></div>
@@ -757,6 +803,8 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
         </div>
         <label class="f" for="institucion">Institución educativa <span class="req">*</span></label>
         <input type="text" id="institucion" placeholder="Nombre completo de la escuela"><div class="err" data-for="institucion"></div>
+        <div id="hermanosBox"></div>
+        <div class="aviso hidden" id="avisoApellidos"></div>
         <h3 style="margin-top:22px">Contacto</h3>
         <label class="f" for="tutor">Nombre del padre, madre o tutor <span class="req">*</span></label>
         <input type="text" id="tutor" autocomplete="name"><div class="err" data-for="tutor"></div>
@@ -770,7 +818,8 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
           <div class="cert-prev-box"><span class="small">Vista de muestra de tu certificado (con marca de agua):</span>
             <canvas id="certPrev" class="cert-prev" width="1100" height="850" aria-label="Vista de muestra del certificado"></canvas>
             <span class="small">La categoría y la rama se agregan al final, después de elegir la categoría.</span></div>
-          <label class="opt confirma"><input type="checkbox" id="confirmaDatos"> <span>Revisé el nombre completo, la institución educativa y la rama, y están escritos correctamente. <span class="req">*</span></span></label>
+          <div id="prevHermanos"></div>
+          <label class="opt confirma"><input type="checkbox" id="confirmaDatos"> <span id="txtConfirma">Revisé el nombre completo, la institución educativa y la rama, y están escritos correctamente. <span class="req">*</span></span></label>
           <div class="err" data-for="confirmaDatos"></div>
         </div>
       </section>
@@ -784,7 +833,7 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
 
       <section class="card step hidden" data-step="4">
         <h3>Pago de inscripción</h3>
-        <p class="hint">Costo: <b id="costo"></b> por jugador. Realiza una transferencia SPEI y adjunta el comprobante.</p>
+        <p class="hint" id="txtCosto">Costo: <b id="costo"></b> por jugador. Realiza una transferencia SPEI y adjunta el comprobante.</p>
         <div class="pay" id="payBox"></div>
         <label class="f" for="comprobante">Comprobante de pago (imagen o PDF, máx. <span id="maxMb"></span> MB) <span class="req">*</span></label>
         <input type="file" id="comprobante" accept="image/*,application/pdf">
@@ -809,6 +858,7 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
       <h3>¡Inscripción recibida!</h3>
       <p>Tu folio es</p>
       <p class="folio" id="folio"></p>
+      <p class="aviso hidden" id="okPromo" style="text-align:left"></p>
       <p class="aviso aviso-tardio hidden" id="okTardio" style="text-align:left">Tu inscripción quedó registrada como <b>extemporánea</b>. Si tu certificado de participación ya no alcanza a imprimirse, te lo enviaremos en formato digital al correo que registraste.</p>
       <p class="hint">Guarda este folio. El pago se valida manualmente; la lista de jugadores y los emparejamientos se publican en <a id="lnkCR" target="_blank" rel="noopener">Chess-Results</a>.</p>
       <button type="button" onclick="location.reload()">Inscribir a otro jugador</button>
@@ -955,6 +1005,10 @@ const AJUSTES = {
   scriptUrl: 'https://script.google.com/macros/s/AKfycbwtgznMbImzTrIU1B5xRYi-a8cnZ2Q4RGog1ERdeny6csLMrYDA3QPZ2sAcpULgLi9-/exec',
   pago: { banco: 'BBVA', titular: 'Pedro Zambrano', clabe: '012 225 00473177874 2' }, // CLABE en formato oficial 3-3-11-1 (banco-plaza-cuenta-dígito)
   maxArchivoMb: 5,
+  // v16: true cuando Code.gs v7 (promoción hermanos en un solo envío, columnas Grupo/Promoción) esté instalado.
+  // Mientras sea false, el formulario conjunto de hermanos funciona igual para la familia, pero la página envía
+  // una inscripción por niño (con el mismo comprobante) a Code.gs v6; la promoción no queda marcada en la hoja.
+  promoBackendV7: false,
   chessResultsUrl: 'https://chess-results.com/',
   facebookUrl: 'https://www.facebook.com/ajedrezpolgar'
 };
@@ -976,6 +1030,10 @@ const CATS_MTL_2027 = [
 ];
 const MTL3 = { serie:'3ra Liga MTL 2026-2027', mtl:true, horario:'Registro 8:30 h · Inicio 9:00 h · Fin aprox. 13:00 h',
   costo:250, cupo:150, formulario:'mtl', convocatoria:null, resultadosUrl:null };
+// v16 — reglas a partir de la 3ª fecha (decididas por el titular el 8 y 9-nov-2026): cuota $300, todas las
+// categorías mixtas (sin separar rama femenil) y promoción hermanos pública: 2 por $500, 3 por $600, con un solo
+// comprobante, «sujeta a revisión y aprobación», por torneo y sin combinar con pases de cortesía.
+const MTL3_DESDE_3A = { ...MTL3, costo:300, mixta:true, promoHermanos:{ 2:500, 3:600 } };
 
 // Certificado de la 2ª etapa en adelante (diseño naranja): el nombre va entre «OTORGADO A:» y la línea punteada (y≈822),
 // centrado sobre esa línea (x 1040–3174), sin invadir el logotipo de la izquierda ni la cinta dorada.
@@ -1007,10 +1065,18 @@ const EVENTOS = [
     sede:'Instituto Oviedo, campus Metropolitano', direccion:'Cofradía 202, El Palote, 37130 León de los Aldama, Gto.',
     mapsUrl:'https://maps.google.com/?q=Instituto+Oviedo+Campus+Metropolitano,+Cofrad%C3%ADa+202,+El+Palote,+37130+Le%C3%B3n,+Gto.',
     categorias:CATS_MTL_2026 },
-  { ...MTL3, id:'mtl3-e3', etapa:'3er evento', titulo:'3er evento', fecha:'2026-12-05', sede:null, categorias:CATS_MTL_2026 },
-  { ...MTL3, id:'mtl3-e4', etapa:'4to evento', titulo:'4to evento', fecha:'2027-01-23', sede:null, categorias:CATS_MTL_2027 },
-  { ...MTL3, id:'mtl3-e5', etapa:'5to evento', titulo:'5to evento', fecha:'2027-02-20', sede:null, categorias:CATS_MTL_2027 },
-  { ...MTL3, id:'mtl3-e6', etapa:'6to evento', titulo:'6to evento', fecha:'2027-03-13', sede:null, categorias:CATS_MTL_2027 },
+  { ...MTL3_DESDE_3A, id:'mtl3-e3', etapa:'3er evento', titulo:'3er evento', fecha:'2026-12-05',
+    // Mismas condiciones de cierre: jueves 3-dic 23:59 (regla por defecto) y extemporánea hasta el sábado 07:00.
+    cierreTardio:'2026-12-05T07:00:00-06:00',
+    horario:'Inicio de la 1ª ronda 9:00 h · Clausura aprox. 13:00 h · Sin registro el día del torneo',
+    convocatoria:{ pdf:'/inscripciones/convocatorias/mtl3-e3.pdf',
+      paginas:['/inscripciones/convocatorias/mtl3-e3-p1.jpg','/inscripciones/convocatorias/mtl3-e3-p2.jpg'] },
+    sede:'Club de Golf Los Naranjos', direccion:'P.º de Los Azahares 219, Fracc. Country Club, Los Naranjos, 37210 León de los Aldama, Gto.',
+    mapsUrl:'https://maps.google.com/?q=Club+de+Golf+Los+Naranjos,+P.%C2%BA+de+Los+Azahares+219,+Los+Naranjos,+37210+Le%C3%B3n,+Gto.',
+    categorias:CATS_MTL_2026 },
+  { ...MTL3_DESDE_3A, id:'mtl3-e4', etapa:'4to evento', titulo:'4to evento', fecha:'2027-01-23', sede:null, categorias:CATS_MTL_2027 },
+  { ...MTL3_DESDE_3A, id:'mtl3-e5', etapa:'5to evento', titulo:'5to evento', fecha:'2027-02-20', sede:null, categorias:CATS_MTL_2027 },
+  { ...MTL3_DESDE_3A, id:'mtl3-e6', etapa:'6to evento', titulo:'6to evento', fecha:'2027-03-13', sede:null, categorias:CATS_MTL_2027 },
   // Evento PARALELO (v13): se muestra como activo junto al torneo MTL, no lo desplaza. Formulario externo
   // institucional de COMUDE León en /on27/ (proyecto propio). fin = último día del evento.
   { id:'on27-municipal', paralelo:true, organiza:'COMUDE León', serie:'Rumbo a ON27',
@@ -1082,6 +1148,11 @@ const PARALELOS = EVENTOS.filter(e => e.paralelo && finDe(e) >= HOY && e !== ACT
 const pasados = EVENTOS.filter(e => finDe(e) < HOY && e !== ACTIVO);
 const proximos = futuros.filter(e => e !== ACTIVO);
 
+// Promoción hermanos del evento: «2 por $500 · 3 por $600 (sujeta a revisión)».
+function textoPromo(ev){
+  const p = ev.promoHermanos; if (!p) return '';
+  return Object.keys(p).sort().map(n => `${n} por ${money(p[n])}`).join(' · ') + ' <span class="small">(un solo pago; sujeta a revisión y aprobación)</span>';
+}
 function rangoCat(c){ return c.maxYear >= 9999 ? `${c.minYear} y posteriores` : `${c.minYear}–${c.maxYear}`; }
 
 function renderActivo(){
@@ -1112,6 +1183,7 @@ function tarjetaActivo(ev){
     ['Sede', ev.sede ? esc(ev.sede) + (ev.mapsUrl ? ` · <a href="${esc(ev.mapsUrl)}" target="_blank" rel="noopener">Ver mapa</a>` : '') : 'Por confirmar'],
     ev.horario ? ['Horario', esc(ev.horario)] : null,
     ev.costo ? ['Inscripción', money(ev.costo) + ' por jugador'] : (ev.gratuito ? ['Inscripción', 'Gratuita'] : null),
+    ev.promoHermanos ? ['Promoción hermanos', textoPromo(ev)] : null,
     ev.cupo ? ['Cupo', ev.cupo + ' jugadores'] : null,
     ev.formulario && ev.sede ? [st0 === 'tardia' ? 'Cierre según convocatoria' : 'Cierre de inscripción', fechaHora(cierreDe(ev))] : null,
     st0 === 'tardia' ? ['Inscripción extemporánea hasta', fechaHora(cierreTardioDe(ev))] : null
@@ -1198,6 +1270,8 @@ function prepararFormulario(){
     [estadoDe(ev) === 'tardia' ? 'Cierre según convocatoria' : 'Cierre de inscripción', fechaHora(cierreDe(ev))],
     estadoDe(ev) === 'tardia' ? ['Inscripción extemporánea hasta', fechaHora(cierreTardioDe(ev))] : null,
     ['Inscripción', money(ev.costo) + ' por jugador'],
+    ev.promoHermanos ? ['Promoción hermanos', textoPromo(ev)] : null,
+    ev.mixta ? ['Modalidad', 'Todas las categorías se juegan mixtas'] : null,
     ['Resultados', `<a href="${AJUSTES.chessResultsUrl}" target="_blank" rel="noopener">Chess-Results</a>`]
   ].filter(Boolean);
   $('#facts').innerHTML = facts.map(([k,v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('');
@@ -1206,6 +1280,7 @@ function prepararFormulario(){
   prepararMuestra();
   $('#lnkCR').href = AJUSTES.chessResultsUrl;
   $('#costo').textContent = money(ev.costo);
+  prepararHermanos(ev);
   $('#maxMb').textContent = AJUSTES.maxArchivoMb;
   $('#payBox').innerHTML = `<div class="small">CLABE interbancaria (${esc(AJUSTES.pago.banco)})</div><code>${esc(AJUSTES.pago.clabe)}</code> <button type="button" id="btnCopiarClabe" class="copiar">Copiar CLABE</button>
     <div class="small" style="margin-top:6px">Titular: <b>${esc(AJUSTES.pago.titular)}</b> · Concepto sugerido: nombre del jugador</div>`;
@@ -1238,6 +1313,8 @@ function updatePreview(){
   $('#prevNombre').textContent = (n || a) ? `${n} ${a}`.trim() : '—';
   $('#prevInst').textContent = inst || '—';
   $('#prevRama').textContent = r ? (r.value === 'V' ? 'Varonil' : 'Femenil') : '—';
+  $('#prevHermanos').innerHTML = NH > 1 ? hermanosDatos().map((h, k) => `<span class="prevLinea"><span class="small">Jugador ${k + 2}:</span> <b>${esc((h.nombres + ' ' + h.apellidos).trim() || '—')}</b> · ${esc(h.institucion || '—')} · ${h.sexo ? (h.sexo === 'V' ? 'Varonil' : 'Femenil') : '—'}</span>`).join('') : '';
+  revisarApellidos();
   if ($('#confirmaDatos').checked){ $('#confirmaDatos').checked = false; }
   syncNext();
   dibujarPrevias();
@@ -1245,6 +1322,125 @@ function updatePreview(){
 ['nombres','apellidos','institucion'].forEach(id => $('#'+id).addEventListener('input', updatePreview));
 document.querySelectorAll('input[name=sexo]').forEach(el => el.addEventListener('change', updatePreview));
 $('#confirmaDatos').addEventListener('change', () => { setErr('confirmaDatos',''); syncNext(); });
+
+/* ================= PROMOCIÓN HERMANOS (v16) =================
+   Solo en eventos con promoHermanos. El jugador 1 usa los campos de siempre; los hermanos 2 y 3 se capturan
+   aquí (nombre, apellidos, nacimiento, rama, escuela, categoría y autorización de imagen por niño). Tutor,
+   contacto, consentimientos y comprobante son únicos para la familia. La promoción queda «Pendiente» de
+   revisión en la hoja; el aviso de apellidos no impide enviar. */
+let NH = 1; // número de jugadores de la familia en esta inscripción (1 = sin promoción)
+const sinAcentos = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+const hval = (i, k) => { const el = $(`#h${i}_${k}`); return el ? (el.value || '').trim() : ''; };
+const hsexo = i => (document.querySelector(`input[name=h${i}_sexo]:checked`) || {}).value || '';
+
+function prepararHermanos(ev){
+  const box = $('#promoBox');
+  if (!ev.promoHermanos){ box.classList.add('hidden'); NH = 1; return; }
+  box.classList.remove('hidden');
+  const p = ev.promoHermanos;
+  $('#promoOpts').innerHTML = `<label class="opt"><input type="radio" name="promoN" value="1" checked> No, un solo jugador (${money(ev.costo)})</label>` +
+    Object.keys(p).sort().map(n => `<label class="opt"><input type="radio" name="promoN" value="${n}"> ${n} hermanos (${money(p[n])} en total)</label>`).join('');
+  $('#promoNota').innerHTML = 'Los hermanos se registran juntos con <b>un solo comprobante de pago</b>. Promoción <b>sujeta a revisión y aprobación</b>; vale para este torneo y no se combina con pases de cortesía.';
+  document.querySelectorAll('input[name=promoN]').forEach(r => r.addEventListener('change', () => { NH = +r.value; renderHermanos(); updatePreview(); }));
+}
+
+function opcionesCatH(nac, actual){
+  const y = nac ? +nac.slice(0,4) : null;
+  if (!y) return '<option value="">— primero la fecha de nacimiento —</option>';
+  const ok = ACTIVO.categorias.filter(c => y >= c.minYear);
+  if (!ok.length) return '<option value="">Sin categoría para ese año</option>';
+  const rec = ok.find(c => y <= c.maxYear);
+  return ok.map(c => `<option value="${c.id}" ${(actual ? actual === c.id : rec === c) ? 'selected' : ''}>${esc(c.nombre)}${rec === c ? ' (su categoría)' : ''}</option>`).join('');
+}
+
+function renderHermanos(){
+  const box = $('#hermanosBox');
+  // conservar lo ya capturado al cambiar de 2 a 3 o al volver
+  const prev = {};
+  box.querySelectorAll('input,select').forEach(el => { prev[el.id || el.name + ':' + el.value] = el.type === 'radio' || el.type === 'checkbox' ? el.checked : el.value; });
+  let html = '';
+  for (let i = 2; i <= NH; i++){
+    html += `<div class="herm" data-h="${i}"><h4>Hermano(a) ${i}</h4>
+      <div class="row">
+        <div><label class="f" for="h${i}_nombres">Nombre(s) <span class="req">*</span></label><input type="text" id="h${i}_nombres"><div class="err" data-for="h${i}_nombres"></div></div>
+        <div><label class="f" for="h${i}_apellidos">Apellidos <span class="req">*</span></label><input type="text" id="h${i}_apellidos"><div class="err" data-for="h${i}_apellidos"></div></div>
+      </div>
+      <div class="row">
+        <div><label class="f" for="h${i}_nacimiento">Fecha de nacimiento <span class="req">*</span></label><input type="date" id="h${i}_nacimiento"><div class="err" data-for="h${i}_nacimiento"></div></div>
+        <div><label class="f">Rama <span class="req">*</span></label><div class="inline">
+          <label class="opt"><input type="radio" name="h${i}_sexo" value="V"> Varonil</label>
+          <label class="opt"><input type="radio" name="h${i}_sexo" value="F"> Femenil</label></div><div class="err" data-for="h${i}_sexo"></div></div>
+      </div>
+      <label class="f" for="h${i}_institucion">Institución educativa <span class="req">*</span></label>
+      <input type="text" id="h${i}_institucion" placeholder="Nombre completo de la escuela"><div class="err" data-for="h${i}_institucion"></div>
+      <label class="f" for="h${i}_categoria">Categoría <span class="req">*</span></label>
+      <select id="h${i}_categoria"><option value="">— primero la fecha de nacimiento —</option></select><div class="err" data-for="h${i}_categoria"></div>
+      <label class="opt"><input type="checkbox" id="h${i}_imagen"> <span>Autorizo el uso de la imagen y voz de este jugador en materiales de difusión del Club. <span class="small">(Opcional)</span></span></label>
+    </div>`;
+  }
+  box.innerHTML = html;
+  for (let i = 2; i <= NH; i++){
+    ['nombres','apellidos','nacimiento','institucion'].forEach(k => { const id = `h${i}_${k}`; if (id in prev) $('#' + id).value = prev[id]; });
+    if (!(`h${i}_institucion` in prev) || !prev[`h${i}_institucion`]) $(`#h${i}_institucion`).value = val('institucion');
+    if (!(`h${i}_apellidos` in prev) || !prev[`h${i}_apellidos`]) $(`#h${i}_apellidos`).value = val('apellidos');
+    ['V','F'].forEach(v => { if (prev[`h${i}_sexo:${v}`]) document.querySelector(`input[name=h${i}_sexo][value=${v}]`).checked = true; });
+    if (prev[`h${i}_imagen`]) $(`#h${i}_imagen`).checked = true;
+    $(`#h${i}_categoria`).innerHTML = opcionesCatH(hval(i,'nacimiento'), prev[`h${i}_categoria`]);
+    $(`#h${i}_nacimiento`).addEventListener('change', () => { $(`#h${i}_categoria`).innerHTML = opcionesCatH(hval(i,'nacimiento')); });
+    box.querySelectorAll(`[data-h="${i}"] input`).forEach(el => el.addEventListener(el.type === 'radio' || el.type === 'checkbox' ? 'change' : 'input', updatePreview));
+    ['apellidos','institucion'].forEach(k => $(`#h${i}_${k}`).addEventListener('input', e => { e.target.dataset.propio = '1'; }));
+  }
+  $('#tituloJ1').textContent = NH > 1 ? 'Jugador 1' : 'Datos del jugador';
+  $('#txtConfirma').innerHTML = (NH > 1 ? 'Revisé el nombre completo, la institución educativa y la rama de todos los jugadores, y están escritos correctamente.' : 'Revisé el nombre completo, la institución educativa y la rama, y están escritos correctamente.') + ' <span class="req">*</span>';
+}
+
+// ¿Comparten al menos un apellido? (sin acentos ni mayúsculas). Solo avisa; no bloquea.
+// Apellidos y escuela del jugador 1 se copian a los hermanos mientras no se hayan editado a mano.
+['apellidos','institucion'].forEach(k => $('#' + k).addEventListener('input', () => {
+  for (let i = 2; i <= NH; i++){ const el = $(`#h${i}_${k}`); if (el && !el.dataset.propio) el.value = $('#' + k).value; }
+}));
+function apellidosCoinciden(){
+  if (NH < 2) return true;
+  const toks = [val('apellidos')].concat(Array.from({ length: NH - 1 }, (_, k) => hval(k + 2, 'apellidos')))
+    .map(a => new Set(sinAcentos(a).split(/[^a-zñ]+/).filter(w => w.length > 2 && !['del','las','los'].includes(w))));
+  if (toks.some(t => !t.size)) return true; // aún sin capturar
+  const comun = [...toks[0]].some(w => toks.every(t => t.has(w)));
+  return comun;
+}
+function revisarApellidos(){
+  const ok = apellidosCoinciden(), a = $('#avisoApellidos');
+  a.classList.toggle('hidden', ok);
+  if (!ok) a.innerHTML = '⚠️ Los apellidos de los jugadores no coinciden. Puedes enviar la inscripción, pero la promoción de hermanos quedará <b>sujeta a revisión</b> y podría no aplicarse.';
+}
+
+function hermanosDatos(){
+  const out = [];
+  for (let i = 2; i <= NH; i++){
+    const c = ACTIVO.categorias.find(x => x.id === hval(i, 'categoria'));
+    out.push({ nombres: titleCase(hval(i,'nombres')), apellidos: titleCase(hval(i,'apellidos')), nacimiento: hval(i,'nacimiento'),
+      sexo: hsexo(i), institucion: hval(i,'institucion').replace(/\s+/g,' '), categoria: c ? c.nombre : '', autorizaImagen: $(`#h${i}_imagen`).checked });
+  }
+  return out;
+}
+function validarHermanos(){
+  let ok = true;
+  const nameRe = /^[\p{L}'´.\- ]{2,}$/u, now = +HOY.slice(0,4);
+  for (let i = 2; i <= NH; i++){
+    ok &= setErr(`h${i}_nombres`, nameRe.test(hval(i,'nombres')) ? '' : 'Escribe el/los nombre(s) completos.');
+    ok &= setErr(`h${i}_apellidos`, nameRe.test(hval(i,'apellidos')) ? '' : 'Escribe los apellidos completos.');
+    const y = +(hval(i,'nacimiento').slice(0,4) || 0);
+    ok &= setErr(`h${i}_nacimiento`, (y > now - 25 && y <= now - 3) ? '' : 'Revisa la fecha de nacimiento.');
+    ok &= setErr(`h${i}_sexo`, hsexo(i) ? '' : 'Selecciona la rama.');
+    ok &= setErr(`h${i}_institucion`, hval(i,'institucion').length >= 4 ? '' : 'Escribe el nombre de la escuela.');
+    ok &= setErr(`h${i}_categoria`, hval(i,'categoria') ? '' : 'Selecciona la categoría.');
+  }
+  // mismo niño capturado dos veces
+  const claves = [titleCase(val('nombres')) + '|' + val('nacimiento')].concat(hermanosDatos().map(h => h.nombres + '|' + h.nacimiento)).map(sinAcentos);
+  if (new Set(claves).size !== claves.length){ ok = false; $('#errGlobal').textContent = 'Hay un jugador repetido en la lista de hermanos.'; }
+  return !!ok;
+}
+function totalPromo(){ return NH > 1 && ACTIVO.promoHermanos ? ACTIVO.promoHermanos[NH] : ACTIVO.costo; }
+const grupoFamiliar = (() => { let g = null; return () => g || (g = 'FAM-' + Date.now().toString(36).toUpperCase().slice(-5) + Math.random().toString(36).slice(2,5).toUpperCase()); })();
 
 function renderCats(){
   const cats = ACTIVO.categorias;
@@ -1278,6 +1474,8 @@ function validate(s){
     ok &= setErr('correo', /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val('correo')) ? '' : 'Correo no válido.');
     ok &= setErr('telefono', /^\d{10}$/.test(val('telefono').replace(/\D/g,'')) ? '' : 'Debe tener 10 dígitos.');
     ok &= setErr('confirmaDatos', $('#confirmaDatos').checked ? '' : 'Confirma que los datos del certificado son correctos.');
+    $('#errGlobal').textContent = '';
+    if (NH > 1) ok &= validarHermanos();
   }
   if (s === 3){
     ok &= setErr('categoria', document.querySelector('input[name=categoria]:checked') ? '' : 'Selecciona una categoría.');
@@ -1305,7 +1503,10 @@ function payload(){
     categoria: cat.nombre, aceptaConvocatoria: $('#acepta').checked, aceptaPrivacidad: $('#privacidad').checked,
     autorizaImagen: $('#imagen').checked, autorizaBoletines: $('#boletines').checked,
     versionAviso: AJUSTES.AVISO_VERSION,
-    tardia: estadoDe(ACTIVO) === 'tardia'
+    tardia: estadoDe(ACTIVO) === 'tardia',
+    // v16: promoción hermanos (Code.gs v7). Sin promoción estos campos no se envían.
+    ...(NH > 1 ? { promocion: { tipo:'Hermanos', jugadores: NH, monto: totalPromo(), grupo: grupoFamiliar(), apellidosCoinciden: apellidosCoinciden() },
+                   hermanos: hermanosDatos() } : {})
   };
 }
 
@@ -1313,8 +1514,14 @@ function renderResumen(){
   const p = payload();
   $('#resumen').innerHTML = `<b>Revisa antes de enviar</b><br>${esc(p.nombres)} ${esc(p.apellidos)} · ${p.sexo==='V'?'Varonil':'Femenil'} · ${esc(p.nacimiento)}<br>
     ${esc(p.institucion)}<br>Categoría: <b>${esc(p.categoria)}</b><br><span class="small">Contacto: ${esc(p.tutor)} · ${esc(p.correo)} · ${esc(p.telefono)}</span><br>
-    <span class="small">Uso de imagen: <b>${p.autorizaImagen ? 'autorizado' : 'no autorizado'}</b> · Boletines: <b>${p.autorizaBoletines ? 'sí' : 'no'}</b></span>`;
-  if ($('#notaRama')) $('#notaRama').textContent = p.sexo === 'F'
+    <span class="small">Uso de imagen: <b>${p.autorizaImagen ? 'autorizado' : 'no autorizado'}</b> · Boletines: <b>${p.autorizaBoletines ? 'sí' : 'no'}</b></span>` +
+    (p.hermanos ? p.hermanos.map((h, k) => `<br><br><b>Jugador ${k + 2}:</b> ${esc(h.nombres)} ${esc(h.apellidos)} · ${h.sexo==='V'?'Varonil':'Femenil'} · ${esc(h.nacimiento)}<br>${esc(h.institucion)}<br>Categoría: <b>${esc(h.categoria)}</b> · <span class="small">Uso de imagen: <b>${h.autorizaImagen ? 'autorizado' : 'no autorizado'}</b></span>`).join('') +
+      `<br><br><b>Promoción hermanos (${p.hermanos.length + 1}): ${money(totalPromo())} en total</b> · <span class="small">sujeta a revisión y aprobación${apellidosCoinciden() ? '' : ' · ⚠️ los apellidos no coinciden'}</span>` : '');
+  $('#txtCosto').innerHTML = NH > 1
+    ? `Total a pagar: <b>${money(totalPromo())}</b> por ${NH} hermanos (promoción sujeta a revisión). Realiza <b>una sola</b> transferencia SPEI y adjunta el comprobante.`
+    : `Costo: <b>${money(ACTIVO.costo)}</b> por jugador. Realiza una transferencia SPEI y adjunta el comprobante.`;
+  if ($('#notaRama') && ACTIVO.mixta) $('#notaRama').textContent = 'Todas las categorías se juegan en modalidad mixta; se premia a los 3 primeros de cada categoría y se entregan medallas también a las 3 mejores niñas.';
+  else if ($('#notaRama')) $('#notaRama').textContent = p.sexo === 'F'
     ? 'Rama: según la convocatoria, la rama femenil se juega por separado si hay al menos 10 inscritas en la categoría; si no, el certificado dirá «Rama Mixta».'
     : 'Rama: los jugadores compiten en la rama mixta.';
   setTimeout(dibujarPrevias, 0);
@@ -1336,6 +1543,29 @@ function show(s){
 $('#btnNext').onclick = () => { if (validate(step)) show(step+1); };
 $('#btnPrev').onclick = () => show(step-1);
 
+// Modo compatible con Code.gs v6: una inscripción por niño, mismo comprobante. Si algo falla a la mitad, al reintentar
+// los ya registrados regresan «ya está inscrito (folio …)» y se toman como hechos, así no se duplican.
+async function enviarHermanosUnoPorUno(data){
+  const base = { ...data }; delete base.hermanos;
+  const ninos = [ { ...base } ].concat(data.hermanos.map(h => ({ ...base, ...h })));
+  const folios = [];
+  for (let k = 0; k < ninos.length; k++){
+    let res;
+    if (!AJUSTES.scriptUrl) res = { ok:true, folio:'DEMO-' + (Date.now() + k).toString().slice(-5) };
+    else {
+      const r = await fetch(AJUSTES.scriptUrl, { method:'POST', headers:{ 'Content-Type':'text/plain;charset=utf-8' }, body: JSON.stringify(ninos[k]) });
+      res = await r.json();
+    }
+    const previo = !res.ok && /ya est[áa] inscrito.*folio ([A-Z0-9-]+)/i.exec(res.error || '');
+    if (res.ok) folios.push(res.folio);
+    else if (previo) folios.push(previo[1]);
+    else {
+      const hechos = folios.length ? ` Ya quedaron registrados: ${folios.join(', ')} (no hay que volver a inscribirlos).` : '';
+      throw new Error(`No se pudo registrar a ${ninos[k].nombres} ${ninos[k].apellidos}: ${res.error || 'error del servidor'}.${hechos}`);
+    }
+  }
+  return { ok:true, folio: folios[0], folios };
+}
 const toB64 = f => new Promise((res,rej) => { const r = new FileReader(); r.onload = () => res(r.result.split(',')[1]); r.onerror = rej; r.readAsDataURL(f); });
 
 $('#frm').addEventListener('submit', async e => {
@@ -1348,7 +1578,8 @@ $('#frm').addEventListener('submit', async e => {
     const f = $('#comprobante').files[0];
     const data = { ...payload(), archivo: { nombre: f.name, tipo: f.type, base64: await toB64(f) } };
     let res;
-    if (!AJUSTES.scriptUrl) { // solo alcanzable con ?demo=1
+    if (data.promocion && !AJUSTES.promoBackendV7) res = await enviarHermanosUnoPorUno(data);
+    else if (!AJUSTES.scriptUrl) { // solo alcanzable con ?demo=1
       console.log('[MODO DEMO] Datos que se enviarían:', { ...data, archivo: { ...data.archivo, base64: '(…)' } });
       res = { ok: true, folio: 'DEMO-' + Date.now().toString().slice(-5) };
     } else {
@@ -1356,7 +1587,12 @@ $('#frm').addEventListener('submit', async e => {
       res = await r.json();
     }
     if (!res.ok) throw new Error(res.error || 'No se pudo registrar.');
-    $('#folio').textContent = res.folio;
+    $('#folio').textContent = (res.folios && res.folios.length > 1) ? res.folios.join(' · ') : res.folio;
+    if (data.promocion){
+      if (!res.folios) throw new Error('El servidor no reconoció la promoción de hermanos (requiere Code.gs v7). Solo se registró al jugador 1, folio ' + res.folio + '. Avísanos por WhatsApp para registrar a los demás.');
+      $('#okPromo').innerHTML = `Registramos a <b>${res.folios.length} hermanos</b> con un solo comprobante. La promoción queda <b>pendiente de revisión</b>; te avisaremos si hay algún ajuste.`;
+      $('#okPromo').classList.remove('hidden');
+    }
     if (data.tardia) $('#okTardio').classList.remove('hidden');
     $('#frm').classList.add('hidden'); $('#ok').classList.remove('hidden');
     $('#inscribir').scrollIntoView();
@@ -1422,7 +1658,7 @@ function datosPrevios(conCategoria){
   return {
     nombre: (n || a) ? `${n} ${a}`.trim() : 'Nombre(s) y apellidos del jugador',
     inst: val('institucion').replace(/\s+/g,' ') || 'Institución educativa',
-    cat: conCategoria ? lineaCat(cat, r ? ramaCert(r.value, true) : '') : ''
+    cat: conCategoria ? lineaCat(cat, r ? ramaCert(r.value, !ACTIVO.mixta) : '') : ''
   };
 }
 function dibujarPrevias(){
@@ -1486,6 +1722,7 @@ function alertaPanel(msg){ $('#pNotaResumen').innerHTML = `<span style="color:va
 
 // Rama femenil separada por categoría: automático (≥10 inscritas) salvo que se cambie a mano.
 function femenilSeparada(cat){
+  if (P.ev && P.ev.mixta) return false;            // v16: desde la 3ª fecha todas las categorías son mixtas
   if (cat in P.override) return P.override[cat];
   return P.filas.filter(f => esValida(f) && f.categoria === cat && f.rama === 'Femenil').length >= 10;
 }
@@ -1510,7 +1747,8 @@ function renderPanel(){
   $('#pNotaResumen').textContent = `${P.filas.length - v.length} fila(s) anuladas o de prueba no se cuentan.` + (P.cuota != null ? ` Correos disponibles hoy en Google: ${P.cuota}.` : '');
   // Ramas
   const cats = (P.ev.categorias || []).map(c => c.nombre);
-  $('#pRamas').innerHTML = `<div class="p-tabla-wrap"><table class="p-tabla"><thead><tr><th>Categoría</th><th>Inscritas</th><th>Inscritos</th><th>Rama femenil por separado</th></tr></thead><tbody>${
+  if (P.ev.mixta){ $('#pRamas').innerHTML = '<p class="small">Desde la 3ª fecha <b>todas las categorías son mixtas</b>: los certificados dicen «Rama Mixta». Las 3 mejores niñas de cada categoría reciben medalla (no cambia el certificado).</p>'; }
+  else $('#pRamas').innerHTML = `<div class="p-tabla-wrap"><table class="p-tabla"><thead><tr><th>Categoría</th><th>Inscritas</th><th>Inscritos</th><th>Rama femenil por separado</th></tr></thead><tbody>${
     cats.map(c => { const fem = v.filter(f => f.categoria === c && f.rama === 'Femenil').length, var_ = v.filter(f => f.categoria === c && f.rama !== 'Femenil').length;
       return `<tr><td>${esc(c)}</td><td>${fem}</td><td>${var_}</td><td><label><input type="checkbox" data-cat="${esc(c)}" ${femenilSeparada(c) ? 'checked' : ''}> ${femenilSeparada(c) ? 'Sí (Rama Femenil)' : 'No (todas en Rama Mixta)'}</label>${c in P.override ? ' <span class="small">· ajustado a mano</span>' : ''}</td></tr>`; }).join('')
   }</tbody></table></div>`;
