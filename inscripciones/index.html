@@ -23,8 +23,9 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
 /aviso-de-privacidad/ (proyecto propio, numeración propia, texto del proyecto legal).
 
 ## Estado actual
-* Versión vigente: v16
-* Archivo entregado: Inscripciones_v16.html → /inscripciones/index.html (sin archivos nuevos).
+* Versión vigente: v17
+* (v17) Inscripciones_v17.html → /inscripciones/index.html (sin archivos nuevos; Code.gs sin cambios).
+* (v16) Archivo entregado: Inscripciones_v16.html → /inscripciones/index.html (sin archivos nuevos).
   + convocatorias/mtl3-e3.pdf, mtl3-e3-p1.jpg, mtl3-e3-p2.jpg. Funciona con Code.gs v6: el registro conjunto de
   hermanos envía una inscripción por niño con el mismo comprobante (promoBackendV7:false). Con Code.gs v7 instalado,
   poner promoBackendV7:true para un solo envío con columnas Grupo familiar / Promoción / Estado promoción.
@@ -120,6 +121,13 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
 * Panel: www.ajedrezpolgar.com/inscripciones/#panel → lista (admin_lista), PDF de imprenta (todas
   las hojas en un PDF), marcar impresos (admin_marcar), envío por correo de PDF individuales
   (admin_enviar), PDF/WhatsApp manual y CSV. Excluye filas con Notas que empiezan con ANULADO/PRUEBA.
+* Panel, impresos (v17): descargar el PDF NO registra nada; el registro es «Marcar N como impresos» (admin_marcar,
+  valor «Impreso <fecha>»). El lote descargado se guarda en localStorage (polgar_lote_imprenta_<id-evento>, solo
+  folios y fecha) y se vuelve a ofrecer al entrar mientras queden folios sin certificado; «descartar» lo borra.
+  El PDF lleva sus folios en Keywords («folios:MTL-2-001,…»). «¿Ya descargaste el PDF…?» lee un PDF del panel en el
+  navegador: usa Keywords si existen; si no (PDF anteriores a v17), lee el texto de cada hoja (DecompressionStream)
+  y empareja por nombre sin acentos/mayúsculas (desempate por institución). Solo marca filas sin certificado, con la
+  fecha de creación del PDF; nombres no encontrados o repetidos se listan y no se marcan. Rechaza PDF de otro evento.
 * Panel, sección 5 (v9): externos → admin_agregar (Code.gs v4). Folio MTL-<n>-E## consecutivo por pestaña.
   Columnas: Comprobante «Por cobrar» o «Pagado vía <org>», Pago validado (casilla) según lo elegido, Notas
   «Por cobrar <org>» / «Pagado <org>», Acepta aviso «Pendiente (vía <org>)», Imagen «No», Boletines «No»,
@@ -174,6 +182,19 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
 - [ ] Portada v3 enlaza a los sitios hermanos vía max-verne.github.io en la barra superior y vía www en el banner — inconsistencia heredada, no se toca aquí.
 
 ## Historial de cambios
+
+**v17 (11-nov-2026) — Recuperar el registro de certificados impresos**
+* Caso real: el titular descargó el PDF para imprenta del 2do evento (6-nov 17:37, 102 hojas) y no pulsó «Marcar
+  102 como impresos» (el botón solo vivía en la página abierta); el panel seguía mostrando 117 sin certificado.
+* Nuevo en la sección 3: subir un PDF ya descargado → resumen (encontrados / ya registrados / no encontrados /
+  repetidos) → «Marcar N como impresos» con la fecha del PDF. Sirve para PDF anteriores (lectura del texto) y nuevos
+  (folios en Keywords).
+* El lote descargado queda guardado en el navegador y al volver a entrar aparece «Falta un paso» con el botón para
+  marcarlo o descartarlo. El aviso tras descargar explica que descargar no registra.
+* Verificación: lector probado con el PDF real (102 hojas, 1 sin institución, nombres con acentos). Flujo completo en
+  navegador automatizado con servidor simulado de 117 filas: 101 marcados desde el PDF real (1 no encontrado a
+  propósito), segunda subida sin duplicar, lote nuevo recordado tras recargar, PDF nuevo leído por folios, móvil.
+  Con el Apps Script real: PENDIENTE DE PRUEBA (la hace el titular).
 
 **v16 (9-nov-2026) — Reglas desde la 3ª fecha: $300, promoción hermanos y modalidad mixta**
 * Eventos 3º a 6º usan MTL3_DESDE_3A: cuota $300, mixta:true y promoHermanos {2:$500, 3:$600}. Los eventos 1º y 2º
@@ -921,6 +942,12 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
         <label class="opt"><input type="checkbox" id="pSoloPago"> <span>Solo con «Pago validado» marcado en la hoja</span></label>
         <div class="fnav"><span class="small" id="pCuentaImp"></span><button type="button" class="primary" id="pImprimir">⬇ Descargar PDF para imprenta</button></div>
         <div id="pConfirmar" class="aviso hidden"></div>
+        <details id="pRecup" style="margin-top:12px">
+          <summary><b>¿Ya descargaste el PDF pero no quedó marcado como impreso?</b> Súbelo aquí</summary>
+          <p class="hint">Elige el PDF que descargaste de este panel (Certificados_…_imprenta_….pdf), con el mismo evento seleccionado arriba. La página lee el nombre de cada hoja, lo busca en la lista del evento y te muestra el resultado <b>antes</b> de marcar nada. El PDF no se sube a ningún servidor.</p>
+          <input type="file" id="pPdfPrevio" accept="application/pdf,.pdf">
+          <div id="pRecupRes" class="aviso hidden"></div>
+        </details>
       </div>
 
       <div class="card">
@@ -1700,7 +1727,7 @@ async function cargarDatos(){
   P.filas = j.filas || []; P.cuota = j.cuota;
   if (Array.isArray(j.orgs) && j.orgs.length) P.orgs = j.orgs;
   else if (!P.orgs.length) P.orgs = ORGS_RESPALDO.slice();
-  renderPanel(); renderExternos();
+  renderPanel(); renderExternos(); mostrarLotePendiente();
 }
 $('#pEntrar').onclick = async () => {
   $('#pErr').textContent = '';
@@ -1840,16 +1867,108 @@ $('#pImprimir').onclick = async () => {
     box.textContent = `Generando ${lote.length} certificado(s)…`;
     await cargarJsPDF();
     const doc = pdfConCerts(lote, fondoJPEG(certDe(P.ev).W, 0.92));
-    doc.save(`Certificados_${nombreArchivo(P.ev.id)}_imprenta_${nombreArchivo(ahoraTxt())}.pdf`);
     P.lote = lote.map(f => f.folio);
-    box.innerHTML = `Se descargó el PDF con <b>${lote.length}</b> certificado(s), ordenados por categoría, rama y apellidos. Ábrelo y revísalo. Cuando lo mandes a imprimir, márcalos para que los siguientes inscritos queden como <b>pendientes de certificado digital</b>.
-      <div class="fnav"><span></span><button type="button" class="primary" id="pMarcarImp">Marcar ${lote.length} como impresos</button></div>`;
-    $('#pMarcarImp').onclick = async () => {
-      const b = $('#pMarcarImp'); b.disabled = true; b.textContent = 'Marcando…';
-      try { const j = await api({ accion:'admin_marcar', folios:P.lote, valor:'Impreso ' + ahoraTxt() }); box.textContent = `Listo: ${j.marcados} certificado(s) marcados como impresos en la hoja.`; await cargarDatos(); }
-      catch (e) { box.textContent = '⚠️ ' + e.message; }
-    };
+    doc.setProperties({ keywords: 'folios:' + P.lote.join(',') });   // v17: el PDF recuerda sus folios
+    doc.save(`Certificados_${nombreArchivo(P.ev.id)}_imprenta_${nombreArchivo(ahoraTxt())}.pdf`);
+    guardarLotePendiente({ folios:P.lote, fecha:ahoraTxt() });
+    mostrarLotePendiente();
   } catch (e) { box.textContent = '⚠️ ' + e.message; }
+};
+
+/* v17 — El PDF descargado todavía NO queda registrado: falta «Marcar como impresos». Si la página se cerraba
+   antes de pulsarlo, el registro se perdía. Ahora el lote pendiente se guarda en este navegador (por evento)
+   y se vuelve a ofrecer al entrar; además se puede subir un PDF ya descargado para marcar desde él. */
+const claveLote = () => 'polgar_lote_imprenta_' + P.ev.id;
+function guardarLotePendiente(l){ try { localStorage.setItem(claveLote(), JSON.stringify(l)); } catch (e) {} }
+function leerLotePendiente(){ try { return JSON.parse(localStorage.getItem(claveLote()) || 'null'); } catch (e) { return null; } }
+function borrarLotePendiente(){ try { localStorage.removeItem(claveLote()); } catch (e) {} }
+const sinRegistro = folios => folios.filter(fo => { const f = P.filas.find(x => x.folio === fo); return f && esValida(f) && !f.certificado; });
+
+async function marcarImpresos(folios, fecha, box, alTerminar){
+  const j = await api({ accion:'admin_marcar', folios, valor:'Impreso ' + fecha });
+  box.innerHTML = `✅ Listo: <b>${j.marcados}</b> certificado(s) quedaron marcados como impresos en la hoja.`;
+  if (alTerminar) alTerminar();
+  await cargarDatos();
+}
+function mostrarLotePendiente(){
+  const box = $('#pConfirmar'), l = leerLotePendiente();
+  if (!l || !Array.isArray(l.folios)) return;
+  const faltan = sinRegistro(l.folios);
+  if (!faltan.length){ borrarLotePendiente(); return; }
+  box.classList.remove('hidden');
+  box.innerHTML = `<b>⚠️ Falta un paso:</b> el PDF para imprenta descargado el <b>${esc(l.fecha)}</b> tiene <b>${faltan.length}</b> certificado(s) que todavía <b>no</b> están registrados como impresos. Descargar el PDF no los registra. Cuando lo mandes (o ya lo hayas mandado) a imprimir, pulsa el botón; así quienes se inscriban después quedan como pendientes de certificado digital.
+    <div class="fnav"><button type="button" class="btn-sm" id="pDescartarLote">No se imprimió · descartar</button><button type="button" class="primary" id="pMarcarImp">Marcar ${faltan.length} como impresos</button></div>`;
+  $('#pDescartarLote').onclick = () => { borrarLotePendiente(); box.textContent = 'Se descartó el aviso. Ningún certificado se marcó.'; };
+  $('#pMarcarImp').onclick = async () => {
+    const b = $('#pMarcarImp'); b.disabled = true; b.textContent = 'Marcando…';
+    try { await marcarImpresos(faltan, l.fecha, box, borrarLotePendiente); }
+    catch (e) { b.disabled = false; b.textContent = `Marcar ${faltan.length} como impresos`; box.insertAdjacentHTML('beforeend', `<p style="color:var(--err)">⚠️ ${esc(e.message)}</p>`); }
+  };
+}
+
+// Lectura de un PDF generado por este panel (jsPDF): folios en Keywords (v17+) o, en PDF anteriores,
+// el texto de cada hoja (nombre / institución / categoría). Todo ocurre en este navegador.
+async function leerPdfImprenta(file){
+  if (typeof DecompressionStream === 'undefined') throw new Error('Este navegador no puede leer el PDF. Usa Chrome, Edge o Firefox actualizados.');
+  const buf = new Uint8Array(await file.arrayBuffer());
+  const s = new TextDecoder('latin1').decode(buf);
+  if (!/^%PDF/.test(s)) throw new Error('El archivo no es un PDF.');
+  const fecha = (m => m ? `${m[3]}/${m[2]}/${m[1]} ${m[4]}:${m[5]}` : '')(s.match(/\/CreationDate \(D:(\d{4})(\d\d)(\d\d)(\d\d)(\d\d)/));
+  const titulo = (s.match(/\/Title \(([^)]*)\)/) || [])[1] || '';
+  const kw = (s.match(/\/Keywords \(folios:([^)]*)\)/) || [])[1];
+  const res = { fecha, titulo, folios: kw ? kw.split(',').filter(Boolean) : null, hojas: [] };
+  if (res.folios) return res;
+  const re = /\/Length (\d+)\s*\/Filter \/FlateDecode\s*>>\s*stream\r?\n/g; let m;
+  while ((m = re.exec(s))){
+    const ini = re.lastIndex, txt = await new Response(new Blob([buf.subarray(ini, ini + +m[1])]).stream().pipeThrough(new DecompressionStream('deflate'))).arrayBuffer()
+      .then(b => new TextDecoder('windows-1252').decode(b)).catch(() => '');
+    if (!/\bTj\b/.test(txt)) continue;
+    const textos = [];
+    for (const t of txt.matchAll(/\(((?:\\.|[^\\)])*)\)\s*Tj/g)){
+      const v = t[1].replace(/\\([0-7]{1,3}|.)/g, (x, c) => /^[0-7]+$/.test(c) ? String.fromCharCode(parseInt(c, 8)) : ({ n:'\n', r:'\r', t:'\t' }[c] || c)).trim();
+      if (v && textos[textos.length - 1] !== v) textos.push(v);
+    }
+    if (!textos.length) continue;
+    const cat = textos.find(t => /^Categor/i.test(t)) || '';
+    res.hojas.push({ nombre: textos[0], inst: textos.find(t => t !== textos[0] && t !== cat) || '', cat });
+  }
+  if (!res.hojas.length) throw new Error('No se encontraron certificados en el PDF. ¿Es el PDF para imprenta descargado de este panel?');
+  return res;
+}
+const claveNombre = s => sinAcentos(s).replace(/[^a-z0-9ñ ]/g, ' ').replace(/\s+/g, ' ').trim();
+function emparejarHojas(hojas){
+  const validas = P.filas.filter(esValida), ok = [], noEnc = [], dudas = [];
+  hojas.forEach(h => {
+    let c = validas.filter(f => claveNombre(datosCert(f).nombre) === claveNombre(h.nombre));
+    if (c.length > 1) c = c.filter(f => claveNombre(datosCert(f).inst) === claveNombre(h.inst));
+    if (c.length === 1) ok.push(c[0].folio); else (c.length ? dudas : noEnc).push(h.nombre);
+  });
+  return { ok:[...new Set(ok)], noEnc, dudas };
+}
+$('#pPdfPrevio').onchange = async () => {
+  const file = $('#pPdfPrevio').files[0], box = $('#pRecupRes'); if (!file) return;
+  box.classList.remove('hidden'); box.textContent = 'Leyendo el PDF…';
+  try {
+    const r = await leerPdfImprenta(file);
+    const ev = r.titulo.replace(/^Certificados · /, '');
+    if (ev && ev !== P.ev.titulo) throw new Error(`Este PDF es del «${ev}», pero arriba está elegido «${P.ev.titulo}». Sal del panel, elige ese evento y vuelve a entrar.`);
+    const e = r.folios ? { ok: r.folios.filter(fo => P.filas.some(f => f.folio === fo)), noEnc: r.folios.filter(fo => !P.filas.some(f => f.folio === fo)), dudas: [] } : emparejarHojas(r.hojas);
+    const total = r.folios ? r.folios.length : r.hojas.length;
+    const faltan = sinRegistro(e.ok), yaTenian = e.ok.length - faltan.length, fecha = r.fecha || ahoraTxt();
+    const lista = (t, arr) => arr.length ? `<p><b>${t} (${arr.length}):</b> ${arr.map(esc).join(' · ')}</p>` : '';
+    box.innerHTML = `PDF del <b>${esc(fecha)}</b> con <b>${total}</b> hoja(s). Encontrados en la lista: <b>${e.ok.length}</b>` +
+      (yaTenian ? ` (${yaTenian} ya tenían certificado registrado y no se tocan)` : '') + '.' +
+      lista('No encontrados (quizá se corrigió el nombre en la hoja después de imprimir; márcalos a mano en la columna Certificado)', e.noEnc) +
+      lista('Nombre repetido en la lista, no se marcan', e.dudas) +
+      (faltan.length ? `<div class="fnav"><span class="small">Se registrarán como «Impreso ${esc(fecha)}».</span><button type="button" class="primary" id="pMarcarPdf">Marcar ${faltan.length} como impresos</button></div>`
+                     : '<p>No hay nada que marcar: todos los encontrados ya tienen certificado registrado.</p>');
+    if (faltan.length) $('#pMarcarPdf').onclick = async () => {
+      const b = $('#pMarcarPdf'); b.disabled = true; b.textContent = 'Marcando…';
+      try { await marcarImpresos(faltan, fecha, box); }   // el aviso de lote pendiente se limpia solo al recargar los datos
+      catch (err) { b.disabled = false; b.textContent = `Marcar ${faltan.length} como impresos`; box.insertAdjacentHTML('beforeend', `<p style="color:var(--err)">⚠️ ${esc(err.message)}</p>`); }
+    };
+  } catch (err) { box.textContent = '⚠️ ' + err.message; }
+  $('#pPdfPrevio').value = '';
 };
 
 async function pdfIndividual(f){
