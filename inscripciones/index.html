@@ -23,7 +23,7 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
 /aviso-de-privacidad/ (proyecto propio, numeración propia, texto del proyecto legal).
 
 ## Estado actual
-* Versión vigente: v17
+* Versión vigente: v18
 * (v17) Inscripciones_v17.html → /inscripciones/index.html (sin archivos nuevos; Code.gs sin cambios).
 * (v16) Archivo entregado: Inscripciones_v16.html → /inscripciones/index.html (sin archivos nuevos).
   + convocatorias/mtl3-e3.pdf, mtl3-e3-p1.jpg, mtl3-e3-p2.jpg. Funciona con Code.gs v6: el registro conjunto de
@@ -182,6 +182,11 @@ Frontera: el Aviso de Privacidad (incluye Uso de Imagen) vive aparte en
 - [ ] Portada v3 enlaza a los sitios hermanos vía max-verne.github.io en la barra superior y vía www en el banner — inconsistencia heredada, no se toca aquí.
 
 ## Historial de cambios
+
+**v18 (17-nov-2026) — ON27: inscripción abierta hasta nuevo aviso**
+* on27-municipal: cierre:null + hastaNuevoAviso:true (decisión del titular el 17-nov, día del cierre original).
+  La tarjeta dice «Cierre de inscripción: Hasta nuevo aviso». Internamente cierra a más tardar al terminar el
+  evento (fin). Para cerrar: poner cierre:'AAAA-MM-DDTHH:MM:00-06:00' y quitar hastaNuevoAviso.
 
 **v17 (11-nov-2026) — Recuperar el registro de certificados impresos**
 * Caso real: el titular descargó el PDF para imprenta del 2do evento (6-nov 17:37, 102 hojas) y no pulsó «Marcar
@@ -1111,7 +1116,7 @@ const EVENTOS = [
     fechaTexto:'Fase Eliminatoria: sábado 21 de noviembre · Fase Clasificatoria: 28 y 29 de noviembre de 2026',
     sede:'Unidad Deportiva Luis I. Rodríguez (Coecillo)', direccion:'León, Gto.',
     mapsUrl:'https://maps.google.com/?q=Unidad+Deportiva+Luis+I.+Rodr%C3%ADguez,+Coecillo,+Le%C3%B3n,+Gto.',
-    horario:null, costo:null, gratuito:true, cupo:250, cierre:'2026-11-17T23:59:00-06:00',
+    horario:null, costo:null, gratuito:true, cupo:250, cierre:null, hastaNuevoAviso:true, // 17-nov: abierta hasta nuevo aviso (decisión del titular)
     formulario:'/on27/', resultadosUrl:null, certificado:null,
     convocatoria:{ pdf:'/on27/convocatoria.pdf',
       paginas:[1,2,3,4,5,6].map(n => '/inscripciones/convocatorias/on27-municipal-p' + n + '.jpg') },
@@ -1146,7 +1151,10 @@ const fechaCorta = iso => new Date(iso + 'T12:00:00' + OFFSET).toLocaleDateStrin
 const fechaHoraLarga = d => d.toLocaleDateString('es-MX', { timeZone:TZ, weekday:'long', day:'numeric', month:'long' }) + ' a las ' + d.toLocaleTimeString('es-MX', { timeZone:TZ, hour:'2-digit', minute:'2-digit', hour12:false }) + ' h';
 const fechaHora = d => d.toLocaleString('es-MX', { timeZone:TZ, dateStyle:'long', timeStyle:'short' });
 
+const finDe = e => e.fin || e.fecha;
+const textoCierre = ev => ev.hastaNuevoAviso ? 'Hasta nuevo aviso' : fechaHora(cierreDe(ev));
 function cierreDe(ev){
+  if (ev.hastaNuevoAviso) return new Date(finDe(ev) + 'T23:59:00' + OFFSET); // sin fecha publicada; cierra a más tardar al terminar el evento
   if (ev.cierre) return new Date(ev.cierre);
   const d = new Date(ev.fecha + 'T23:59:00' + OFFSET); d.setDate(d.getDate() - 2); return d; // jueves previo 23:59
 }
@@ -1167,7 +1175,6 @@ function estadoDe(ev){
 }
 const ETIQUETA = { 'tardia':'Inscripción extemporánea abierta', 'abierta':'Inscripción abierta', 'cerrada':'Inscripción cerrada', 'proximamente':'Inscripción próximamente', 'sin-formulario':'Evento sin inscripción' };
 
-const finDe = e => e.fin || e.fecha;
 const futuros = EVENTOS.filter(e => e.fecha >= HOY && !e.paralelo);
 const ACTIVO = (AJUSTES.FORZAR_ACTIVO && EVENTOS.find(e => e.id === AJUSTES.FORZAR_ACTIVO)) || futuros[0] || null;
 // v13: eventos paralelos (p. ej. ON27 de COMUDE) se muestran activos junto al torneo MTL hasta su último día.
@@ -1212,7 +1219,7 @@ function tarjetaActivo(ev){
     ev.costo ? ['Inscripción', money(ev.costo) + ' por jugador'] : (ev.gratuito ? ['Inscripción', 'Gratuita'] : null),
     ev.promoHermanos ? ['Promoción hermanos', textoPromo(ev)] : null,
     ev.cupo ? ['Cupo', ev.cupo + ' jugadores'] : null,
-    ev.formulario && ev.sede ? [st0 === 'tardia' ? 'Cierre según convocatoria' : 'Cierre de inscripción', fechaHora(cierreDe(ev))] : null,
+    ev.formulario && ev.sede ? [st0 === 'tardia' ? 'Cierre según convocatoria' : 'Cierre de inscripción', textoCierre(ev)] : null,
     st0 === 'tardia' ? ['Inscripción extemporánea hasta', fechaHora(cierreTardioDe(ev))] : null
   ].filter(Boolean);
 
@@ -1294,7 +1301,7 @@ function prepararFormulario(){
     ['Fecha', fechaLarga(ev.fecha)],
     ['Sede', esc(ev.sede)],
     ev.direccion ? ['Dirección', esc(ev.direccion) + (ev.mapsUrl ? ` · <a href="${esc(ev.mapsUrl)}" target="_blank" rel="noopener">Ver mapa</a>` : '')] : null,
-    [estadoDe(ev) === 'tardia' ? 'Cierre según convocatoria' : 'Cierre de inscripción', fechaHora(cierreDe(ev))],
+    [estadoDe(ev) === 'tardia' ? 'Cierre según convocatoria' : 'Cierre de inscripción', textoCierre(ev)],
     estadoDe(ev) === 'tardia' ? ['Inscripción extemporánea hasta', fechaHora(cierreTardioDe(ev))] : null,
     ['Inscripción', money(ev.costo) + ' por jugador'],
     ev.promoHermanos ? ['Promoción hermanos', textoPromo(ev)] : null,
