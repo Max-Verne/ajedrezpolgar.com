@@ -1716,7 +1716,7 @@ function dibujarPrevias(){
    Sin clave correcta el servidor no entrega ningún dato. Los PDF se arman en este navegador
    (jsPDF alojado en /inscripciones/lib/, se carga solo al usar el panel). */
 const P = { clave:'', ev:null, filas:[], fondo:null, override:{}, lote:[], cuota:null, orgs:[], ext:[] };
-const EVENTOS_PANEL = EVENTOS.filter(e => e.formulario === 'mtl' && e.sede);
+const EVENTOS_PANEL = EVENTOS.filter(e => (e.formulario === 'mtl' || e.certificado) && e.sede);
 const esValida = f => !/^\s*(ANULAD|PRUEBA)/i.test(f.notas || '');
 const ahoraTxt = () => new Date().toLocaleString('es-MX', { timeZone:TZ, day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit', hour12:false }).replace(',', '');
 
