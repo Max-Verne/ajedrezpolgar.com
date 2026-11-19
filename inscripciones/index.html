@@ -1076,6 +1076,13 @@ const CERT_MTL_NARANJA = {
   inst:   { cx:2110, base:728, size:62,  min:34, maxW:1900, color:'#FFE9A8' },
   cat:    { cx:2110, base:796, size:44,  min:30, maxW:1800, color:'#FFFFFF' }
 };
+// Certificado ON27 (diseño COMUDE León, fondo blanco): nombre entre «OTORGADO A» y la línea
+// punteada, categoría·rama dentro del recuadro redondeado debajo.
+const CERT_ON27 = {
+  W: 3300, H: 2550,
+  nombre: { cx:1650, base:1270, size:145, min:70, maxW:2250, color:'#1b3b6f' },
+  cat:    { cx:1650, base:1452, size:52,  min:34, maxW:1100, color:'#3a4a5e' }
+};
 // Orden cronológico. Los id NUNCA se reutilizan ni se cambian.
 const EVENTOS = [
   { ...MTL3, id:'mtl3-e1', etapa:'1er evento', titulo:'1er evento e Inauguración', fecha:'2026-10-10',
@@ -1118,7 +1125,8 @@ const EVENTOS = [
     sede:'Unidad Deportiva Luis I. Rodríguez (Coecillo)', direccion:'León, Gto.',
     mapsUrl:'https://maps.google.com/?q=Unidad+Deportiva+Luis+I.+Rodr%C3%ADguez,+Coecillo,+Le%C3%B3n,+Gto.',
     horario:null, costo:null, gratuito:true, cupo:250, cierre:null, hastaNuevoAviso:true, // 17-nov: abierta hasta nuevo aviso (decisión del titular)
-    formulario:'/on27/', resultadosUrl:null, certificado:null,
+    formulario:'/on27/', resultadosUrl:null,
+    certificado:{ muestra:'/inscripciones/certificados/on27-municipal-muestra.jpg', layout:CERT_ON27 },
     convocatoria:{ pdf:'/on27/convocatoria.pdf',
       paginas:[1,2,3,4,5,6].map(n => '/inscripciones/convocatorias/on27-municipal-p' + n + '.jpg') },
     categorias:[
