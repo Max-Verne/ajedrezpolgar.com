@@ -15,7 +15,8 @@
 =====================================================================
 
 ## Estado actual
-* Versión vigente: v11 (ON27_Formulario_Inscripcion_Municipal_v11.html → /on27/index.html). INSCRIPCIONES CERRADAS
+* Versión vigente: v12 (ON27_Formulario_Inscripcion_Municipal_v12.html → /on27/index.html). INSCRIPCIONES CERRADAS al
+  público; enlace privado ?ext=o6tqepcjbq abre el formulario hasta el 20-nov 23:59 (2 registros extemporáneos)
   (20-nov-2026 20:55). Texto anterior de v10:
   HASTA NUEVO AVISO (sin fecha de cierre; backend con CONFIG.CIERRE: null).
 * Archivos junto a la página: /on27/carta-responsiva.pdf y .docx, y /on27/convocatoria.pdf (formatos oficiales de COMUDE).
@@ -68,6 +69,12 @@
 * [x] ON27 en el catálogo de /inscripciones/ como evento paralelo (Inscripciones v13), activo junto a MTL.
 
 ## Historial de cambios
+**v12 (20-nov-2026) — Enlace privado para 2 registros extemporáneos**
+* El titular autorizó dos registros extemporáneos tras el cierre. La página pública sigue cerrada; con
+  ?ext=o6tqepcjbq el formulario se muestra abierto (aviso «Registro extemporáneo autorizado») hasta el
+  20-nov 23:59 y envía claveExtemporanea. El titular dejó el backend con CIERRE: null para recibirlos;
+  debe volver a cerrarlo después. Code_ON27_v4 (opcional) valida la clave en el servidor, limita a 2 y
+  anota «Extemporánea (enlace privado)» en Notas.
 **v11 (20-nov-2026) — Cierre de inscripciones**
 * El titular cerró la inscripción en línea el viernes 20-nov-2026 a las 20:55 (víspera de la Eliminatoria).
   AJUSTES.cierre = 2026-11-20T20:55-06:00: la página muestra «La inscripción en línea está cerrada» y oculta el
@@ -440,10 +447,13 @@ const DEMO = QS.get('demo') === '1';
 const qsHoy = QS.get('hoy'); // ?hoy=AAAA-MM-DD para revisar estados por fecha
 const AHORA = /^\d{4}-\d{2}-\d{2}$/.test(qsHoy || '') ? new Date(qsHoy + 'T12:00:00-06:00') : new Date();
 
+// Registro extemporáneo por enlace privado (?ext=CLAVE): solo quien recibe el enlace ve el formulario abierto.
+const EXT = { clave: 'o6tqepcjbq', hasta: '2026-11-20T23:59:00-06:00' };
+const EXT_OK = QS.get('ext') === EXT.clave && AHORA <= new Date(EXT.hasta);
 function estado(){
   if (!AJUSTES.scriptUrl && !DEMO) return 'proximamente';
   if (AJUSTES.apertura && AHORA < new Date(AJUSTES.apertura)) return 'proximamente';
-  if (AJUSTES.cierre && AHORA > new Date(AJUSTES.cierre)) return 'cerrada';
+  if (AJUSTES.cierre && AHORA > new Date(AJUSTES.cierre)) return EXT_OK ? 'abierta' : 'cerrada';
   return 'abierta';
 }
 const fmtFecha = iso => new Date(iso).toLocaleString('es-MX', { timeZone:'America/Mexico_City', weekday:'long', day:'numeric', month:'long', hour:'2-digit', minute:'2-digit', hour12:false }) + ' h';
@@ -461,6 +471,8 @@ const fmtFecha = iso => new Date(iso).toLocaleString('es-MX', { timeZone:'Americ
       '<a href="/on27/carta-responsiva.pdf" target="_blank" rel="noopener">descárgala aquí</a> · ' +
       '<a href="/on27/convocatoria/">Ver la convocatoria</a></div>';
     $('#formWrap').style.display = 'none';
+  } else if (EXT_OK){
+    box.innerHTML = '<div class="estado prox"><b>Registro extemporáneo autorizado</b> por el comité organizador. Este enlace es personal; vence el ' + fmtFecha(EXT.hasta) + '.</div>';
   } else if (AJUSTES.cierre){
     box.innerHTML = '<div class="estado prox">Inscripción abierta hasta el ' + fmtFecha(AJUSTES.cierre) + ', o antes si se completa el cupo de ' + AJUSTES.cupo + ' inscritos.</div>';
   } else {
@@ -637,6 +649,7 @@ $('#formIns').addEventListener('submit', async (ev) => {
     avisoAceptado: true,
     autorizacionDocumentosAceptada: true,
     autorizaImagen: $('#chkImagen').checked,
+    claveExtemporanea: EXT_OK ? EXT.clave : '',
     enviadoEl: new Date().toISOString(),
     documentos
   };
