@@ -15,7 +15,8 @@
 =====================================================================
 
 ## Estado actual
-* Versión vigente: v10 (ON27_Formulario_Inscripcion_Municipal_v10.html → /on27/index.html). INSCRIPCIONES ABIERTAS
+* Versión vigente: v11 (ON27_Formulario_Inscripcion_Municipal_v11.html → /on27/index.html). INSCRIPCIONES CERRADAS
+  (20-nov-2026 20:55). Texto anterior de v10:
   HASTA NUEVO AVISO (sin fecha de cierre; backend con CONFIG.CIERRE: null).
 * Archivos junto a la página: /on27/carta-responsiva.pdf y .docx, y /on27/convocatoria.pdf (formatos oficiales de COMUDE).
 * Página de la convocatoria: /on27/convocatoria/ (6 páginas en imagen + botón de descarga del PDF + botón a inscripción).
@@ -67,6 +68,10 @@
 * [x] ON27 en el catálogo de /inscripciones/ como evento paralelo (Inscripciones v13), activo junto a MTL.
 
 ## Historial de cambios
+**v11 (20-nov-2026) — Cierre de inscripciones**
+* El titular cerró la inscripción en línea el viernes 20-nov-2026 a las 20:55 (víspera de la Eliminatoria).
+  AJUSTES.cierre = 2026-11-20T20:55-06:00: la página muestra «La inscripción en línea está cerrada» y oculta el
+  formulario; convocatoria y Carta Responsiva siguen descargables. Backend: CONFIG.CIERRE con la misma fecha.
 **v10 (17-nov-2026) — Abierta hasta nuevo aviso**
 * El titular decidió el 17-nov (día del cierre original, 23:59) dejar la inscripción abierta hasta nuevo aviso.
   AJUSTES.cierre = null; el aviso superior dice «Inscripción abierta hasta nuevo aviso, o hasta completar el
@@ -420,7 +425,7 @@ const AJUSTES = {
   convocatoriaPdf: '/on27/convocatoria/', // página con la convocatoria completa y botón de descarga
   // Ventana de inscripción, hora de León (-06:00). null = sin límite por ese lado.
   apertura: null,
-  cierre: null, // 17-nov-2026: abierta HASTA NUEVO AVISO. Para cerrar: poner fecha aquí y en CONFIG.CIERRE del backend
+  cierre: '2026-11-20T20:55:00-06:00', // 20-nov-2026 20:55: CERRADA por el titular (debe coincidir con CONFIG.CIERRE del backend)
   cupo: 250,
   maxArchivoMb: 5,
   maxEnvioMb: 20
