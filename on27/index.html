@@ -71,7 +71,8 @@
 **v11 (20-nov-2026) — Cierre de inscripciones**
 * El titular cerró la inscripción en línea el viernes 20-nov-2026 a las 20:55 (víspera de la Eliminatoria).
   AJUSTES.cierre = 2026-11-20T20:55-06:00: la página muestra «La inscripción en línea está cerrada» y oculta el
-  formulario; convocatoria y Carta Responsiva siguen descargables. Backend: CONFIG.CIERRE con la misma fecha.
+  formulario; debajo del aviso quedan los enlaces a la Carta Responsiva (PDF) y a la convocatoria
+  (la tarjeta de la carta vive dentro del formulario, que se oculta). Backend: CONFIG.CIERRE con la misma fecha.
 **v10 (17-nov-2026) — Abierta hasta nuevo aviso**
 * El titular decidió el 17-nov (día del cierre original, 23:59) dejar la inscripción abierta hasta nuevo aviso.
   AJUSTES.cierre = null; el aviso superior dice «Inscripción abierta hasta nuevo aviso, o hasta completar el
@@ -455,7 +456,10 @@ const fmtFecha = iso => new Date(iso).toLocaleString('es-MX', { timeZone:'Americ
       ' Puedes revisar los requisitos y preparar los documentos desde ahora.</div>';
     $('#fsForm').disabled = true; $('#fsForm').classList.add('off');
   } else if (st === 'cerrada'){
-    box.innerHTML = '<div class="estado cerr">La inscripción en línea está cerrada.</div>';
+    box.innerHTML = '<div class="estado cerr">La inscripción en línea está cerrada.</div>' +
+      '<div class="estado prox">¿Ya te inscribiste? Recuerda llevar la <b>Carta Responsiva</b> impresa y firmada, con copia del INE de quien firma: ' +
+      '<a href="/on27/carta-responsiva.pdf" target="_blank" rel="noopener">descárgala aquí</a> · ' +
+      '<a href="/on27/convocatoria/">Ver la convocatoria</a></div>';
     $('#formWrap').style.display = 'none';
   } else if (AJUSTES.cierre){
     box.innerHTML = '<div class="estado prox">Inscripción abierta hasta el ' + fmtFecha(AJUSTES.cierre) + ', o antes si se completa el cupo de ' + AJUSTES.cupo + ' inscritos.</div>';
